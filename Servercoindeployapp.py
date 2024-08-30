@@ -1,3 +1,5 @@
+
+
 from ast import If
 from audioop import error
 from http import server
@@ -8862,9 +8864,7 @@ if not allowedtostartpowerserver  == True:
      servers33 = servers33["Success"]
      servers = servers33
     except Exception as e:
-        print("WE MESSED UP HARDDDDDDDD: "+str(e))
         lol=True
-    print("servers2"+str(servers))
     for item in serverlist:
         urlthing = "http://"+serverlist[item]+"/recieveservers"
         try:
@@ -8884,7 +8884,6 @@ if not allowedtostartpowerserver  == True:
             serverhashlist[serverhash]["Amount"]+=1
             serverhashlist[serverhash]["ServersThatGotIt"].append(serverthatsentit)
             serverlistdoubleup[serverhash]=item
-            print(serverlistdoubleup[serverhash])
         else:
             serverhashlist[serverhash] = {"Amount":1,"ServersThatGotIt":[]}
             serverhashlist[serverhash]["ServersThatGotIt"].append(serverthatsentit)
@@ -8894,23 +8893,18 @@ if not allowedtostartpowerserver  == True:
     for item in servers:
        
        try:
-        print("servers:"+str(servers[item]))
         responsething = requests.get("http://"+servers[item]+"/recieveservers")
         responsething2 = requests.get("http://"+servers[item]+"/recieveservers2")
         
         responsething=responsething.json()
         responsething2 = responsething2.json()
         responsething2 = responsething2["Success"]
-        print("Responsething:"+str(responsething2))
         serverlistlist[it] = {"Data":responsething["Success"],"Server":servers[item],"NEWDATA":responsething2}
-        print("serverlistlist:"+str(serverlistlist))
-        print("YES!")
+        
         it+=1
 
        except Exception as E:
-           print("error: "+str(E))
            lol=True
-    print("Serverlistlist: "+str(serverlistlist))
     table_string=""
     for item in serverlistlist:
       for itemm in serverlistlist[item]["Data"]:
@@ -8925,14 +8919,11 @@ if not allowedtostartpowerserver  == True:
         if not hasht in HashList:
             HashList[hasht] = {"Amount":1,"Serverswithhash":[]}
             HashList[hasht]["Serverswithhash"].append(server)
-            print("HashList2: "+str(HashList))
         else:
             HashList[hasht]["Amount"]+=1
             HashList[hasht]["Serverswithhash"].append(server)
-            print("HashList2: "+str(HashList))
       except Exception as e:
-          print("Our mission failed because: "+str(e))
-
+          lol = True
     BLOCKSWENTTHROUGH = 0
     VKEYPLUSWALLETS = 0
     BLOCKLISTTHING = {}
@@ -8944,13 +8935,10 @@ if not allowedtostartpowerserver  == True:
             timestamplist[timestamp] = {"Amount":1}
         else:
             timestamplist[timestamp]["Amount"]+=1
-    print(serverhashlist)
 
     max_hash_key = max(serverhashlist, key=lambda x: serverhashlist[x]['Amount'])
-    print("Serverlistdoubleup:"+str(serverlistdoubleup))
-    print(serverlistdoubleup[max_hash_key])
+
     trueserverlist = serverlistlist[serverlistdoubleup[max_hash_key]]
-    print("trueserverlist: "+str(trueserverlist))
     ID =0 
     for item in trueserverlist:
             try:
@@ -8958,44 +8946,36 @@ if not allowedtostartpowerserver  == True:
              if requesttything.status_code == 200:
                 requesttything = requesttything.json()
                 addnumtotimestamplist(requesttything["Success"])
-                print("NUMTIMESTAMP: "+str(timestamplist))
              else:
-                 print("Oh.")
+                lol=True
             except:
                 lol=True
             ID+=1
-            print("YEEEESSSSSS")
             
 
  
     while TOTALPOWERVALUE == True:
         doomblocks = 0
         blockreward = 0
-        print("TOTALPOWERVALUE: "+str(TOTALPOWERVALUE))
-        print("POWER")
+       
         if TOTALPOWERVALUE == False:
                 break
         if FIRSTWAVE == True:
             ID =0 
-            print("TOTALPOWERVALUE: "+str(TOTALPOWERVALUE))
             
             for item in trueserverlist["Data"]:
                 try:
-                 print("SERVERLIST:"+str(trueserverlist))
-                 print("SERVERLISTID: "+str(trueserverlist["Data"]))
+              
                  requestthing = requests.post(trueserverlist["NEWDATA"][trueserverlist["Data"][str(ID)]]["PROTOCOL"]+str(trueserverlist["Data"][str(ID)])+"/gethashstringhash")
                  if requestthing.status_code == 200:
                     requestthing = requestthing.json()
                     addhashthingtohashlist(requestthing["Success"],trueserverlist["Data"][str(ID)])
-                    print("HashList33"+str(HashList))
                  else:
-                     print("Status code: "+str(requestthing.status_code))
+                     lol=True
                 except Exception as e:
-                    print("Mission Failed because: "+str(e))
                     lol=True
                 ID+=1
-            print("HashList"+str(HashList))
-            print("TimeStampList: "+str(timestamplist))
+       
             hashthingthingthing = max(HashList,key=lambda x: HashList[x]['Amount'])
             timestartdate = max(timestamplist,key=lambda x: timestamplist[x]['Amount'])
             serveramount = len(HashList[hashthingthingthing]["Serverswithhash"])
@@ -9009,12 +8989,10 @@ if not allowedtostartpowerserver  == True:
             POWERVAL = True
             if POWERVAL == False:
                   TOTALPOWERVALUE = False
-                  print("ITS OVER")
                   break
             while trueproof == False:
               if POWERVAL == False:
                   TOTALPOWERVALUE = False
-                  print("ITS OVER")
                   break
                   break
                   break
@@ -9025,20 +9003,15 @@ if not allowedtostartpowerserver  == True:
               
               randomserver = random.randint(0,serveramount-1)
               HASHLEN = len(HashList[hashthingthingthing]["Serverswithhash"])
-              print("HASH LENGTH:"+str(HASHLEN))
-              print("STEP 11")
+              
               if HASHLEN == 0:
-                  print("WHAHTHTHTHHTHTHTHE HECK HAPPENDNENN")
                   POWERVAL = False
                   break
 
               if randomserver<=HASHLEN and urltosendto == "":
-               print("SERVER: "+str(HashList[hashthingthingthing]["Serverswithhash"]))
                urltosendto = HashList[hashthingthingthing]["Serverswithhash"][int(randomserver)]
                urltosendto2 = trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/getalltheblocks"
-               print("URLTOSENDTO2: "+str(urltosendto2))
               else:
-                  print("FAIL!")
                   POWERVAL = False
               lol = False
               sql_file_path = "output.sql"
@@ -9050,16 +9023,12 @@ if not allowedtostartpowerserver  == True:
                    file.write(respondtomeplz.content)
 
                   import_sql_file(sql_file_path, new_database_path)
-                print("LOADED!")
                
 
               except Exception as e:
-                  print("ERROR:"+str(e))
-                  print("HAHAHAHHAHAAHAHAHHHAHA!!!!!!!!!!!")
+                 
                   POWERVAL = False
-              print("STEP 12")
               if TOTALPOWERVALUE == False:
-                  print("ITS ALLLLLLLLL OVER")
                   break
               urltosendto = HashList[hashthingthingthing]["Serverswithhash"][int(randomserver)]
               urltosendto244 = trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/getblocknum"
@@ -9089,21 +9058,18 @@ if not allowedtostartpowerserver  == True:
               try:
                   responsepower = requests.get(urltosendto244)
                   responsepower = responsepower.content
-                  print("responsepower.content: "+str(responsepower))
                   responsepower = str(responsepower)
                   newpowerresponse = '' 
                   for letter in responsepower:
                     if letter in numberstring:
                       newpowerresponse=newpowerresponse+str(letter)
-                  print("newpowerresponse: "+str(newpowerresponse))
               except Exception as e:
-                  print("ERROROROROR: "+str(e))
+                  lol=True
               maxblocknum = maxblocknum/9+1
               if len(blocklistthingy.keys())>maxblocknum:
                   blocklistthingy = {}
                   del HashList[hashthingthingthing]["Serverswithhash"]
               timelen = 0
-              print("blocklenthing: "+str(blocklenthing))
               blocknum = 1
               HASHTOACCESS = {}
               numthingmax = 1
@@ -9115,14 +9081,10 @@ if not allowedtostartpowerserver  == True:
                  hashstringlist.append(blocklistthingy[BLOCKACCESSTHING]["Blockhash"])
                  timelen+=1
                  HASHSTRINGFORHASHCHECKTHING =HASHSTRINGFORHASHCHECKTHING+blocklistthingy[blocknum]["Blockhash"]
-                 print("POWERHASH: "+str(blocklistthingy[BLOCKACCESSTHING]["Blockhash"]))
                  blocknum+=1
-              print("timelen: "+str(timelen))
               hashthingpowerforever = hashlib.sha256(HASHSTRINGFORHASHCHECKTHING.encode('utf8')).hexdigest()
               BLOCKDEVICE = {}
-              print("STEP 13")
-              print("HASHTHINGPOWERFOREVER:"+str(hashthingpowerforever))
-              print("HASHTHINGTHINGTHING"+str(hashthingthingthing))
+       
               hashpost = requests.post(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/gethashstringplus")
               hashpost = hashpost.json()
               hashpost = hashpost["Success"]
@@ -9133,9 +9095,8 @@ if not allowedtostartpowerserver  == True:
               with open("HASHCHECKTHING.txt","w") as file:
                   file.write(str(HASHSTRINGFORHASHCHECKTHING))
               if not HASHSTRINGFORHASHCHECKTHING == hashpost:
-                  print("Oh, it all makes sense now.")
+                  lol=True
               if not hashthingpowerforever == hashthingthingthing:
-                  print("THIS IS WHY!!!!!!")
                   for item in HashList[hashthingthingthing]["Serverswithhash"]:
                       if item == urltosendto:
                           del item
@@ -9150,20 +9111,20 @@ if not allowedtostartpowerserver  == True:
                    numthingmax+=1
                for i in range(len(blocklistthingy.keys())):
                   blockstring = ""
-                  print("STEP 14")
-                  print("DATAINBLOCK: "+str(blocklistthingy[item]))
+          
                   BLOCKDEVICE = blocklistthingy[item]
                   BLOCKACCESSTHING = HASHTOACCESS[i+1]
                   try:
                       dicty = blocklistthingy[item]["Blockdata"]
                       BLOCKDATATYPE = "Blockdata"
                   except:
-                      print("WRONG TYPE!!!!")
+                      lol=True
                   try:
                       dicty = blocklistthingy[item]["BlockData"]
                       BLOCKDATATYPE = "BlockData"
                   except:
-                      print("WRONG TYPE!!!!")
+                      lol=True
+
                   for itemm in blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE]:
                      
                      if blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["Type"] == 1:
@@ -9204,36 +9165,29 @@ if not allowedtostartpowerserver  == True:
                          blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["vmtransactionnum"]
                   blockhashthingything = ''
                   blockhashthingything = hashlib.sha256(blockstring.encode('utf8')).hexdigest()
-                  if not blockhashthingything == '':
-                      print("OK:"+str(blockhashthingything))
-                  if not hashstringlist[totalitems] == '':
-                      print("OK2")
+                  
                   if hashstringlist[totalitems] == '':
                       hashstringlist[totalitems] = hashlib.sha256(hashstringlist[totalitems].encode('utf8')).hexdigest()
                   if not hashstringlist[totalitems] == blockhashthingything:
                       PROOFOFHAPPEN = False
                       totalitems = 0
-                      print("hashstringlist")
-                      print("Ohhhhhhhhhhhhhhhhhhh")
+                      
                       try:
                        if HashList[hashthingthingthing]["Serverswithhash"][randomserver]:
                           del HashList[hashthingthingthing]["Serverswithhash"][randomserver]
                        break
                       except:
-                          print("It doesn't even exist anymore.")
                           POWERVAL = False
                           break
                   else:
                       totalitems+=1
-               print("STEP 15")
-               print("PROOFOFHAPPEN: "+str(PROOFOFHAPPEN))
+              
                with open ("PROOFOFHAPPEN.txt","w") as file:
                    file.write(str(PROOFOFHAPPEN))
                if PROOFOFHAPPEN == False:
                    POWERVAL = False
                if PROOFOFHAPPEN == True:
                    DICTIONARY = {}
-                   print("Step 1")
                    verifyingkeydatalist = {}
                    verifyingkeyhashdatalist  ={}
                    keydatanumber = 1
@@ -9244,7 +9198,6 @@ if not allowedtostartpowerserver  == True:
                                 try:
                                  verifyingkeys22 = requests.get(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/getalltheverifyingkeys")
                                  verifyingkeys22 = verifyingkeys22.json()
-                                 print("VERIFYINGKEYS: "+str(verifyingkeys22))
                                  verifyingkeys22 = verifyingkeys22["Success"]
                                  hashthis = ""
                                  for item in verifyingkeys22:
@@ -9258,7 +9211,8 @@ if not allowedtostartpowerserver  == True:
                                  verifyingkeydatalist[hashthis] = verifyingkeys22
                                  keydatanumber+=1
                                 except:
-                                    print("Can't Do")
+                                    lol=True
+
                    highest_item = max(verifyingkeydatalist, key=lambda x: verifyingkeyhashdatalist[x]['Count'])
                    Datathing = verifyingkeydatalist[str(highest_item)]
                    EASYTOUSEDATATHING = {}
@@ -9267,20 +9221,16 @@ if not allowedtostartpowerserver  == True:
                        
                        Walletindata = Datathing[item]["walletname"]
                        Verifyingkey = Datathing[item]["verifyingkey"]
-                       print("WALLET: "+str(Walletindata))
                        EASYTOUSEDATATHING[Walletindata] = {"Verifyingkey":load_pem_public_key(convertthething(Verifyingkey).encode('utf-8'),default_backend()),"Verifyingkeysummoningthing":Verifyingkey}
                        WALLETVALUES[Walletindata] = {"Coins":0,"txextras":{}}
-                   print("Step 3")
                    PROOFOFHAPPEN3 = True
                   
                    COMBINETHEMBOTHFOREVERLOL = {}
                    itemswentthrough = 0
                    blockreward = 420000*(10**8)
                    blocksuntildoom = 5
-                   print("BLOCKACTIVATE: "+str(BLOCKDEVICE))
                    for item in blocklistthingy.keys():
-                       print("Step 4")
-                       print("BLOCKSTUFF: "+str(blocklistthingy[item]))
+                
                        transactionfeetotal = 0
                        if PROOFOFHAPPEN3 == False:
                            break
@@ -9289,17 +9239,16 @@ if not allowedtostartpowerserver  == True:
                         dicty = blocklistthingy[item]["Blockdata"]
                         BLOCKDATATYPE = "Blockdata"
                        except:
-                        print("WRONG TYPE!!!!")
+                        lol=True
+
                        try:
                         dicty = blocklistthingy[item]["BlockData"]
                         BLOCKDATATYPE = "BlockData"
                        except:
-                        print("WRONG TYPE!!!!")
-                       print("Step 4.5")
+                        lol=True
+
                        for itemm in blocklistthingy[item][BLOCKDATATYPE]:
-                          print("Step 5")
                           if blocklistthingy[item][BLOCKDATATYPE][itemm]["Type"] == 1:
-                           print("Yes")
                            keys_to_keep = {'Type', 'amountofcoins',"Sender","Reciever","txextra","verifyingsig","transactionfee","lol"}  # Define keys that should be kept
                           
                            keys_to_remove = [key for key in blocklistthingy[item][BLOCKDATATYPE][itemm].keys() if key not in keys_to_keep]
@@ -9332,22 +9281,20 @@ if not allowedtostartpowerserver  == True:
 
                            
                            if blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"] in WALLETVALUES[blocklistthingy[item][BLOCKDATATYPE][itemm]["Sender"]]["txextras"]:
-                             print("FOUND IT")
+                             lol=True
+
                            if WALLETVALUES[blocklistthingy[item][BLOCKDATATYPE][itemm]["Sender"]]["Coins"] >= (blocklistthingy[item][BLOCKDATATYPE][itemm]["amountofcoins"] + blocklistthingy[item][BLOCKDATATYPE][itemm]["transactionfee"]) and not blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"] in WALLETVALUES[blocklistthingy[item][BLOCKDATATYPE][itemm]["Sender"]]["txextras"] and blocklistthingy[item][BLOCKDATATYPE][itemm]["amountofcoins"]%1==0 and blocklistthingy[item][BLOCKDATATYPE][itemm]["transactionfee"]%1==0 and len(blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"])==10 and blocklistthingy[item][BLOCKDATATYPE][itemm]["amountofcoins"]>0:
-                             print("YEA")
-                             print(blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"])
+                          
                              publickeything = EASYTOUSEDATATHING[blocklistthingy[item][BLOCKDATATYPE][itemm]["Sender"]]["Verifyingkey"]
-                             print(publickeything)
-                             print(blocklistthingy[item][BLOCKDATATYPE][itemm]["verifyingsig"])
+                        
                              signature =  blocklistthingy[item][BLOCKDATATYPE][itemm]["verifyingsig"]
                              try:
                                            signature = base64.b64decode(signature)
                              except Exception as e:
-                                      print("Error: "+str(e))
+                                    lol=True
+
                              messagething = str(blocklistthingy[item][BLOCKDATATYPE][itemm]["Sender"]) + str(blocklistthingy[item][BLOCKDATATYPE][itemm]["Reciever"]) + str(blocklistthingy[item][BLOCKDATATYPE][itemm]["amountofcoins"]) + str(blocklistthingy[item][BLOCKDATATYPE][itemm]["transactionfee"]) + str(blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"])
-                             print(signature)
                              message = messagething.encode('utf-8')
-                             print(messagething)
                              try:
                               publickeything.verify(
                                signature,
@@ -9424,7 +9371,6 @@ if not allowedtostartpowerserver  == True:
                            blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"]= remove_sql(blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"])
                            blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra2"]= remove_sql(blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra2"])
 
-                           print("Started Up")
                            try:
                             int( blocklistthingy[item][BLOCKDATATYPE][itemm]["transactionfee"])
                             int( blocklistthingy[item][BLOCKDATATYPE][itemm]["fileprice"])
@@ -9440,19 +9386,18 @@ if not allowedtostartpowerserver  == True:
                          
          
                            verifythis = str(blocklistthingy[item][BLOCKDATATYPE][itemm]["filesize"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["daysoflasting"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["Reciever"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["fileprice"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["filehash"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["transactionfee"])
-                           print("VERIFYTHISPART2: "+str(verifythis))
                            verifythis2 = str(blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra2"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["fileprice"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["transactionfee"])+".0"         
-                           print("Part2: "+str(verifythis2))
                            signature = blocklistthingy[item][BLOCKDATATYPE][itemm]["verifyingsig1"]
                            try:
                                            signature = base64.b64decode(signature)
                            except Exception as e:
-                                      print("Error: "+str(e))
+                                      lol=True
+
                            signature2 = blocklistthingy[item][BLOCKDATATYPE][itemm]["verifyingsig2"]
                            try:
                                            signature2 = base64.b64decode(signature2)
                            except Exception as e:
-                                      print("Error: "+str(e))
+                                      lol=True
                            publickeything = EASYTOUSEDATATHING[blocklistthingy[item][BLOCKDATATYPE][itemm]["Sender"]]["Verifyingkey"]
                            publickeything2 = EASYTOUSEDATATHING[blocklistthingy[item][BLOCKDATATYPE][itemm]["Reciever"]]["Verifyingkey"]
                            TRUEPOWERTHING = False
@@ -9463,29 +9408,8 @@ if not allowedtostartpowerserver  == True:
             
                            
            
-                            print("Reasons for failure:")
     
-                            if  (blocklistthingy[item][BLOCKDATATYPE][itemm]["fileprice"] + blocklistthingy[item]["Blockdata"][itemm]["transactionfee"]) > WALLETVALUES[blocklistthingy[item]["Blockdata"][itemm]["Sender"]]["Coins"]:
-                              print("Insufficient coins in Sender's wallet")
-
-                            if blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"] in \
-                             WALLETVALUES[blocklistthingy[item][BLOCKDATATYPE][itemm]["Sender"]]["txextras"]:
-                             print("txextra already exists in Sender's txextras")
-
-                            if blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"] in \
-                             WALLETVALUES[blocklistthingy[item][BLOCKDATATYPE][itemm]["Reciever"]]["txextras"]:
-                             print("txextra already exists in Receiver's txextras")
-
-                            if not len(blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"]) == 10:
-                             print("Invalid length of txextra")
-
-                            if not blocklistthingy[item][BLOCKDATATYPE][itemm]["transactionfee"] % 1 == 0:
-                             print("Transaction fee is not a whole number")
-
-                            if not blocklistthingy[item][BLOCKDATATYPE][itemm]["fileprice"] % 1 == 0 or \
-                             blocklistthingy[item][BLOCKDATATYPE][itemm]["fileprice"] <= 0 or \
-                             blocklistthingy[item][BLOCKDATATYPE][itemm]["transactionfee"] <= 0:
-                             print("Invalid file price or transaction fee")
+                            
 
                            
                            try:
@@ -9525,7 +9449,6 @@ if not allowedtostartpowerserver  == True:
                             WALLETVALUES[blocklistthingy[item][BLOCKDATATYPE][itemm]["Reciever"]]["txextras"][blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"]] = "yes"
                             WALLETVALUES[blocklistthingy[item][BLOCKDATATYPE][itemm]["Reciever"]]["Coins"]+=blocklistthingy[item][BLOCKDATATYPE][itemm]["fileprice"]
                              
-                            print("IT IS DONE.")
                            else:
                                 truethingthing2 = False
                                 PROOFOFHAPPEN3 = False
@@ -9535,7 +9458,6 @@ if not allowedtostartpowerserver  == True:
                                 del HashList[hashthingthingthing]["Serverswithhash"][randomserver]
                                 break 
                           elif blocklistthingy[item][BLOCKDATATYPE][itemm]["Type"] == 3:
-                             print("COME")
         
 
                              try:
@@ -9590,12 +9512,12 @@ if not allowedtostartpowerserver  == True:
                              try:
                                            verifyingsig1 = base64.b64decode(verifyingsig1)
                              except Exception as e:
-                                      print("Error: "+str(e))
+                                      lol=True
                              verifyingsig2 = blocklistthingy[item][BLOCKDATATYPE][itemm]["verifyingsig2"]
                              try:
                                            verifyingsig2 = base64.b64decode(verifyingsig2)
                              except Exception as e:
-                                      print("Error: "+str(e))
+                                      lol=True
                              verifythis1 = str(blocklistthingy[item][BLOCKDATATYPE][itemm]["pendingtransactionnum"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["filespace"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["daysoflasting"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["Reciever"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["filepricething"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["transactionfee"])
 
                              try:
@@ -9606,7 +9528,6 @@ if not allowedtostartpowerserver  == True:
                               )
                              except:
                               truethough = False
-                              print("MESSUPREASON: 2")
                              verifythis2 = str(blocklistthingy[item][BLOCKDATATYPE][itemm]["pendingtransactionnum"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["filespace"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["daysoflasting"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["Sender"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["filepricething"])+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["Reciever"])+blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"]+str(blocklistthingy[item][BLOCKDATATYPE][itemm]["transactionfee"])
 
                              try:
@@ -9616,7 +9537,6 @@ if not allowedtostartpowerserver  == True:
                                ec.ECDSA(hashes.SHA256())
                              )
                              except:
-                              print("MESSUPREASON: 3")
                               truethough = False
                              if truethough == True and WALLETVALUES[blocklistthingy[item][BLOCKDATATYPE][itemm]["Sender"]]["Coins"]>=(blocklistthingy[item][BLOCKDATATYPE][itemm]["filepricething"]+blocklistthingy[item][BLOCKDATATYPE][itemm]["transactionfee"]) and not blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"] in WALLETVALUES[blocklistthingy[item][BLOCKDATATYPE][itemm]["Sender"]]["txextras"] and not blocklistthingy[item][BLOCKDATATYPE][itemm]["txextra"] in WALLETVALUES[blocklistthingy[item][BLOCKDATATYPE][itemm]["Reciever"]]["txextras"] and blocklistthingy[item][BLOCKDATATYPE][itemm]["transactionfee"]%1==0 and blocklistthingy[item][BLOCKDATATYPE][itemm]["filepricething"]%1==0 and blocklistthingy[item][BLOCKDATATYPE][itemm]["filepricething"]>0 and blocklistthingy[item][BLOCKDATATYPE][itemm]["transactionfee"]>0:
                               WALLETVALUES[blocklistthingy[item][BLOCKDATATYPE][itemm]["Sender"]]["Coins"]+=-(blocklistthingy[item][BLOCKDATATYPE][itemm]["filepricething"]+blocklistthingy[item]["Blockdata"][itemm]["transactionfee"])
@@ -9633,7 +9553,6 @@ if not allowedtostartpowerserver  == True:
                                 del HashList[hashthingthingthing]["Serverswithhash"][randomserver]
                                 break 
                           elif blocklistthingy[item][BLOCKDATATYPE][itemm]["Type"] == 4:
-                           print("Come")
 
                            keys_to_keep = {'Type', 'amountofcoins',"Sender","Reciever","txextra","verifyingsig1","transactionfee","verifyingsig2","vmtransactionnum","lol"}  # Define keys that should be kept
                            truepower1 = True
@@ -9651,7 +9570,6 @@ if not allowedtostartpowerserver  == True:
                            keys_to_remove = [key for key in blocklistthingy[item][BLOCKDATATYPE][itemm].keys() if key not in keys_to_keep]
                            for key in keys_to_remove:
                             blocklistthingy[item][""][itemm].pop(key, None)
-                            print("It's all over, red october, brush my shoulder, hyped it up, how it's up.")
                             truepower1 = False
                            try:
                             DICTX = {}
@@ -9677,12 +9595,12 @@ if not allowedtostartpowerserver  == True:
                            try:
                                            verifyingsig = base64.b64decode(verifyingsig)
                            except Exception as e:
-                                      print("Error: "+str(e))
+                                      lol=True
                            verifyingsig2 = blocklistthingy[item][BLOCKDATATYPE][itemm]["verifyingsig2"]
                            try:
                                            verifyingsig2 = base64.b64decode(verifyingsig2)
                            except Exception as e:
-                                      print("Error: "+str(e))
+                                      lol=True
                            sender = blocklistthingy[item][BLOCKDATATYPE][itemm]["Sender"]
                            reciever = blocklistthingy[item][BLOCKDATATYPE][itemm]["Reciever"]
                            vmtransactionnum = blocklistthingy[item][BLOCKDATATYPE][itemm]["vmtransactionnum"]
@@ -9695,7 +9613,6 @@ if not allowedtostartpowerserver  == True:
                              ec.ECDSA(hashes.SHA256())
                             )
                            except:
-                            print("LMESSUP!@1")
                             truepower1 = False
                            verifythis = str(price)+sender+txextra+str(vmtransactionnum)+reciever+str(transactionfee)
 
@@ -9706,7 +9623,6 @@ if not allowedtostartpowerserver  == True:
                               ec.ECDSA(hashes.SHA256())
                             )
                            except:
-                            print("LMESSUP!@2")
                             truepower1 = False
                            if truepower1==True and WALLETVALUES[sender]["Coins"]>=(price+transactionfee) and not txextra in WALLETVALUES[sender]["txextras"] and not txextra in WALLETVALUES[reciever]["txextras"] and price%1==0 and transactionfee%1==0:
                             WALLETVALUES[sender]["Coins"]+=-1*(price+transactionfee)
@@ -9716,18 +9632,7 @@ if not allowedtostartpowerserver  == True:
                             transactionfeetotal+=blocklistthingy[item][BLOCKDATATYPE][itemm]["transactionfee"]
 
                            else:
-                            if truepower1 == False:
-                             print("TYPE4VERIFICATIONERROR")
-                            if WALLETVALUES[sender]["Coins"]<=(price+transactionfee):
-                             print("TYPE4PRICEERROR")
-                            if txextra in WALLETVALUES[sender]["txextras"]:
-                             print("TYPE4TXEXTRAERROR")
-                            if txextra in WALLETVALUES[reciever]["txextras"]:
-                             print("TYPE4TXEXTRAERROR2")
-                            if price%1<0 or price%1>0:
-                             print("TYPE4PRICE%ERROR")
-                            if transactionfee%1>0 or transactionfee%1<0:
-                             print("TYPE4TRANSACTIONFEE%ERROR")
+                            
                             truethingthing2 = False
                             PROOFOFHAPPEN3 = False
                             blockreward = 420000*(10**8)
@@ -9735,10 +9640,8 @@ if not allowedtostartpowerserver  == True:
                             itemswentthrough = 0
                             del HashList[hashthingthingthing]["Serverswithhash"][randomserver]
                             break 
-                       print("WALLETS:"+str(WALLETVALUES))
                        WALLETVALUES[blocklistthingy[item]["FirstSender"]]["Coins"]+= blockreward
                        WALLETVALUES[blocklistthingy[item]["FirstSender"]]["Coins"]+=transactionfeetotal
-                       print("Step 6")
 
                        itemswentthrough+=1
                        blocksuntildoom+=-1
@@ -9753,7 +9656,6 @@ if not allowedtostartpowerserver  == True:
                        COMBINETHEMFOREVERLOL = {}
                        for item in EASYTOUSEDATATHING:
                            verifyingkey = EASYTOUSEDATATHING[item]["Verifyingkey"]
-                           print("verifyingkey: "+str(verifyingkey))
                            coins = WALLETVALUES[item]["Coins"]
                            COMBINETHEMBOTHFOREVERLOL[item] = {"verifyingkey":verifyingkey,"Coins":coins,"txextras":WALLETVALUES[item]["txextras"],"Verifyingkeysummoningthing":EASYTOUSEDATATHING[item]["Verifyingkeysummoningthing"]}
                        Walletnumthing = len(EASYTOUSEDATATHING)
@@ -9761,9 +9663,7 @@ if not allowedtostartpowerserver  == True:
                        PROOFOFHAPPEN33 = True
                        datalistpower = {}
                        datalistpower2 = {}
-                   print("Step 7")
                    if PROOFOFHAPPEN3 == True:
-                            print("Step 8")
                             if FINISHEDTHESTUFF4EVER == True:
                              TOTALPOWERVALUE=False
                             serverthingthing.setblockchain(blocklistthingy)
@@ -9776,42 +9676,33 @@ if not allowedtostartpowerserver  == True:
                              try:
                               NEWBLOCKNUM = requests.get(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/getblocknum")
                               NEWBLOCKNUM = NEWBLOCKNUM.json()
-                              print("NEWBLOCKNUMDATA: "+str(NEWBLOCKNUM))
                               NEWBLOCKNUM = NEWBLOCKNUM["Success"]
                               blocklenthing = len(blocklistthingy.keys())+1
-                              print("BLOCKLENTHING: "+str(blocklenthing))
                               NEWBLOCKNUM3 = int(NEWBLOCKNUM)
                               servers = {}
                              except:
                                lol=True
-                             print("Step 9")
 
                             
                              if blocklenthing == int(NEWBLOCKNUM3):
-                              print("Step 10")
                               savedservers = dict(trueserverlist["Data"])
-                              print("SavedServers: "+str(savedservers))
                               deletionnumber = 0
                               rangenum = 0
                               minimumnumber = 0
                               for item in savedservers:
                                   if savedservers[item] == urltosendto:
-                                     print("URLTOSENDTO: "+str(urltosendto))
                                      deletionnumber = rangenum
                                   else:
                                      rangenum+=1
                               del savedservers[str(deletionnumber)]
                               if deletionnumber == 0:
                                   minimumnumber = 1
-                              print("Minimumnumber")
                               try:
-                                  print("URL TO SEND TO: "+str(urltosendto))
                                   servers=requests.get(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/recieveservers2")
                                   servers = servers.json()
                                   servers = servers["Success"]
                               except Exception as e:
                                   
-                                  print("WE LOST!!! Error: "+str(e))
                                   try:
                                    for i in range(5):
                                   
@@ -9820,9 +9711,7 @@ if not allowedtostartpowerserver  == True:
                                     truenumber = 0
                                     for item in savedservers:
                                         if rangenum == number:
-                                            print("SavedServers: "+str(savedservers))
                                             truenumber = str(item)
-                                            print("Truenumber: "+str(truenumber))
                                     if len(savedservers) == 1 and '0' in savedservers:
                                         number = 0
                                     try:
@@ -9833,18 +9722,17 @@ if not allowedtostartpowerserver  == True:
                                      break
                                     except:
                                      del savedservers[number]
-                                     print("Well that failed")
                                   except Exception as e:
-                                   print("Well that failed.....: "+str(e))
+                                   lol=True
                               for item in servers:
                                try:
                                 serverthingthing.listserver(servers[item]["server"],servers[item]["altserver"],servers[item]["Fileprice"],load_pem_public_key(convertthething(servers[item]["verifyingkey"]).encode('utf-8'),backend=default_backend),servers[item]["RAMGBPRICE"],servers[item]["VCPUPRICE"],servers[item]["DATATRANSFERGB"],servers[item]["portthing"],servers[item]["MINERCHECK"],servers[item]["NODECHECK"],servers[item]["verifyingkey"],servers[item]["PROTOCOL"])
                                except:
-                                   print("Ehhhhh it was just THAT server.")
+                                   lol=True
                                try:
                                 serverthingthing.addtimeaddedtimetoserver(servers[item]["server"],servers[item]["timeadded"])
                                except Exception as e:
-                                   print("OH NO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+str(e))
+                                     lol=True
                               if SpecialDevice == 1:
                                 data = {"type":1,"IP":SpecialDomain,"Verifyingkey":public_pem.decode('utf-8'),"fileprice":PriceperGBperday,"ramgbprice":RAMPRICEPERGB,"datatransferprice":DATATRANSFERPRICEPERGB,"vcpuprice":VCPUPRICE,"PortThing":SPECIALPORT,"PROTOCOL":httpthingy,"MINERCHECK":"YES","NODECHECK":"YES"}
                               else:
@@ -9855,7 +9743,6 @@ if not allowedtostartpowerserver  == True:
                                try:
                                 requests.post(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/addnewserver",json=data)
                                except:
-                                print("WELL WE'RE HERE THOUGH!")
                                 deletethisone = ""
                                 for item in trueserverlist["Data"]:
                                     if trueserverlist["Data"][item] == urltosendto:
@@ -9865,24 +9752,16 @@ if not allowedtostartpowerserver  == True:
                                 rangenumthingy2 = 1
                                 for item in trueserverlist["Data"]:
                                    if randomnum == rangenumthingy2:
-                                       print("WE'RE HERE")
                                        urltosendto = trueserverlist["Data"][str(item)]
-                                       print("URLTOSENDTO: "+str(urltosendto))
                                    else:
-                                    print("RANDOMNUM: "+str(randomnum))
-                                    print("Rangenumthing: "+str(rangenumthingy2))
-                                    print("UGH!!!!!!!!!")
+                                  
                                     rangenumthingy2+=1
-                               print("Well it's not this......")
                                walletamountnum = requests.get(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/getverifyingkeynum")
                                walletamountnum = walletamountnum.json()
-                               print("WALLETNUMAMOUNT: "+str(walletamountnum))
                                data2 = {"beginnum":Walletnumthing}
                                
                                servers = requests.get(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/recieveservers")
-                               print("SERVERS:"+str(servers))
                                servers = servers.json()
-                               print("SERVERS2:"+str(servers))
 
                                servers = servers["Success"]
                                verifyingkeydatalist = {}
@@ -9896,7 +9775,6 @@ if not allowedtostartpowerserver  == True:
                                  verifyingkeys22 = requests.post(trueserverlist["NEWDATA"][urltosendto2]["PROTOCOL"]+urltosendto2+"/getsomeoftheverifyingkeys",json=data2)
                                  if verifyingkeys22.status_code == 200:
                                   verifyingkeys22 = verifyingkeys22.json()
-                                  print("VERIFYINGKEYS: "+str(verifyingkeys22))
                                   verifyingkeys22 = verifyingkeys22["Success"]
                                   hashthis = ""
                                   for item in verifyingkeys22:
@@ -9910,7 +9788,7 @@ if not allowedtostartpowerserver  == True:
                                   verifyingkeydatalist[hashthis] = verifyingkeys22
                                   keydatanumber+=1
                                 except:
-                                    print("WE COULDNT DO THIS!")
+                                    lol=True
                                highest_item = max(verifyingkeydatalist, key=lambda x: verifyingkeyhashdatalist[x]['Count'])
                                verifyingkeys22 = verifyingkeydatalist[str(highest_item)]
                                for item in verifyingkeys22:
@@ -9929,14 +9807,11 @@ if not allowedtostartpowerserver  == True:
                                 serverthingthing.loadvmdatalistintoself()
                                 serverthingthing.loadvmdatalist2intoself()
                                 serverthingthing.loadlistofkeyeysintoself()
-                                print("Step 11")
 
                                 if changethat600thingthing.status_code == 200:
-                                   print("Step 12")
 
                                    changethat600thingthing = changethat600thingthing.json()
                                    changethat600thingthing = changethat600thingthing["Success"]
-                                   print("600thing:"+str(changethat600thingthing))
                                    with open("timeatstart.txt","w") as file:
                                        file.write(str(time.time()))
                                    if changethat600thingthing>0:
@@ -9947,7 +9822,6 @@ if not allowedtostartpowerserver  == True:
                                        themega600thing = 0
                                        with open("changethe600thing.txt","r") as file:
                                          themega600thing = float(file.read())
-                                         print("THEMEGA600THING: "+str(themega600thing))
                                        the600thing = themega600thing
                                        if  themega600thing>=-3 and themega600thing<=0:
 
@@ -9960,7 +9834,6 @@ if not allowedtostartpowerserver  == True:
                                             if themega600thing>-3:
                                              file.write(str(themega600thing))
                                         
-                                        print("THE COUNTDOWNTHING: "+str(themega600thing+3))
                                         countdownthing = int(themega600thing)
                                        else:
                                                 with open("changethe600thing.txt","w") as file:
@@ -9983,7 +9856,6 @@ if not allowedtostartpowerserver  == True:
                                         if changethecountdownthing.status_code == 200:
                                            changethecountdownthing =changethecountdownthing.json()
                                            changethecountdownthing = changethecountdownthing["Success"]
-                                           print("OVER HERE!!!!")
                                            changethecountdownthing = float(changethecountdownthing)
                                            if changethecountdownthing>0:
                                                changethat600thing = True
@@ -10003,9 +9875,7 @@ if not allowedtostartpowerserver  == True:
                                               with open("countdownthing.txt","w") as file:
                                                   file.write(changethecountdownthing)
                                        except Exception as e:
-                                           print("ERROR: "+str(e))
                                            lol=True
-                                   print("Step 13")
                                    dictofletters = []
                                    stringthing = ""
                                    for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz":
@@ -10049,7 +9919,6 @@ if not allowedtostartpowerserver  == True:
                                     format=serialization.PrivateFormat.PKCS8,
                                     encryption_algorithm=serialization.NoEncryption()
                                    )
-                                   print("Step 14")
                                    with open("privatepemtxt.txt","w") as file:
                                     file.write(private_pem.decode('utf-8'))
        
@@ -10064,55 +9933,39 @@ if not allowedtostartpowerserver  == True:
                                    serverthingthing.createwallet(stringthingx,public_pemLOL)
                                    verifyingkeything444 = serverthingthing.getverificationkey(stringthingx)
                                    verifyingkeything444 =convertthething(verifyingkeything444)
-                                   print(load_pem_public_key(verifyingkeything444.encode('utf-8'), default_backend()))
                                    serverthingthing.changewallet(stringthingx)
                                    wallet = serverthingthing.getselfwallet()
-                                   if wallet == stringthingx:
-                                    print("YES")
-                                   else:
-                                    print("WTF")
-                                   print("Step 15")
+                                   
                                    ramgb = get_ram_info()
                                    serverthingthing.setRAM(ramgb)
-                                   if serverthingthing.checkforwallet(stringthingx) == "YES":
-                                    print("Yeah")
-                                   else:
-                                    print("WTF")
+                                   
        
 
                                    num_vcpus = psutil.cpu_count(logical=True)
-                                   print("VCPUS: "+str(num_vcpus))
                                    serverthingthing.setVCPUS(num_vcpus)
 
-                                   print("TEDDY FARE")
                                    selfwallet = serverthingthing.getselfwallet()
-                                   print(selfwallet)
                                    data = {"walletname":stringthingx,"publickey":public_pemLOL.decode('utf-8')}
 
                                    requests.post(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+str(urltosendto)+"/createwallet",json=data)
                                    serverthingthing.setverifyingkey(private_key39)
-                                   print(serverthingthing.getverificationkey(stringthingx))
-                                   print("WALLETVALUES7500:  "+str(WALLETVALUES))
+                                   
                                except:
                                     lol=True
                               except Exception as e:
-                                   print("CODENAME!: "+str(e))
+                                   lol=True
                              else:
                               try:
                                data = {"Blockamount":int(blocklenthing)}
-                               print("step 10")
                                blocks = requests.get(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/getblocknum")
                                blocks = blocks.json()
                                if blocklenthing == int(NEWBLOCKNUM3):
-                                 print("HOW IS THIS HAPPENING? THIS DOESNT MAKE SENSE! STOP THIS MADNESS NOW!")
                                  CHECKEDCORRECTLY = True
                              
                                blocks = blocks["Success"]
                                blocklenthing = int(blocks)
-                               print("BLOCKLENTHING: "+str(blocklenthing))
                              
                                try:
-                                print("step 11")
                                 
                                 datalistpower = requests.post(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/getsomeoftheblocks",json=data)
                                 datalistpower = datalistpower.json()
@@ -10120,9 +9973,7 @@ if not allowedtostartpowerserver  == True:
                                 datalistpower = dict(datalistpower)
                                 blocknumthing = len(datalistpower)
                                 data2 = {"beginnum":Walletnumthing}
-                                print("BLOCKLENTHING: "+str(blocklenthing))
                                 try:
-                                 print("step 12")
                                  verifyingkeydatalist = {}
                                  verifyingkeyhashdatalist  ={}
                                  keydatanumber = 1
@@ -10132,7 +9983,6 @@ if not allowedtostartpowerserver  == True:
                                   urltosendto = trueserverlist[item]
                                   verifyingkeys22 = requests.post(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/getsomeoftheverifyingkeys",json=data2)
                                   verifyingkeys22 = verifyingkeys22.json()
-                                  print("VERIFYINGKEYS: "+str(verifyingkeys22))
                                   verifyingkeys22 = verifyingkeys22["Success"]
                                   hashthis = ""
                                   for item in verifyingkeys22:
@@ -10147,7 +9997,6 @@ if not allowedtostartpowerserver  == True:
                                   keydatanumber+=1
                                  highest_item = max(verifyingkeydatalist(), key=lambda x: verifyingkeyhashdatalist[x]['Count'])
                                  datalistpower2 = verifyingkeydatalist[str(highest_item)]
-                                 print("DATALISTPOWER2: "+str(datalistpower2))
                                  maxblocknum = time.time()-timestartdate
                                  maxblocknum = maxblocknum/603
                                  COMBINETHEMBOTHFOREVERLOL2={}
@@ -10165,7 +10014,6 @@ if not allowedtostartpowerserver  == True:
                                     break
                                  for itemm in datalistpower[item]["BlockData"]:
                                   if datalistpower[item]["BlockData"][itemm]["Type"] == 1 :
-                                   print("Yes")
                                    keys_to_keep = {'Type', 'amountofcoins',"Sender","Reciever","txextra","verifyingsig","transactionfee","lol"}  # Define keys that should be kept
                            
                                    keys_to_remove = [key for key in datalistpower[item]["Blockdata"][itemm].keys() if key not in keys_to_keep]
@@ -10209,23 +10057,18 @@ if not allowedtostartpowerserver  == True:
                                    datalistpower[item]["Blockdata"][itemm]["txextra"]=remove_sql( datalistpower[item]["Blockdata"][itemm]["txextra"])
 
                            
-                                   if datalistpower[item]["Blockdata"][itemm]["txextra"] in WALLETVALUES[ datalistpower[item]["Blockdata"][itemm]["Sender"]]["txextras"]:
-                                    print("FOUND IT")
+                             
                                    if WALLETVALUES[datalistpower[item]["Blockdata"][itemm]["Sender"]]["Coins"] >= (datalistpower[item]["Blockdata"][itemm]["amountofcoins"] +  datalistpower[item]["Blockdata"][itemm]["transactionfee"]) and not  datalistpower[item]["Blockdata"][itemm]["txextra"] in WALLETVALUES[ datalistpower[item]["Blockdata"][itemm]["Sender"]]["txextras"] and  datalistpower[item]["Blockdata"][itemm]["amountofcoins"]%1==0 and  datalistpower[item]["Blockdata"][itemm]["transactionfee"]%1==0 and len( datalistpower[item]["Blockdata"][itemm]["txextra"])==10 and  datalistpower[item]["Blockdata"][itemm]["amountofcoins"]>0:
-                                    print("YEA")
-                                    print( datalistpower[item]["Blockdata"][itemm]["txextra"])
+                                    
                                     publickeything = EASYTOUSEDATATHING[ datalistpower[item]["Blockdata"][itemm]["Sender"]]["Verifyingkey"]
-                                    print(publickeything)
-                                    print(datalistpower[item]["Blockdata"][itemm]["verifyingsig"])
+                              
                                     signature =   datalistpower[item]["Blockdata"][itemm]["verifyingsig"]
                                     try:
                                            signature = base64.b64decode(signature)
                                     except Exception as e:
-                                      print("Error: "+str(e))
+                                       lol=True
                                     messagething = str( datalistpower[item]["Blockdata"][itemm]["Sender"]) + str( datalistpower[item]["Blockdata"][itemm]["Reciever"]) + str( datalistpower[item]["Blockdata"][itemm]["amountofcoins"]) + str( datalistpower[item]["Blockdata"][itemm]["transactionfee"]) + str( datalistpower[item]["Blockdata"][itemm]["txextra"])
-                                    print(signature)
                                     message = messagething.encode('utf-8')
-                                    print(messagething)
                                     try:
                                      publickeything.verify(
                                      signature,
@@ -10327,7 +10170,6 @@ if not allowedtostartpowerserver  == True:
                                    datalistpower[item]["Blockdata"][itemm]["txextra"]= remove_sql(blocklistthingy[item]["Blockdata"][itemm]["txextra"])
                                    datalistpower[item]["Blockdata"][itemm]["txextra2"]= remove_sql(blocklistthingy[item]["Blockdata"][itemm]["txextra2"])
 
-                                   print("Started Up")
                                    try:
                                     int( datalistpower[item]["Blockdata"][itemm]["transactionfee"])
                                     int( datalistpower[item]["Blockdata"][itemm]["fileprice"])
@@ -10349,19 +10191,17 @@ if not allowedtostartpowerserver  == True:
                          
          
                                   verifythis = str(datalistpower[item]["Blockdata"][itemm]["filesize"])+str(datalistpower[item]["Blockdata"][itemm]["daysoflasting"])+str(datalistpower[item]["Blockdata"][itemm]["Reciever"])+str(datalistpower[item]["Blockdata"][itemm]["fileprice"])+str(datalistpower[item]["Blockdata"][itemm]["txextra"])+str(datalistpower[item]["Blockdata"][itemm]["filehash"])+str(datalistpower[item]["Blockdata"][itemm]["transactionfee"])
-                                  print("VERIFYTHISPART2: "+str(verifythis))
                                   verifythis2 = str(datalistpower[item]["Blockdata"][itemm]["txextra2"])+str(datalistpower[item]["Blockdata"][itemm]["fileprice"])+str(datalistpower[item]["Blockdata"][itemm]["transactionfee"])+".0"         
-                                  print("Part2: "+str(verifythis2))
                                   signature = datalistpower[item]["Blockdata"][itemm]["verifyingsig1"]
                                   try:
                                            signature = base64.b64decode(signature)
                                   except Exception as e:
-                                      print("Error: "+str(e))
+                                      lol=True
                                   signature2 = datalistpower[item]["Blockdata"][itemm]["verifyingsig2"]
                                   try:
                                            signature2 = base64.b64decode(signature2)
                                   except Exception as e:
-                                      print("Error: "+str(e))
+                                      lol=True
                                   publickeything = EASYTOUSEDATATHING[datalistpower[item]["Blockdata"][itemm]["Sender"]]["Verifyingkey"]
                                   publickeything2 = EASYTOUSEDATATHING[datalistpower[item]["Blockdata"][itemm]["Reciever"]]["Verifyingkey"]
                                   TRUEPOWERTHING = False
@@ -10372,30 +10212,7 @@ if not allowedtostartpowerserver  == True:
             
                            
            
-                                   print("Reasons for failure:")
-    
-                                   if  (datalistpower[item]["Blockdata"][itemm]["fileprice"] + datalistpower[item]["Blockdata"][itemm]["transactionfee"]) > WALLETVALUES[blocklistthingy[item]["Blockdata"][itemm]["Sender"]]["Coins"]:
-                                    print("Insufficient coins in Sender's wallet")
-
-                                   if datalistpower[item]["Blockdata"][itemm]["txextra"] in \
-                                    WALLETVALUES[datalistpower[item]["Blockdata"][itemm]["Sender"]]["txextras"]:
-                                    print("txextra already exists in Sender's txextras")
-
-                                   if datalistpower[item]["Blockdata"][itemm]["txextra"] in \
-                                    WALLETVALUES[datalistpower[item]["Blockdata"][itemm]["Reciever"]]["txextras"]:
-                                    print("txextra already exists in Receiver's txextras")
-
-                                   if not len(datalistpower[item]["Blockdata"][itemm]["txextra"]) == 10:
-                                    print("Invalid length of txextra")
-
-                                   if not datalistpower[item]["Blockdata"][itemm]["transactionfee"] % 1 == 0:
-                                    print("Transaction fee is not a whole number")
-
-                                   if not datalistpower[item]["Blockdata"][itemm]["fileprice"] % 1 == 0 or \
-                                     datalistpower[item]["Blockdata"][itemm]["fileprice"] <= 0 or \
-                                     datalistpower[item]["Blockdata"][itemm]["transactionfee"] <= 0:
-                                     print("Invalid file price or transaction fee")
-
+                                  
                            
                                    try:
                                     publickeything.verify(
@@ -10446,7 +10263,6 @@ if not allowedtostartpowerserver  == True:
                                     WALLETVALUES[datalistpower[item]["Blockdata"][itemm]["Reciever"]]["txextras"][datalistpower[item]["Blockdata"][itemm]["txextra"]] = "yes"
                                     WALLETVALUES[datalistpower[item]["Blockdata"][itemm]["Reciever"]]["Coins"]+=datalistpower[item]["Blockdata"][itemm]["fileprice"]
                                     transactionfeetotal+=datalistpower[item]["Blockdata"][itemm]["transactionfee"]
-                                    print("IT IS DONE.")
                                    else:
                                     PROOFOFHAPPEN33 = False
                                     blockreward = 420000*(10**8)
@@ -10462,7 +10278,6 @@ if not allowedtostartpowerserver  == True:
                                     del HashList[hashthingthingthing]["Serverswithhash"][randomserver]
                                     break 
                                   elif datalistpower[item]["Blockdata"][itemm]["Type"] == 3:
-                                     print("COME")
                          
 
                                      try:
@@ -10529,12 +10344,13 @@ if not allowedtostartpowerserver  == True:
                                      try:
                                            verifyingsig1 = base64.b64decode(verifyingsig1)
                                      except Exception as e:
-                                      print("Error: "+str(e))
+                                       lol=True
+
                                      verifyingsig2 = datalistpower[item]["Blockdata"][itemm]["verifyingsig2"]
                                      try:
                                            verifyingsig2 = base64.b64decode(verifyingsig2)
                                      except Exception as e:
-                                      print("Error: "+str(e))
+                                      lol=True
                                      verifythis1 = str(datalistpower[item]["Blockdata"][itemm]["pendingtransactionnum"])+str(datalistpower[item]["Blockdata"][itemm]["filespace"])+str(datalistpower[item]["Blockdata"][itemm]["daysoflasting"])+str(datalistpower[item]["Blockdata"][itemm]["Reciever"])+str(datalistpower[item]["Blockdata"][itemm]["txextra"])+str(datalistpower[item]["Blockdata"][itemm]["filepricething"])+str(datalistpower[item]["Blockdata"][itemm]["transactionfee"])
 
                                      try:
@@ -10545,7 +10361,6 @@ if not allowedtostartpowerserver  == True:
                                       )
                                      except:
                                       truethough = False
-                                      print("MESSUPREASON: 2")
                                      verifythis2 = str(datalistpower[item]["Blockdata"][itemm]["pendingtransactionnum"])+str(datalistpower[item]["Blockdata"][itemm]["filespace"])+str(datalistpower[item]["Blockdata"][itemm]["daysoflasting"])+str(datalistpower[item]["Blockdata"][itemm]["Sender"])+str(datalistpower[item]["Blockdata"][itemm]["filepricething"])+str(datalistpower[item]["Blockdata"][itemm]["Reciever"])+datalistpower[item]["Blockdata"][itemm]["txextra"]+str(datalistpower[item]["Blockdata"][itemm]["transactionfee"])
 
                                      try:
@@ -10555,7 +10370,6 @@ if not allowedtostartpowerserver  == True:
                                        ec.ECDSA(hashes.SHA256())
                                       )
                                      except:
-                                      print("MESSUPREASON: 3")
                                       truethough = False
                                      if truethough == True and WALLETVALUES[datalistpower[item]["Blockdata"][itemm]["Sender"]]["Coins"]>=(datalistpower[item]["Blockdata"][itemm]["filepricething"]+datalistpower[item]["Blockdata"][itemm]["transactionfee"]) and not datalistpower[item]["Blockdata"][itemm]["txextra"] in WALLETVALUES[datalistpower[item]["Blockdata"][itemm]["Sender"]]["txextras"] and not datalistpower[item]["Blockdata"][itemm]["txextra"] in WALLETVALUES[datalistpower[item]["Blockdata"][itemm]["Reciever"]]["txextras"] and datalistpower[item]["Blockdata"][itemm]["transactionfee"]%1==0 and datalistpower[item]["Blockdata"][itemm]["filepricething"]%1==0 and datalistpower[item]["Blockdata"][itemm]["filepricething"]>0 and datalistpower[item]["Blockdata"][itemm]["transactionfee"]>0:
                                       WALLETVALUES[datalistpower[item]["Blockdata"][itemm]["Sender"]]["Coins"]+=-(datalistpower[item]["Blockdata"][itemm]["filepricething"]+blocklistthingy[item]["Blockdata"][itemm]["transactionfee"])
@@ -10578,7 +10392,6 @@ if not allowedtostartpowerserver  == True:
                                        del HashList[hashthingthingthing]["Serverswithhash"][randomserver]
                                        break 
                                   elif datalistpower[item]["Blockdata"][itemm]["Type"] == 4:
-                                   print("Come")
 
                                    keys_to_keep = {'Type', 'amountofcoins',"Sender","Reciever","txextra","verifyingsig1","transactionfee","verifyingsig2","vmtransactionnum","lol"}  # Define keys that should be kept
                                    truepower1 = True
@@ -10602,7 +10415,6 @@ if not allowedtostartpowerserver  == True:
                                    keys_to_remove = [key for key in datalistpower[item]["Blockdata"][itemm].keys() if key not in keys_to_keep]
                                    for key in keys_to_remove:
                                     datalistpower[item]["Blockdata"][item].pop(key, None)
-                                    print("It's all over, red october, brush my shoulder, hyped it up, how it's up.")
                                     truepower1 = False
                                    try:
                                     DICTX = {}
@@ -10628,12 +10440,12 @@ if not allowedtostartpowerserver  == True:
                                    try:
                                            verifyingsig = base64.b64decode(verifyingsig)
                                    except Exception as e:
-                                      print("Error: "+str(e))
+                                      lol=True
                                    verifyingsig2 = datalistpower[item]["Blockdata"][itemm]["verifyingsig2"]
                                    try:
                                            verifyingsig2 = base64.b64decode(verifyingsig2)
                                    except Exception as e:
-                                      print("Error: "+str(e))
+                                      lol=True
                                    sender = datalistpower[item]["Blockdata"][itemm]["Sender"]
                                    reciever = datalistpower[item]["Blockdata"][itemm]["Reciever"]
                                    vmtransactionnum = datalistpower[item]["Blockdata"][itemm]["vmtransactionnum"]
@@ -10646,7 +10458,6 @@ if not allowedtostartpowerserver  == True:
                                      ec.ECDSA(hashes.SHA256())
                                     )
                                    except:
-                                    print("LMESSUP!@1")
                                     truepower1 = False
                                    verifythis = str(price)+sender+txextra+str(vmtransactionnum)+reciever+str(transactionfee)
 
@@ -10657,7 +10468,6 @@ if not allowedtostartpowerserver  == True:
                                      ec.ECDSA(hashes.SHA256())
                                     )
                                    except:
-                                    print("LMESSUP!@2")
                                     truepower1 = False
                                    if truepower1==True and WALLETVALUES[sender]["Coins"]>=(price+transactionfee) and not txextra in WALLETVALUES[sender]["txextras"] and not txextra in WALLETVALUES[reciever]["txextras"] and price%1==0 and transactionfee%1==0:
                                     WALLETVALUES[sender]["Coins"]+=-1*(price+transactionfee)
@@ -10667,18 +10477,7 @@ if not allowedtostartpowerserver  == True:
                                     transactionfeetotal+=datalistpower[item]["Blockdata"][itemm]["transactionfee"]
 
                                    else:
-                                    if truepower1 == False:
-                                     print("TYPE4VERIFICATIONERROR")
-                                    if WALLETVALUES[sender]["Coins"]<=(price+transactionfee):
-                                     print("TYPE4PRICEERROR")
-                                    if txextra in WALLETVALUES[sender]["txextras"]:
-                                     print("TYPE4TXEXTRAERROR")
-                                    if txextra in WALLETVALUES[reciever]["txextras"]:
-                                     print("TYPE4TXEXTRAERROR2")
-                                    if price%1<0 or price%1>0:
-                                     print("TYPE4PRICE%ERROR")
-                                    if transactionfee%1>0 or transactionfee%1<0:
-                                     print("TYPE4TRANSACTIONFEE%ERROR")
+                                   
                                     PROOFOFHAPPEN33 = False
                                     blockreward = 420000*(10**8)
                                     blocksuntildoom = 5
@@ -10693,11 +10492,9 @@ if not allowedtostartpowerserver  == True:
                                     del HashList[hashthingthingthing]["Serverswithhash"][randomserver]
                                     break 
                                 except Exception as e:
-                                    print("THE ERROR: "+str(e))
                                     lol=True
                                 WALLETVALUES[datalistpower[item]["FirstSender"]]["Coins"]+= blockreward
                                 WALLETVALUES[datalistpower[item]["FirstSender"]]["Coins"]+=transactionfeetotal
-                                print("WORKING!!!!!!!!")
                                 itemswentthrough+=1
                                 blocksuntildoom-=1
                                 if blocksuntildoom == 0:
@@ -10708,41 +10505,36 @@ if not allowedtostartpowerserver  == True:
                                   blockreward = math.floor(blockreward/2)
                                   blocksuntildoom=210000
                                except Exception as e:
-                                   print("THE ERROR: "+str(e))
 
                                    lol=True
                               except Exception as e:
-                                  print("ERROR@#: "+str(e))
                                   lol=True
                               try:
                                NEWBLOCKNUM2 = requests.get(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/getblocknum")
                                NEWBLOCKNUM2 = NEWBLOCKNUM2.json()
                                NEWBLOCKNUM2 = NEWBLOCKNUM2["Success"]
                                if blocklenthing == int(NEWBLOCKNUM2):
-                                       print("WE DID IT!")
+                                       lol=True
                                else:
                                        PROOFOFHAPPEN33 = False
                               except:
                                   print("Failed!")
-                              print("PROOFOFHAPPEN33: "+str(PROOFOFHAPPEN33))
                               if PROOFOFHAPPEN33 == True:
-                                   print("WERE HERE!")
                                    try:
                                      servers=requests.get(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/recieveservers2")
                                      servers = servers.json()
                                      servers = servers["Success"]
                                    except:
-                                    print("WE LOST!!!")
+                                    lol=True
                                    for item in servers:
                                     serverthingthing.listserver(servers[item]["server"],servers[item]["altserver"],servers[item]["Fileprice"],load_pem_public_key(convertthething(servers[item]["verifyingkey"]).encode('utf-8'),backend=default_backend),servers[item]["RAMGBPRICE"],servers[item]["VCPUPRICE"],servers[item]["DATATRANSFERGB"],servers[item]["portthing"],servers[item]["MINERCHECK"],servers[item]["NODECHECK"],servers[item]["verifyingkey"],servers[item]["PROTOCOL"])
                                     try:
                                      serverthingthing.addtimeaddedtimetoserver(servers[item]["server"],servers[item]["timeadded"])
                                     except:
-                                        print("WE've FAILED!")
+                                        lol=True
                                    blocklenthing = int(NEWBLOCKNUM3)
                                    ITEMPOWERNUM = 0
                                    POWERVAL = False
-                                   print("Datalistpower: "+str(datalistpower))
                                    serverthingthing.setblockchain(blocklistthingy)
                                    serverthingthing.setblockchain(datalistpower)
                                    COMBINETHEMBOTHFOREVERLOL2={}
@@ -10789,7 +10581,6 @@ if not allowedtostartpowerserver  == True:
                                    FINISHEDTHESTUFF4EVER = True
                                    FIRSTWAVE = False
                                    TOTALPOWERVALUE=False
-                                   print("YES!")
 
                                    try:
                                     changethat600thingthing = requests.get(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/getthecurrent600thing")
@@ -10805,7 +10596,6 @@ if not allowedtostartpowerserver  == True:
                                    serverthingthing.setdoomblocks(blocksuntildoom)
                                    serverthingthing.setblockreward(blockreward)
                                    selfip = get_local_ip()
-                                   print(selfip)
                                    serverthingthing.listserver(selfip,"NONE",PriceperGB,public_key3333333,RAMPRICEPERGB,VCPUPRICE,DATATRANSFERPRICEPERGB,SPECIALPORT,"YES","YES",str(public_pem),httpthingy)
                                    changethat600thing = True
                                    timethingthing = True
@@ -10866,40 +10656,27 @@ if not allowedtostartpowerserver  == True:
                                    serverthingthing.createwallet(stringthingx,public_pemLOL)
                                    verifyingkeything444 = serverthingthing.getverificationkey(stringthingx)
                                    verifyingkeything444 =convertthething(verifyingkeything444)
-                                   print(load_pem_public_key(verifyingkeything444.encode('utf-8'), default_backend()))
                                    serverthingthing.changewallet(stringthingx)
                                    wallet = serverthingthing.getselfwallet()
-                                   if wallet == stringthingx:
-                                    print("YES")
-                                   else:
-                                    print("WTF")
+                                   
                                    ramgb = get_ram_info()
                                    serverthingthing.setRAM(ramgb)
-                                   if serverthingthing.checkforwallet(stringthingx) == "YES":
-                                    print("Yeah")
-                                   else:
-                                    print("WTF")
+                                   
        
 
                                    num_vcpus = psutil.cpu_count(logical=True)
-                                   print("VCPUS: "+str(num_vcpus))
                                    serverthingthing.setVCPUS(num_vcpus)
                                    data = {"walletname":stringthingx,"publickey":public_pemLOL.decode('utf-8')}
 
                                    requests.post(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+str(urltosendto)+"/createwallet",json=data)
 
-                                   print("TEDDY FARE")
                                    selfwallet = serverthingthing.getselfwallet()
-                                   print(selfwallet)
                                    serverthingthing.setverifyingkey(private_key39)
-                                   print(serverthingthing.getverificationkey(stringthingx))
-                                   print("WALLETVALUES7500:  "+str(WALLETVALUES))
                                    try:
                                     changethat600thingthing = requests.get(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/getthecurrent600thing")
                                     if changethat600thingthing.status_code == 200:
                                      changethat600thingthing = changethat600thingthing.json()
                                      changethat600thingthing = changethat600thingthing["Success"]
-                                     print("FINAL600THING: "+str(changethat600thingthing))
                                      if float(changethat600thingthing)>0:
                                        changethat600thing = True
                                        with open("changethe600thing.txt","w") as file:
@@ -10912,7 +10689,6 @@ if not allowedtostartpowerserver  == True:
                                        except:
                                            lol=True
                                        if changethecountdownthing.status_code == 200:
-                                           print("Changethecountdownthing: "+str(changethecountdownthing))
                                            changethecountdownthing = changethecountdownthing.json()
                                            changethecountdownthing=changethecountdownthing["Success"]
                                            if float(changethecountdownthing)>0:
@@ -10932,7 +10708,7 @@ if not allowedtostartpowerserver  == True:
                                                file.write(str(the600thing-5))
                                    except:
                                     lol=True
-                                  
+
 elif allowedtostartpowerserver == True:
     blocknum =serverthingthing.getblockamount()
     
