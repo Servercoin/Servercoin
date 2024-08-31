@@ -10925,7 +10925,6 @@ def loop1():
                serverthingthing.the600reset()
 
      return str(countdownthing)
- print("DOES THIS EVEN DO ANYTHING")
  the600thing = 0
  timeatstarttime = 0
  with open("changethe600thing.txt","w") as file:
@@ -10987,10 +10986,7 @@ def loop1():
           else:
            response23 =t600thingactivate()
         
-           try:
-            response23 = response23.json()
-           except Exception as e:
-               print("THAT'S NONSENSE: "+str(e))
+  
           
            the600thing = float(response23)
            countdownthing = 3
@@ -11002,6 +10998,7 @@ def loop1():
          averagetimelist+=truetime
          averagetimecount+=1
          trueaveragetime = averagetimelist/averagetimecount
+     serverthingthing.gothroughthetransactionlist()
      ipthing = get_local_ip2()
 
      loadloop = True
@@ -11024,6 +11021,7 @@ def loop1():
 
       except Exception as e:
          lol=True
+
 
 
 def loop3(timethingthing,timewaitthing):
