@@ -3447,6 +3447,23 @@ class serverthing:
        
     def addharddrive(self,harddrive):
         self.harddrives[harddrive] = {"DataAvailable":0}
+    def the600fix(self):
+      self.the600thing-=0.25
+      print("600thing: "+str(self.the600thing))
+      return "DID IT"
+
+    def the600get(self):
+      return self.the600thing
+    def the600reset(self):
+       self.the600thing = 600
+       return "DID IT"
+    def thecountdownfix(self):
+      self.thecountdownthing-=0.25
+      return "DID IT"
+    def thecountdownget(self):
+      return self.thecountdownthing
+    def thecountdownreset(self):
+      self.thecountdownthing = 3
     def setharddrivedata(self,harddrive,dataamount):
        
 
