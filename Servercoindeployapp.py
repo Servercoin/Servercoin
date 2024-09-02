@@ -1004,6 +1004,201 @@ class serverthing:
          self.serverlist[str(server)+str(":")+str(portthing)] ={"server":str(server),"altserver":otherserver,"Fileprice":fileprice,"verifyingkey":verifyingkey,"timeadded":time.time(),"RAMGBPRICE":RAMGBPRICE,"VCPUPRICE":VCPUPRICE,"DATATRANSFERGB":DATATRANSFERGB}
          self.superserverlist[str(server)+str(":")+str(portthing)]={"server":str(server),"altserver":otherserver,"Fileprice":fileprice,"verifyingkey":Verifyingkey2,"portthing":portthing,"timeadded":time.time(),"RAMGBPRICE":RAMGBPRICE,"VCPUPRICE":VCPUPRICE,"DATATRANSFERGB":DATATRANSFERGB,"MINERCHECK":MINERCHECK,"NODECHECK":NODECHECK,"PROTOCOL":PROTOCOL}
          self.servernum+=1
+    def addblockthing(self,data):
+     received_dict = data["recieved_dict"]
+     portnum = data["selfport"]
+     procedureblock = Procedures()
+     blockstring = ""
+     servers = self.getservers()
+     serverlen = len(servers)
+
+     blocksendmore = procedureblock.getthatblockaccepted(received_dict)
+     for item in blocksendmore["Blockstuff"]:
+      if blocksendmore["Blockstuff"][item]["Type"] == 1:
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["Sender"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["Reciever"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["amountofcoins"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["transactionfee"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["verifyingsig"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["txextra"])
+      elif blocksendmore["Blockstuff"][item]["Type"] == 2:
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["Sender"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["Reciever"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["transactionfee"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["verifyingsig1"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["verifyingsig2"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["filehash"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["fileprice"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["daysoflasting"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["filesize"])
+      elif blocksendmore["Blockstuff"][item]["Type"] == 3:
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["Sender"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["Reciever"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["transactionfee"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["verifyingsig1"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["verifyingsig2"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["filepricething"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["daysoflasting"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["filespace"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["pendingtransactionnum"])
+      elif blocksendmore["Blockstuff"][item]["Type"] == 4:
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["Sender"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["Reciever"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["transactionfee"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["verifyingsig1"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["verifyingsig2"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["amountofcoins"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["txextra"])
+       blockstring = blockstring+str(blocksendmore["Blockstuff"][item]["vmtransactionnum"])
+
+     dashhash = hashlib.sha256(blockstring.encode()).hexdigest()
+
+     wallet = self.getselfwallet()
+     data = {
+       "hash": dashhash,
+       "Firstsender": wallet,
+       "Serverip": "http://"+str(get_local_ip())+"/checkforblockexistence",
+       "Timecreated": blocksendmore["Obtainmentdate"],
+       "NodesPassedThrough": 0,
+
+     }
+     url1num = random.randint(0,serverlen-1)
+     url2num = random.randint(0,serverlen-1)
+     CHECKED = True
+     NEWDATA = {"Hash":data["hash"],"Port":str(portnum)}
+
+     try:
+       CHECK = requests.post("http://"+str(servers[str(url1num)])+"/checkforblockexistence",json=NEWDATA)
+       print("CHECK:"+str(CHECK))
+
+       CHECK = CHECK.json()
+       print("CHECK: "+str(CHECK))
+       CHECK = CHECK["Success"]
+       print("CHECK:"+str(CHECK))
+
+       if CHECK == "YES":
+        if url1num<serverlen:
+         url1num+1
+        elif url1num>=serverlen:
+         url1num+=-1
+       supercheck = True
+       try:
+         servers[str(url1num)]
+       except:
+         supercheck=False
+       if supercheck == False:
+         print("NOCROWN")
+         return "WHERE'S MY CROWN"
+     except Exception as e:
+       print("ERROR: "+str(e))
+       return "WHERE'S MY CROWN"
+     try:
+       CHECK = requests.post("http://"+str(servers[str(url2num)])+"/checkforblockexistence",json=NEWDATA)
+       print("CHECK:"+str(CHECK))
+
+       CHECK = CHECK.json()
+       print("CHECK: "+str(CHECK))
+       CHECK = CHECK["Success"]
+       print("CHECK:"+str(CHECK))
+
+       if CHECK == "YES":
+        if url2num<serverlen:
+         url2num+1
+        elif url2num>=serverlen:
+         url2num+=-1
+        supercheck = True
+        try:
+         servers[str(url2num)]
+        except:
+         supercheck=False
+        if supercheck == False:
+         print("NOCROWN2")
+         return "FAILED"
+     except Exception as e:
+        print("ERROR2: "+str(e))
+     try:
+        CHECK = requests.post("http://"+str(servers[str(url1num)])+"/checkforblockdatainthing",json=NEWDATA)
+        print("CHECK:"+str(CHECK))
+
+        CHECK = CHECK.json()
+        print("CHECK:"+str(CHECK))
+
+        CHECK = CHECK["Success"]
+        print("CHECK:"+str(CHECK))
+        if CHECK == "YES":
+         if url1num<serverlen:
+          url1num+1
+         elif url1num>=serverlen:
+          url1num+=-1
+        supercheck = True
+        try:
+         servers[str(url1num)]
+        except:
+         supercheck=False
+        if supercheck == False:
+         print("NOCROWN2")
+         return "WHERE'S MY CROWN"
+     except Exception as e:
+        print("ERROR3: "+str(e))
+        return "WHERE'S MY CROWN"
+     try:
+        CHECK = requests.post("http://"+str(servers[str(url2num)])+"/checkforblockdatainthing",json=NEWDATA)
+        print("CHECK:"+str(CHECK))
+
+        CHECK=CHECK.json()
+        print("CHECK:"+str(CHECK))
+
+        CHECK = CHECK["Success"]
+        print("CHECK:"+str(CHECK))
+
+        if CHECK == "YES":
+         if url2num<serverlen:
+          url2num+1
+         elif url2num>=serverlen:
+          url2num+=-1
+         supercheck = True
+        try:
+         servers[str(url2num)]
+        except:
+         supercheck=False
+        if supercheck == False:
+         print("NOCROWN")
+         return "WHERE'S MY CROWN"
+     except Exception as e:
+        print("ERROR4: "+str(e))
+        return "WHERE'S MY CROWN"
+
+     if url1num == url2num:
+        if url2num+1<serverlen:
+         url2num+=1
+        elif url2num+1>= serverlen:
+         url2num+=-1
+     else:
+        print("Not enough servers to send to two servers.")
+     print("SErvers: "+str(servers))
+     servers=servers
+     if url1num<0:
+        url1num = 0
+     if url2num<0:
+        url2num = 0
+     url1 = "http://"+str(servers[str(url1num)])+"/recieveblockdata1"
+     url2 = "http://"+str(servers[str(url2num)])+"/recieveblockdata1"
+
+     try:
+        response = requests.post(url1, json=data)
+        response2 = requests.post(url2,json=data)
+        print("RESPONSE1: "+str(response.json()))
+        print("RESPONSE2: "+str(response.json()))
+        url1 = "http://"+str(servers[str(url1num)])+"/recieveblockdata2"
+        url2 = "http://"+str(servers[str(url2num)])+"/recieveblockdata2"
+        Dataset = {"blockdata":dict(blocksendmore["Blockstuff"])}
+        print("DATASET:"+str(Dataset))
+
+        responsee = requests.post(url1,json=Dataset)
+        responsee2 = requests.post(url2,json=Dataset)
+     except Exception as e:
+        print("ERROR433: "+str(e))
+        lol=True
     def getprotocol(self,server):
         return self.superserverlist[str(server)]["PROTOCOL"]
     def addtimeaddedtimetoserver(self,server,timeadded):
@@ -1143,7 +1338,7 @@ class serverthing:
      retries = 1
      if retries == 1:
       try:
-       response = requests.post(URL,json=data)
+       self.addblockthing(data)
        retries+=1
       except Exception as e:
          lol = True
