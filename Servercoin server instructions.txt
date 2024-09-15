@@ -1,0 +1,36 @@
+﻿1. IMPORTANT: You have to have a VM named testythingyrestored for the VM features on your server to work, currently this VM has to be in VirtualBox but this can change in the future.(No guarantees though) For speed, it is recommended that you run this in Mojo.
+It is also recommended that you use the command gunicorn -b 0.0.0.0:PORT(The port of your thing) app:app to make the thing be able to handle multiple requests at a time(While right now not really an issue due to low users could be an issue later) ‘VM features’ are features that users get to use, not you.(Unless you buy a VM from yourself)
+If you can’t load it up because ‘requested address is not valid in its context’, use a reverse proxy(e.g ngrok) to get a special domain(And change the host at the bottom of the code to “0.0.0.0”)(Using 127.0.0.1:PORT(Replace with the actual port) as the address and port for the reverse proxy will always work if you do this, well atleast for ngrok)
+Connect using ipassedthetest.pythonanywhere.com
+
+
+2. For special domain and 2. For not(Special Domain is just a domain you’d see on the web, and if you pick 2 that means you’re thing doesn’t have a domain just an IP)
+3. What is the http variant of this(Type https:// if it’s https, Type http:// if it’s not https(Don’t know why you’d want to do that though.))
+4. What is the port of the thing(Type in a number from 1 to 65536)
+5. What is the total amount of data transfer megabytes that are usable on this machine(If it’s unlimited just put a ridiculously large number, if you don’t want anyone using that function put 0, if you don’t know the number then look up your internet’s data limit)
+6. Seed phrase(Type in any seed phrase you want this is NOT a wallet it’s just used so the system’s prices can be updated on the other servers)
+7. 1. For stopping this and 2. For continuing this(Type 1 if you don’t need the price to be updated, type 2 if you need the price to be updated)
+8. What is the genesis password?(Type in whatever you want here, just here to make it so there aren’t loads of different servercoin networks that are all the exact same, getting it wrong just means you have to connect to an already existing server, I can’t do anything with the genesis password besides make new networks.)
+For 8-13 , type a ridiculously large number if you don’t want anyone to use your server for storage space
+9. What is the amount of server coins you want the user to spend per gigabyte.(This is per day.)
+10. What is the price of RAM per Gigabyte per day on this server(See above 8)
+11. What is the price of RAM per gigabyte per day on this server in FIAT? Type -1 if none(See above 8)
+12. What is the price of DATA TRANSFER per Gigabyte per day on this server?(See above 8)
+13. What is the price of DATA TRANSFER per gigabyte per day on this server in FIAT? Type -1 if none(See above 8)
+14. What is the price of 1 VCPU per day on this server?(See above 8)
+15. What is the name of the drive that the VMs are stored in?(This drive is also the drive the files uploaded onto your server are stored, if you don’t want anyone to upload files this isn’t important)
+16. What is the address of the ISO file?(Only important if you’re using the VM features and haven’t already made a VM)
+17. What is the IP address of the VM you use for the thing that allows the VMs this makes to get their IP?(This isn’t the IP Address shown right below ‘What is the genesis password’, you get it by executing print(socket.gethostbyname(socket.gethostname()))(Make sure to type in import socket first))
+18.  Would you like to add the ISO file?(Again, only if you’re using the VM features and haven’t already made a VM)
+19. Would you like to add the video memory mb(Same as 16 and 18)
+20. Would you like to start the VM?(It starts the VM anyways even if you type NO(Will change this soon))
+21. 1. For finishing the setup of this VM 2. For I don’t want to do this(2. If you don’t want to use the VM features 1 if you do want to use the VM features)
+22. Enter the IP of the server you're connecting to:(This can be a domain or IP depending on what the server is)
+23. What is the port?(If it’s a domain type whatever)
+24. 1. for special domain, 2. for regular.(Regular is an IP and what a special domain is was explained earlier)
+25. Select 1 for adding a server to the serverlist and 2 for stopping this(‘stopping this’ just means you aren’t adding more servers to the list of initial servers to get data from)
+Discord Server Invite: https://discord.gg/MAUJqu8v
+And, if you want to buy ServerCoin:
+Buy on quickswap.exchange(Use the contract address 0xB0bFAE40E3fb54E37C54A0F10B072Ead30264DE1(This is a wrapped token))
+Unwrap on https://theactualservercoinwrappedcoins-h3rogylc.b4a.run/unwrapthecoins3
+Wrap on https://theactualservercoinwrappedcoins-h3rogylc.b4a.run/wrapthecoins
