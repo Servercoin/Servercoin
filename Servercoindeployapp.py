@@ -903,11 +903,14 @@ try:
 except:
             lol=True
 
-input("Would you like to start the VM?")
-try:
+VMstart = input("Would you like to start the VM?")
+if VMstart == "NO" or "No":
+ print("No VM started.")
+else:
+ try:
     start_virtual_machine(vm_name)
-except:
-            lol=True
+ except:
+    print("Error")
 
 thing = int(input("1. for finishing the setup of this VM 2. for I don't want to do this "))
 ISO=""
