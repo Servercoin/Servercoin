@@ -492,7 +492,7 @@ def get_human_readable_size(size_bytes):
             return f"{size_bytes:.2f} {unit}"
         size_bytes /= 1024
 app = Flask(__name__)
-PriceperGBperday = float(input("What is the amount of yellow server coins you want the user to spend per gigabyte."))
+PriceperGBperday = float(input("What is the amount of server coins you want the user to spend per gigabyte."))
 
 PriceperGB = PriceperGBperday
 PriceperGBperday = PriceperGBperday*(10**8)
