@@ -29,8 +29,3 @@ For 8-13 , type a ridiculously large number if you don’t want anyone to use yo
 23. What is the port?(If it’s a domain type whatever)
 24. 1. for special domain, 2. for regular.(Regular is an IP and what a special domain is was explained earlier)
 25. Select 1 for adding a server to the serverlist and 2 for stopping this(‘stopping this’ just means you aren’t adding more servers to the list of initial servers to get data from)
-Discord Server Invite: https://discord.gg/MAUJqu8v
-And, if you want to buy ServerCoin:
-Buy on quickswap.exchange(Use the contract address 0xB0bFAE40E3fb54E37C54A0F10B072Ead30264DE1(This is a wrapped token))
-Unwrap on https://theactualservercoinwrappedcoins-h3rogylc.b4a.run/unwrapthecoins3
-Wrap on https://theactualservercoinwrappedcoins-h3rogylc.b4a.run/wrapthecoins
