@@ -996,6 +996,8 @@ class serverthing:
         self.loadedblockservers = {}
         self.itlooped = True
         self.badservers = {}
+        self.the600thing = 600
+        self.thecountdownthing = 3
     def listserver(self,server,otherserver,fileprice,verifyingkey,RAMGBPRICE,VCPUPRICE,DATATRANSFERGB,portthing,MINERCHECK,NODECHECK,Verifyingkey2,PROTOCOL):
       if not server+":"+str(portthing) in self.serverlist:
         if SpecialDevice == 1:
