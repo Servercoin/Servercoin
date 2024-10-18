@@ -9304,8 +9304,8 @@ if not allowedtostartpowerserver  == True:
                  BLOCKACCESSTHING = HASHTOACCESS[i+1]
                  hashstringlist.append(blocklistthingy[BLOCKACCESSTHING]["Blockhash"])
                  timelen+=1
-                 if not i == 100:
-                  HASHSTRINGFORHASHCHECKTHING =HASHSTRINGFORHASHCHECKTHING+blocklistthingy[blocknum]["Blockhash"]
+                 
+                 HASHSTRINGFORHASHCHECKTHING =HASHSTRINGFORHASHCHECKTHING+blocklistthingy[blocknum]["Blockhash"]
                  blocknum+=1
               hashthingpowerforever = hashlib.sha256(HASHSTRINGFORHASHCHECKTHING.encode('utf8')).hexdigest()
               BLOCKDEVICE = {}
