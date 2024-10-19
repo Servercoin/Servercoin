@@ -5,6 +5,13 @@ from audioop import error
 from http import server
 from telnetlib import SE
 from typing import Self
+class Procedures:
+    def __init__(self):
+        self.serverips = []
+
+    def getthatblockaccepted(self, blockdata):
+        lola = {"Blockstuff": blockdata, "Obtainmentdate": time.time()}
+        return lola
 def delete_fifth_character(input_string,startnum):
    newstring = ''
    numswenthrough = 0
@@ -1071,9 +1078,9 @@ class serverthing:
      url2num = random.randint(0,serverlen-1)
      CHECKED = True
      NEWDATA = {"Hash":data["hash"],"Port":str(portnum)}
-
+     print("Servers: "+str(servers))
      try:
-       CHECK = requests.post("http://"+str(servers[str(url1num)])+"/checkforblockexistence",json=NEWDATA)
+       CHECK = requests.post("http://"+str(servers[int(url1num)])+"/checkforblockexistence",json=NEWDATA)
        print("CHECK:"+str(CHECK))
 
        CHECK = CHECK.json()
@@ -1088,7 +1095,7 @@ class serverthing:
          url1num+=-1
        supercheck = True
        try:
-         servers[str(url1num)]
+         servers[int(url1num)]
        except:
          supercheck=False
        if supercheck == False:
@@ -1098,7 +1105,7 @@ class serverthing:
        print("ERROR: "+str(e))
        return "WHERE'S MY CROWN"
      try:
-       CHECK = requests.post("http://"+str(servers[str(url2num)])+"/checkforblockexistence",json=NEWDATA)
+       CHECK = requests.post("http://"+str(servers[int(url2num)])+"/checkforblockexistence",json=NEWDATA)
        print("CHECK:"+str(CHECK))
 
        CHECK = CHECK.json()
@@ -1113,7 +1120,7 @@ class serverthing:
          url2num+=-1
         supercheck = True
         try:
-         servers[str(url2num)]
+         servers[int(url2num)]
         except:
          supercheck=False
         if supercheck == False:
@@ -1122,7 +1129,7 @@ class serverthing:
      except Exception as e:
         print("ERROR2: "+str(e))
      try:
-        CHECK = requests.post("http://"+str(servers[str(url1num)])+"/checkforblockdatainthing",json=NEWDATA)
+        CHECK = requests.post("http://"+str(servers[int(url1num)])+"/checkforblockdatainthing",json=NEWDATA)
         print("CHECK:"+str(CHECK))
 
         CHECK = CHECK.json()
@@ -1137,7 +1144,7 @@ class serverthing:
           url1num+=-1
         supercheck = True
         try:
-         servers[str(url1num)]
+         servers[int(url1num)]
         except:
          supercheck=False
         if supercheck == False:
@@ -1147,7 +1154,7 @@ class serverthing:
         print("ERROR3: "+str(e))
         return "WHERE'S MY CROWN"
      try:
-        CHECK = requests.post("http://"+str(servers[str(url2num)])+"/checkforblockdatainthing",json=NEWDATA)
+        CHECK = requests.post("http://"+str(servers[int(url2num)])+"/checkforblockdatainthing",json=NEWDATA)
         print("CHECK:"+str(CHECK))
 
         CHECK=CHECK.json()
@@ -1186,8 +1193,8 @@ class serverthing:
         url1num = 0
      if url2num<0:
         url2num = 0
-     url1 = "http://"+str(servers[str(url1num)])+"/recieveblockdata1"
-     url2 = "http://"+str(servers[str(url2num)])+"/recieveblockdata1"
+     url1 = "http://"+str(servers[int(url1num)])+"/recieveblockdata1"
+     url2 = "http://"+str(servers[int(url2num)])+"/recieveblockdata1"
 
      try:
         response = requests.post(url1, json=data)
@@ -10955,7 +10962,9 @@ if not allowedtostartpowerserver  == True:
                                    serverthingthing.setVCPUS(num_vcpus)
                                    data = {"walletname":stringthingx,"publickey":public_pemLOL.decode('utf-8')}
 
-                                   requests.post(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+str(urltosendto)+"/createwallet",json=data)
+                                   response = requests.post(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+str(urltosendto)+"/createwallet",json=data)
+                                   
+                                   walletbalance = requests.post(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+str(urltosendto)+"/getwalletbalance",json=dataxx)
 
                                    selfwallet = serverthingthing.getselfwallet()
                                    serverthingthing.setverifyingkey(private_key39)
@@ -11003,9 +11012,9 @@ elif allowedtostartpowerserver == True:
     if blocknum == 1:
        selfip = get_local_ip()
        if SpecialDevice == 1: 
-                                    serverthingthing.listserver(SpecialDomain,"NONE",PriceperGB,public_key3333333,RAMPRICEPERGB,VCPUPRICE,DATATRANSFERPRICEPERGB,SPECIALPORT,"YES","YES",str(public_pem))
+                                    serverthingthing.listserver(SpecialDomain,"NONE",PriceperGB,public_key3333333,RAMPRICEPERGB,VCPUPRICE,DATATRANSFERPRICEPERGB,SPECIALPORT,"YES","YES",str(public_pem),httpthingy)
        else:
-                                    serverthingthing.listserver(selfip,"NONE",PriceperGB,public_key3333333,RAMPRICEPERGB,VCPUPRICE,DATATRANSFERPRICEPERGB,SPECIALPORT,"YES","YES",str(public_pem))
+                                    serverthingthing.listserver(selfip,"NONE",PriceperGB,public_key3333333,RAMPRICEPERGB,VCPUPRICE,DATATRANSFERPRICEPERGB,SPECIALPORT,"YES","YES",str(public_pem),httpthingy)
 
        changethat600thing = True
        timethingthing = True
@@ -11154,8 +11163,11 @@ if selfwallet == "":
 
                                        selfwallet = serverthingthing.getselfwallet()
                                        data = {"walletname":stringthingx,"publickey":public_pemLOL.decode('utf-8')}
+                                       dataxx = {"walletname":stringthingx}
 
-                                       requests.post("http://"+str(urltosendto)+"/createwallet",json=data)
+                                       Response= requests.post("http://"+str(urltosendto)+"/createwallet",json=data)
+                                       walletbalance = requests.post("http://"+str(urltosendto)+"/getwalletbalance",json=dataxx)
+
                                        serverthingthing.setverifyingkey(private_key39)
                                   
 data = {}
@@ -11282,6 +11294,7 @@ def loop1():
 
        responsedata = response222
        numthing = float(responsedata)
+       print("numthing: "+str(numthing))
        if numthing<0.3:
           loadloop = False
 
