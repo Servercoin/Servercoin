@@ -9130,6 +9130,7 @@ if not allowedtostartpowerserver  == True:
         it+=1
 
        except Exception as E:
+	   del servers[item]
            lol=True
     table_string=""
     for item in serverlistlist:
