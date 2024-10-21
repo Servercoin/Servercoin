@@ -9116,6 +9116,7 @@ if not allowedtostartpowerserver  == True:
             serverlistdoubleup[serverhash]=item
 
     it = 0
+    deletetheseservers = []
     for item in servers:
        
        try:
@@ -9130,8 +9131,10 @@ if not allowedtostartpowerserver  == True:
         it+=1
 
        except Exception as E:
-	   del servers[item]
+	   deletetheseservers.append(item)
            lol=True
+    for item in deletetheseservers:
+        del servers[item]   
     table_string=""
     for item in serverlistlist:
       for itemm in serverlistlist[item]["Data"]:
