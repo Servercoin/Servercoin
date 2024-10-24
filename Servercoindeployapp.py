@@ -4982,6 +4982,55 @@ class serverthing:
 
         except json.JSONDecodeError:
                     lol=True
+    def startfilestufftransaction(self,DATATRANSFERGB,DAYSOFLASTING,RAMGB,DATASTORAGEGB,walletname,VCPUS,verifyingsig):
+        avgtransactionfee = math.floor(self.averagetransactionfee)
+        self.pendingvmtransactions[self.pendingvmnum] = {"DataTransferGB":DATATRANSFERGB,"Daysoflasting":DAYSOFLASTING,"RAMPRICEGB":RAMGB,"DATASTORAGEGB":DATASTORAGEGB,"VCPUS":VCPUS,"Walletname":walletname,"verifyingsig":"O","txextra":"O","Price":0,"verifyingsig1":"O","transactionfee":avgtransactionfee}
+        stringthingthingthing = ""
+        for i in range(10):
+            stringthingthingthing = stringthingthingthing+str(letterdict[random.randint(1,35)])
+        stringthingthingthing = remove_sql(stringthingthingthing)
+        NEODATATRANSFERGB = DATATRANSFERGB/(10**9)
+        NEORAMGB = RAMGB/(10**9)
+        NEODATASTORAGEGB = DATASTORAGEGB/(10**9)
+        selfkeything = self.selfverifyingkey
+        selfwalletthing = self.wallet
+        self.pendingvmtransactions[self.pendingvmnum]["txextra"] = stringthingthingthing
+        RAMGBPRICE = math.floor(NEORAMGB*RAMPRICEPERGB)
+        DATATRANSFERGBPRICE = math.floor(NEODATATRANSFERGB*DATATRANSFERPRICEPERGB)
+        VCPUPRICE33 = math.floor(VCPUS*VCPUPRICE)
+        DATASTORAGEGB3 = math.floor(NEODATASTORAGEGB*PriceperGB)
+        stuff3333 = RAMGBPRICE+DATATRANSFERGBPRICE+VCPUPRICE33+DATASTORAGEGB3
+        TRUSTTHING = math.floor(stuff3333*DAYSOFLASTING)
+        verifythis4r = str(RAMGB)+str(DATASTORAGEGB)+str(VCPUS)+str(DATATRANSFERGB)+str(walletname)+str(DAYSOFLASTING)
+
+        verifyingkey = self.wallets[walletname]["verifyingkey"]
+        verifythis33 = str(RAMGB)+str(DATASTORAGEGB)+str(VCPUS)+str(DATATRANSFERGB)+str(walletname)+str(DAYSOFLASTING)
+        TRUETHAT = True
+        try:
+         verifyingkey.verify(
+            verifyingsig,
+            verifythis33.encode('utf-8'),
+            ec.ECDSA(hashes.SHA256())
+         )
+        except Exception as e:
+            print("ERROR: "+str(e))
+            TRUETHAT = False
+       
+        if self.wallets[walletname]["Coins"]>=TRUSTTHING and TRUETHAT == True:
+         self.pendingvmtransactions[self.pendingvmnum]["Price"] = TRUSTTHING
+         TRUSTTHING = "Price:"+str(TRUSTTHING)+"walletname:"+walletname+"txextra:"+stringthingthingthing+"pendingvmnum:"+str(self.pendingvmnum)+"selfwallet:"+str(self.wallet)+"transactionfee:"+str(avgtransactionfee)
+         signature = selfkeything.sign(
+            TRUSTTHING.encode('utf-8'),
+            ec.ECDSA(hashes.SHA256())
+          )
+         self.pendingvmtransactions[self.pendingvmnum]["verifyingsig"] = signature
+         self.pendingvmnum+=1
+         return TRUSTTHING
+        else:
+         if TRUETHAT == False:
+             print("VERIFICATION ERROR.")
+         if self.wallets[walletname]["Coins"]<=TRUSTTHING:
+             print("Coin error.")
 
     def endfilestufftransaction(self,newverifyingsig,vmtransactionnum):
         walletname = self.pendingvmtransactions[vmtransactionnum]["Walletname"]
