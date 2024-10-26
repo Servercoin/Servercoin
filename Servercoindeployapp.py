@@ -247,7 +247,7 @@ def fourthround(num):
     return num
   else:
    return math.floor(num*4)/4
-max600thingnum = 6
+max600thingnum = 600
 def ConvertTheNumber(Number):
     if Number<0 and Number>=-3:
         NewNumber = int(Number)
