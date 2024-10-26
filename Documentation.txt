@@ -1,0 +1,243 @@
+1.Classes
+ 1a. Serverthing-The main class of the code of servercoin. Powers the whole system at its core.
+ 1b. Serverthing’s Functions:
+         1F.
+          Def __init__(self)-The function that creates the class, and defines all the variables.
+           Variables:
+             self.transactions-Doesn’t exactly do anything, since it’s only used in ‘addnormfile’ which isn’t used.
+             Self.averagetransactionfee- The average of the transaction fees used on the network.
+             Self.wallets- The dictionary with data of all the wallets.
+             Self.codefiles- Doesn’t do anything
+             Self.totalstorage- The total storage of the machine the servercoin node is being hosted on.
+             Self.totalram- The total RAM of the machine the servercoin node is being hosted on.
+             self.operationspersecond-Unused
+             self.serverlist-The list of all the servers on the servercoin network.
+             Self.files- The list of all files uploaded by servercoin users to the machine.
+             self.blocklist-The database containing the whole servercoin blockchain.
+             Self.proposedblocks-All blocks sent to the servercoin system that are in pending because next block isn’t ready yet.
+             Self.blocknum- The number of blocks on the servercoin network.
+             Self.pendingtransactions- Transactions that are pending and waiting to be put onto a block and sent to the rest of the servercoin network.
+             Self.transactionamount- Unused
+             Self.blocktobesent- This is what the servercoin node makes to send the block to the servercoin network
+             Self.listofsignatures- Unused
+             Self.blockreward- The amount of servercoin granted for each block made.
+             Self.blocksuntildoom- The amount of blocks until the servercoin halving occurs.
+             Self.harddrives- The hard drives on the servercoin node
+             Self.rating- Unused(This exists because servercoin guard was originally planned to be on the servercoin nodes, but it was reconsidered and made into its own app)
+             self.amountofratings-Same as self.rating
+             Self.ratings-Same as self.rating
+             self.totalstorageonthiscomp-Unused
+             self.othercomputersontheorder-Unused
+             self.internalizedserver-Unused
+             self.currentsendstreaker-Unused
+             self.requestlist-Unused
+             self.serversallowedtoaddtorequestlist-Unused
+             self.bannedservers-Unused
+             self.serverthingpower-Unused
+             self.hashstring-Used to make sure that when a new node connects the blockchain is the right one.
+
+             Self.verifyingkeyspluswallets- Used to send data of wallets and verifyingkeys to the connecting nodes. 
+             Self.walletnum - Used for self.verifyingkeyspluswallets. 
+             self.blockchainstarttime - The time that the servercoin blockchain started.
+             Self.pendingfiletransactions- File transactions that have not been fully verified.
+             Self.pendingfiletransactionnum- Used to get the specific file transactions.
+             Self.selfverifyingkey- The servercoin node’s verifying key.
+             Self.pendingwalletchanges- Wallet changes that will occur when the new block gets accepted.
+             self.servernum-The number of servers on the servercoin network.
+             self.filespacedata-The data of file space purchases on the servercoin node.
+             Self.filespacedatatransactionnum- Used to get the filespacedata so it can expire when it’s supposed to expire.
+             self.altserversonthing-Used so that if a servercoin node is selling cloud services on other servers the user can get to them.
+             self.vmdatalistyyy-Unused
+             Self.pendingvmtransactions- Same as pendingfiletransactions but for virtual machine transactions.
+             Self.pendingvmnum- Same as pendingfiletransactionnum but for virtual machine transactions.
+             Self.vmdatalistalt - Used so VMs expire at the time they’re supposed to expire.
+             Self.RAMGB- Unused RAM in Gigabytes of the servercoin node.
+             Self.VCPUS- Unused CPU cores of the servercoin node.
+             Self.truevmdatalist - Same use as self.vmdatalistalt.
+             Self.selfip-Used so it can send the correct IP to the servercoin nodes when it sends the block out.
+             Self.blocknumtransactionnum - Unused.
+             Self.superserverlist- Self.serverlist but the verifyingkey is the thing used to make the verifyingkey and not the object.
+             Self.specialsuperability- No longer used
+             Self.superdictdevice - Used, but pointless.
+             Self.nextproposedblocklist- Used to help send blocks across the servercoin network.
+             Self.loadedblockservers - Unused
+             Self.itlooped- Unused
+             Self.badservers- Unused
+             Self.the600thing- The countdown until the time it is that the blocks from other servercoin nodes start coming in.
+             Self.thecountdownthing-The countdown until a block is approved. Only begins when the 
+600thing hits zero.
+       IMPORTANT: These functions often have variables that being with the words ‘true’ or ‘proof’. These are used to make sure all conditions are met before the function does its function.
+       2F. Def listserver -Adds a server to the serverlist.
+       3F. Def addblockthing- Uploads a block to the servercoin network.
+        4F. Def getprotocol- Gets the http protocol of a server.
+        5F. Def addtimeaddedtoserver - Used so when a servercoin node connects to the network they have the correct time added for the server.
+        6F. Def getservers2 - Returns superserverlist.
+        7F. Def gethashstringspecial- Returns the hashstring.
+        8F. Def gothroughthetransactionlist - Loads the transactions on self.blocktobesent.
+        9F. Def addnextblocks - Adds blocks that were received but couldn’t be added to the proposed blocks last time to the proposed blocks.
+        10F. Def acceptablockpuppy - Accepts a block.
+        11F. Def setvcpus - Sets the VCPUS variable to the correct number.
+        12F. Def getvcpus - Gets the VCPUS variable.
+        13F. Def getservers -Gets the serverlist.
+        14F. Def addnormfile - Unused
+        15F. Def addforcorrectblockcount - Adds proposed blocks to the variable proposedblocks.
+        16F. Def checkforserverinblock- Used to prevent duplicate servers in blocks.
+        17F. Def createwallet- Adds the wallet to the servercoin node(The sending of the wallet to the other nodes is done on the route.)
+        18F. Def createwalletotherreason- Does the same thing as createwallet.
+        19F. Def gettheavgtransactionfee- Gets the average transaction fee.
+        20F. Def getwalletbalance- Gets the wallet balance.
+        21F. Def getverificationkey - Gets the thing used to make the verifyingkey of the wallet.
+        22F. Def rateserver- Unused
+        23F. Def getthepriceofuploads- Unused
+        24F. Def addblockdatatoblock - Adds the blockdata to blocks which were sent by other servercoin nodes.
+        25F. Def getblockamount- Gets the blocknum
+        26F. Def changewallet- Changes the servercoin node’s wallet.
+        27F. Def getselfwallet- Gets the servercoin node’s wallet.
+        28F. Def checkforblockexistence- Checks if block is in self.proposedblocks.
+        29F. Def checkforblockdata- Checks if blockdata is in self.proposedblocks.
+        30F. Def gettransactionamountofwallet- Gets the amount of transactions a wallet has done.
+        31F. Def getresponsefromthing - Unused
+        32F. Def changeserverip - Changes the variable ‘self.selfip’ to the serverip.
+        33F. Def getinternetspeedfrom1request - Unused
+        34F. Def checkifthinginserverlist - Checks if the server is in the serverlist.
+        35F. Def generateavalidationhash - Gets the hash of the wallet list.
+        
+
+        36F. Def gethashstring - Gets the hash string.
+        37F. Def getblocksafterpoint - Gets the blocks after a specific blocknum.
+        38F. Def getonespecificblock - Gets one block from the blocklist, based on the blocknum.
+        39F. Def getverifyingchecklist - Gets the thing used to put the walletlist into new nodes.
+        40F. Def getsomeoftheverifyingkeychecklist - Gets wallets after a specific walletnum.
+        41F. Def getsomeoftheverifyingchecklistalt - Gets wallets between the beginnum and endnum. 
+        42F. Def getblockamount - Gets the blocknum.
+        43F. Def getkeythingamount - Gets the amount of wallets.
+        44F. Def serverifyingkeyamount - Sets the variable self.walletnum.
+        45F. Def setblocknum - Changes the blocknum of the node to the variable inputted into the function.
+        46F. Def setblockchain-Changes the blockchain of the node to the variable inputted into the function.
+        47F. Def setserverlist- Changes the serverlist of the node to the variable inputted into the function.
+        48F. Def checkforserverthing - Unused
+        49F. Def setthetime- Changes the blockchain start time of the node.
+        50F. Def getthetime- Returns the blockchain start time.
+        51F. Def setwalletlist- Changes the walletlist of the node.
+        52F. Def getmaxproposedblock- Gets the block that currently has the highest time. This time is based on servertime but there are other factors to make it so the server time isn’t always
+        53F. Def getransaction- Checks if transaction’s hash is in the pending transactions.
+        54F. Def setverifyingkey- Changes the verifyingkey of the node.
+        55F. Def getverifyingkey - Gets the verifyingkey of the node.
+        56F. Def startfiletransaction - Starts the file transaction.
+        57F. Def endthepend - Ends the file transaction.
+        58F. Def addfiletransactionnotfrommainpc - Adds file transactions to pendingtransactions that aren’t from the node itself but other nodes.
+        59F. Def getfile - Returns the file that is being requested.
+        60F. Def getridoftransactions- Deletes all pendingfiletransactions.
+        61F. Def addharddrive - Adds a hard drive to the servercoin node’s self.harddrives variable.
+        62F. Def the600fix-Lowers the 600 thing.
+        63F. Def the600get - Returns the 600 thing.
+        64F. Def the600reset - Resets the 600 thing to 600.
+        65F. Def thecountdownfix - Lowers the countdown thing.
+        66F. Def thecountdownget - Returns the countdown thing
+        67F. Def thecountdownreset- Resets the countdown thing to 3.    
+        68F. Def setharddrivedata - Changes the hard drive data of the node.
+        69F. Def buyfilestoragespacep1 - Starts file storage space transaction.
+        70F. Def buyfilestoragespacep2 - Ends file storage space transaction.
+        71F. Def addfilespacetransactionfromaltPC - Used to put file space transactions that weren’t done for the node into pending transactions.
+        72F. Def addfilealt - Uses file space purchased from the 3 above transactions to add the file.
+        73F. Def deletefile - Deletes the file. Can only delete files uploaded by servercoin users using a servercoin wallet.
+        74F. Def addaspecialblock- A test function that adds a non-working block to make sure it doesn’t go through.
+       75F. Def editspecialblockwaittime - Changes the block’s ‘serverwaittime’ to 0.
+       76F. Def gothroughfiles - Deletes all files uploaded by servercoin user’s that have expired.
+       77F. Def changeserverfileprice - Changes the node’s log of the server’s file price.
+       78F. Def changeservervcpuprice - Changes the node’s log of the server’s vcpu price.
+       79F. Def changeservervcpuprice - Changes the node’s log of the server’s RAMGB price.
+       80F. Def changeservervcpuprice - Changes the node’s log of the server’s DATATRANSFERGB price.
+       81F. Def getverifyingkeyfromserver- Returns a server’s verifying key.
+       82F. Def getcheapestCSP - Gets the server with the cheapest file price on the database.
+       83F. Def getcheapestCSP2 - Same as getcheapestCSP but based on cheapest VCPU price.
+       84F. Def getcheapestCSP3 -  - Same as getcheapestCSP but based on cheapest RAMGB price.
+       85F. Def getcheapestCSP4 - Same as getcheapestCSP but based on cheapest DATATRANSFER price.
+       86F. Def addAltserver - Adds alt server to the server’s database.
+       87F. Def getaltservers - Returns the alt servers of the server.
+       88F. Def listfilelistasafile - Turns the ‘self.files’ into a file.
+       89F. Def loadfilesintoself - Loads the file data from the ‘files.txt’ file into the servercoin node.
+       90F. Def listfilespacelistasafile - Same as listfilelistasafile but for file space data.
+       91F. Def loadfilespaceintoself - Same as loadfilesintoself but for file space data.
+       92F. Def startfilestufftransaction - Starts a transaction for VM data.
+       93F. Def endfilestufftransaction - Finishes the transaction for VM data.
+       94F. Def getfilestufftransactionfromaltPC - Loads VM data transactions from other nodes into self.pendingtransactions.
+       95F. Def setRAM - Changes the variable self.RAMGB of the servercoin node.
+       96F. Def addatestblock - Adds an invalid block with a ridiculously high serverwaittime to the database ‘self.proposedblocks’.
+       97F. Def removethesillytransactions - Gets rid of invalid VM data.
+       98F. Def vmstufflistasafile - Same as listfilelistasafile but for VM data.
+       99F. Def loadvmstufflistintoself - Same as loadfilesintoself but for VM data.
+       100F. Def getharddrivestorage - Gets the amount of storage on a hard drive.
+       101F. Def getRAMonSERVER - Returns the variable self.RAMGB.
+       102F. Def CREATEVMLOL - Creates a VM on the machine.
+       103F. Def GOTHROUGHVMS - Deletes invalid VMs.
+       104F. Def startVM - Starts a VM.
+       105F. Def ADDINTERNETSPEEDTRANSFERDATATOVM - Adds the internet speed transfer data to itself.
+       106F. Def ADDVMSTORAGE - Makes the VM have more storage.
+       107F. Def ADDRAMTOVM - Makes the VM have more RAM.
+       108F. Def DELETEVM - Deletes the VM.
+       109F. Def ADDFILETOVM - Adds a file from the file list to the VM.
+       110F. Def setdoomblocks - Changes the servercoin node’s amount of blocks until halving.
+       111F. Def setblockreward - Changes the servercoin node’s block reward.
+        112F. Def ADDFILETOVM2 - Adds a file directly to the VM instead of from the file list.
+        113F. Def CHECKTHINGSINTERNETSPEEDVALIDITY- Makes sure the VM isn’t using more internet speed than it’s supposed to.
+        114F. Def STOPVM - Shuts down the VM.
+        115F. Def executecommandonVM - Executes a command on the VM.
+        116F. Def checkVMTHINGYTIMEY - Makes sure the VM’s internet speed is being checked.
+        117F. Def LISTVMDATALISTASAFILE lists the data of VMDATALIST as a file.
+        118F. Def LISTVMDATALIST2ASAFILE lists the data of VMDATALIST2 as a file.
+        119F. Def LISTKEYEYESASFILE - Loads the listofkeyeys into a file.
+        120F. Def loadvmdatalistintoself - Loads VMDATALIST from a file.
+        121F. Def loadvmdatalist2intoself - Loads VMDATALIST2 from a  file.
+        122F. Def loadlistofkeyeysintoself - Loads the listofkeyeys from a file.
+        123F. Def getfilespaceamount - Returns the total data storage a servercoin wallet has available on this node.
+        124F. Def deletethevmfile - Deletes files from the VM.
+        125F. Def getthevmIP - Gets the IP of the VM. 
+        126F. Def CHECKIFVMDATATRANSFERFULL - Checks if the VM’s data transfer limit has been reached.
+        127F. Def CHECKIFVMDATASTORAGEFULL - Checks if the VM has run out of space.
+        128F. Def CHECKIFVMRAMFULL - Checks if all the RAM in the VM is used up.
+        129F. Def gettimeadded - Gets the timeadded of the servercoin node. 
+     
+        
+ Class procedures: A class used in function addblockthing of serverthing to help it get the time   and blockdata of the block so it can send the block to the rest of the nodes properly. The only function in it(Excluding init), is getthatblockaccepted. This is the function used in addblockthing of serverthing.
+ Class class DiskBackedDict: The thing used to make dictionaries which are using storage and not RAM. 
+  Functions: 
+    All of the function names describe what they do well enough that this really isn’t necessary.
+ 
+External Functions:
+ Def Delete_fifth_character- a function used to delete a character in a specific position.
+ def export_sqlite_database -  A function used to put the database on a file so it can be sent to the newly connecting servercoin nodes.
+ Def import_sql_file - Used to put the file’s data into the database,
+ Def remove_sql - Deletes sql from the string.
+ Def convertthething - Used to make the wallet’s verifyingkey work correctly.
+ Def get_local_ip - Gets the IP of the servercoin node that is used on the servercoin network.
+ Def get_local_ip2 - Gets the actual IP of the servercoin node.
+ Def remove_newlines_and_spaces - Removes newlines and spaces.
+ Def fourthround - Rounds to the nearest fourth.
+ Def ConvertTheNumber - Converts the number inputted into the correct number for the 600 thing or countdown thing.
+ Def get_ram_info - Gets the RAM of the server.
+ Def set_vm_memory - Sets the virtual machine’s memory.
+ Def modify_vm_storage - Changes the virtual machine’s storage.
+ Def createseedphrase - Generates a seed phrase.
+ Def createvmstuff - Puts the data of the VM into the dictionaries VMDATALIST and VMDATALIST2.
+ Def get_disk_info1 - Returns the drives on the computer.
+ Def get_disk_info2 - Returns the data of the drives.
+ Def get_ip_address - Does the same thing as get_local_ip2.
+ Def get_human_readable_size - Makes the data size easier to read by converting it into the smallest possible unit.
+ Def sendNEWPRICE - Gets the FIAT price of servercoin and changes the cost of the server’s file uploads to the FIAT price put in at the start, unless it was disabled.
+ Def sendNEWRAMPRICE - Same as sendNEWPRICE but for RAM
+ Def sendNEWDATATRANSFERPRICE - Same as sendNEWPRICE but for DATATRANSFER
+ Def sendNEWVCPUPRICE - Same as sendNEWPRICE but for VCPUS.
+ Def create_virtual_machine - Creates a virtual machine.
+ Def add_iso - Adds the ISO file to the virtual machine. 
+ Def video_memory_command - Adds video memory to the virtual machine.
+ Def delete_virtual_machine - Deletes the virtual machine.
+ Def add_file_to_vm - Adds a file to the virtual machine.
+ Def delete_file_from_vm - Deletes a file from the virtual machine.
+ Def start_virtual_machine - Starts the virtual machine.
+ Def execute_command_on_vm - Executes a command on the virtual machine.
+ Def getipthing - Gets the IP of a virtual machine.
+ Def clonevm - Clones a vm but the storage, ram, and vcpus can be different than the original virtual machine.
+ Def changethings - Changes the RAM and VCPUS of the virtual machine.
+ Def stop_virtual_machine - Stops the virtual machine.
+
