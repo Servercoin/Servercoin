@@ -240,4 +240,23 @@ External Functions:
  Def clonevm - Clones a vm but the storage, ram, and vcpus can be different than the original virtual machine.
  Def changethings - Changes the RAM and VCPUS of the virtual machine.
  Def stop_virtual_machine - Stops the virtual machine.
-
+ Def loop1 - Makes the servercoin node accept a block every ten minutes.
+ Def loop3 - Gets rid of all the pending file transactions.
+ Def loop4 - Changes the hard drive data to the current data.
+ Def loop5 - Makes it so the cost of the server is accurate on all nodes.
+ Def loop19 - Same thing as loop5 but for VCPU price.
+ Def loop20 - Same thing as loop19 but for datatransfer price.
+ Def loop21 - Same thing as loop20 but for ramgb price.
+ Def loop6 - Loads the file data into a file and loads file space data into a file.
+ Def loop7 - Keeps the PriceperGBbutFIAT value the same as the one in pricepergbbutfiat.txt.
+ Def loop8 - Same as loop7 but for RamGB.
+ Def loop9 - Same as loop8 but for Datatransferprice.
+ Def loop10 - Same as loop9 but for VCPU price.
+ Def loop11 - Makes it so the FIAT price of the functions of the server is accurate to what the price truly is.
+ Def loop12 - Gets rid of invalid VM data every ten seconds.
+ Def loop13 - Adds the VM data to a file.
+ Def loop14 - Makes sure there's no invalid VMS on the machine.
+ Def loop15 - Makes sure the VMs are still updating internet transfer data.
+ Def loop16 - Puts the VMDATALIST variable into a file.
+ Def loop17 - Puts the VMDATALIST2 variable into a file.
+ Def loop18 - Puts the listofkeyeyes variable into a file.
