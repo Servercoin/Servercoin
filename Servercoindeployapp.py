@@ -2988,10 +2988,10 @@ class serverthing:
         
         if not os.path.exists(full_path):
            os.makedirs(full_path)
-        second_path = os.path.join(full_path,str(walletname))
+        second_path = os.path.join(full_path,sanitize_filename(str(walletname)))
         if not os.path.exists(second_path):
            os.makedirs(second_path)
-        second_path = os.path.join(second_path,str(filename))
+        second_path = os.path.join(second_path,sanitize_filename(str(filename)))
 
         dayslastingfor+=-1
         TRUETHINGTHING = False
