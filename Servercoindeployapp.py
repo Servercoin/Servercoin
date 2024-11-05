@@ -12,6 +12,10 @@ class Procedures:
     def getthatblockaccepted(self, blockdata):
         lola = {"Blockstuff": blockdata, "Obtainmentdate": time.time()}
         return lola
+
+def sanitize_filename(filename):
+    # Remove any characters that could indicate a path traversal
+    return re.sub(r'[^a-zA-Z0-9_\-\.]', '_', filename)
 def delete_fifth_character(input_string,startnum):
    newstring = ''
    numswenthrough = 0
