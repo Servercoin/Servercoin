@@ -295,6 +295,257 @@ def modify_vm_storage(vm_name, new_size_gb):
     except Exception as e:
         lol=True
 sigthinglisty = {}
+httpthingy = ""
+SpecialDevice = 0
+SpecialDomain = ""
+
+SPECIALPORT = 0
+DATATRANSFERPOWER = 0
+seed_phrase = ""
+TABLEOFWEBSITESTOCHECK = []
+inthing = ""
+inthinghash = ""
+loadthisloop = True
+allowedtostartpowerserver = False
+
+PriceperGBperday = 0.0
+
+
+PriceperGBbutFIAT = 0.0
+RAMPRICEPERGB = 0.0
+
+RAMPRICEPERGBFIAT = 0.0
+DATATRANSFERPRICEPERGB = 0.0
+
+DATATRANSFERPRICEPERGBFIAT = 0.0
+VCPUPRICE = 0.0
+
+VCPUPRICEFIAT = 0.0
+VMLOADDRIVE = ""
+ISOFILE = ""
+SELFVMTHINGLOADERIP = ""
+
+PlaceHolderText = "What http protocol does your server use?"
+loadinputty = 0
+Variablelevel = 1
+Variable1 = ""
+Variable2 = ""
+Variable3 = ""
+Variable4 = ""
+Variable5 = ""
+
+def on_focus_in(event):
+    if text_box.get("1.0", tk.END).strip() == PlaceHolderText:
+        text_box.delete("1.0", tk.END)  # Remove the placeholder text
+        text_box.config(fg='black')     # Set normal text color
+
+def on_focus_out(event):
+    if text_box.get("1.0", tk.END).strip() == "":
+        text_box.insert("1.0", PlaceHolderText)  # Put the placeholder back
+        text_box.config(fg='grey')               # Set placeholder text color
+
+def on_key_press(event):
+    if text_box.get("1.0", tk.END).strip() == PlaceHolderText:  # If placeholder is present
+        text_box.delete("1.0", tk.END)  # Remove the placeholder text
+        text_box.config(fg='black')     # Set normal text color
+
+def submit_text():
+    global Variablelevel,httpthingy,SpecialDevice,SpecialDomain,inthing,inthinghash,loadthisloop,loadinputty,VMLOADDRIVE,ISOFILE,SELFVMTHINGLOADERIP,TABLEOFWEBSITESTOCHECK,PriceperGBperday,PriceperGBbutFIAT,RAMPRICEPERGB,RAMPRICEPERGBFIAT,DATATRANSFERPRICEPERGB,DATATRANSFERPRICEPERGBFIAT,VCPUPRICE,VCPUPRICEFIAT,allowedtostartpowerserver,DATATRANSFERPOWER,SPECIALPORT,seed_phrase, Variable1, Variable2, Variable3, Variable4, Variable5, PlaceHolderText
+
+    user_text = text_box.get("1.0", tk.END).strip()
+    if user_text == PlaceHolderText or user_text == "":  # Check if the user input is valid
+        print("No valid input submitted.")
+    else:
+        print(f"User entered: {user_text}")
+        
+        # Assign user input to the corresponding variable
+        if Variablelevel == 1:
+            httpthingy = user_text
+            PlaceHolderText = "1. for special domain and 2 for not."
+            Variablelevel += 1
+
+        elif Variablelevel == 2:
+           if not SpecialDevice>0:
+            SpecialDevice = int(user_text)
+            if SpecialDevice == 1:
+             PlaceHolderText = "What is the special domain?"
+            else:
+             PlaceHolderText = "What is the port of this thing?"
+             Variablelevel+=1
+
+           else:
+            if SpecialDevice == 1:
+             SpecialDomain = user_text
+             PlaceHolderText = "What is the port of this thing?"
+             Variablelevel+=1
+            else:
+             PlaceHolderText = "What is the port of this thing?"
+             Variablelevel+=1
+             print("There is no special domain it seems...")
+        elif Variablelevel == 3:
+            SPECIALPORT = int(user_text)
+            PlaceHolderText = "What is the total amount of data transfer megabytes that are usable on this machine?"
+            Variablelevel+=1
+        elif Variablelevel == 4:
+            DATATRANSFERPOWER = int(user_text)
+            PlaceHolderText = "Seed phrase"
+            Variablelevel+=1
+
+        elif Variablelevel == 5:
+            seed_phrase = user_text
+            PlaceHolderText = "What is the genesis password?"
+            Variablelevel+=1
+            
+        elif Variablelevel == 6:
+            inthing = user_text
+            inthinghash = str(hashlib.sha256(inthing.encode('utf8')).hexdigest())
+            if inthinghash == "c508c75cab978afb13baa0b2d9d42118dd4d40a233672510b7bfef3ad53573a8":
+             allowedtostartpowerserver = True
+            PlaceHolderText = "1. for stopping this and 2. for continuing this"
+            Variablelevel+=1
+        elif Variablelevel == 7:
+            if loadinputty<=0:
+             loadinputty = int(user_text)
+             if loadinputty == 2:
+              PlaceHolderText = "What is the Address of the website you are getting your data from?"
+             else:
+              PlaceHolderText = "What is the amount of server coins you want the user to spend per gigabyte."
+              Variablelevel+=1
+            else:
+             if loadinputty == 2:
+             
+              newserver = user_text
+              loadinputty = 0
+              PlaceHolderText = "1. for stopping this and 2. for continuing this"
+              TABLEOFWEBSITESTOCHECK.append(newserver)
+             else:
+              
+              print("loadinputty: "+str(loadinputty))
+              Variablelevel+=1
+              PlaceHolderText = "What is the amount of server coins you want the user to spend per gigabyte."
+        elif Variablelevel == 8:
+            PriceperGBperday = float(user_text)
+            
+            PlaceHolderText = "What is the FIAT price of this thing? If there isn't one just type NONE."
+            Variablelevel+=1
+            
+        elif Variablelevel == 9:
+            if not user_text == "NONE":
+             PriceperGBbutFIAT = float(user_text)
+            else:
+             PriceperGBbutFIAT = user_text
+            PlaceHolderText = "What is the price of RAM per Gigabyte per day on this server?"
+            Variablelevel+=1
+        elif Variablelevel == 10:
+            RAMPRICEPERGB = float(user_text)
+            
+            PlaceHolderText = "What is the price of RAM per gigabyte per day on this server in FIAT? Type -1 if none"
+            Variablelevel+=1
+        elif Variablelevel == 11:
+            RAMPRICEPERGBFIAT = float(user_text)
+            
+            PlaceHolderText = "What is the price of DATA TRANSFER per Gigabyte per day on this server?"
+            Variablelevel+=1
+        elif Variablelevel == 12:
+            DATATRANSFERPRICEPERGBFIAT = float(user_text)
+            
+            PlaceHolderText = "What is the price of DATA TRANSFER per gigabyte per day on this server in FIAT? Type -1 if none"
+            Variablelevel+=1
+        elif Variablelevel == 13:
+            DATATRANSFERPRICEPERGB = float(user_text)
+            
+            PlaceHolderText = "What is the price of 1 VCPU per day on this server?"
+            Variablelevel+=1
+        elif Variablelevel == 14:
+            VCPUPRICE = float(user_text)
+            
+            PlaceHolderText = "What is the price of 1 VCPU per day on this server in FIAT? Type -1 if none"
+            Variablelevel+=1
+        elif Variablelevel == 15:
+            VCPUPRICEFIAT = float(user_text)
+            
+            PlaceHolderText = "What is the name of the drive that the VMs are stored in?"
+            Variablelevel+=1
+        elif Variablelevel == 16:
+            VMLOADDRIVE = user_text
+            
+            PlaceHolderText = "What is the address of the ISO file?"
+            Variablelevel+=1
+            
+        elif Variablelevel == 17:
+            ISOFILE = user_text
+            
+            PlaceHolderText = "What is the IP address of the VM you use for the thing that allows the VMs this makes to get their IP?"
+            Variablelevel+=1
+        elif Variablelevel == 18:
+            if PlaceHolderText == "The thing has finished. How'd you get here?":
+                print("JUST QUIT NOW!")
+                root.quit()
+                print("YOU WERE SUPPOSED TO QUIT!")
+            SELFVMTHINGLOADERIP = user_text
+            
+            PlaceHolderText = "The thing has finished. How'd you get here?"
+            root.quit()  # Exit the application after the fifth submission
+            root.destroy()
+            print("YOU SHOULD'VE CLOSED THE TKINTER!")
+        # Increment the level
+
+        # Clear the text box and reset it with new placeholder text
+        text_box.delete("1.0", tk.END)
+        text_box.insert("1.0", PlaceHolderText)
+        text_box.config(fg='grey')
+
+# Create the main window
+
+
+root = tk.Tk()
+root.title("Servercoin GUI part 1.")
+
+# Make the window full screen
+root.attributes('-fullscreen', True)
+
+# Style the Textbox (make it more modern-looking)
+text_box = tk.Text(root, height=10, fg='grey', bg='#f0f0f0', padx=10, pady=10, bd=2, relief="solid", font=("Arial", 18))
+text_box.insert("1.0", PlaceHolderText)  # Insert the initial placeholder text
+text_box.pack(padx=20, pady=20, fill=tk.BOTH, expand=True)  # Fill the entire available space
+
+# Bind focus in/out events to manage the placeholder
+text_box.bind("<FocusIn>", on_focus_in)
+text_box.bind("<FocusOut>", on_focus_out)
+
+# Bind key press event to remove placeholder when typing starts
+text_box.bind("<Key>", on_key_press)
+
+# Style the Submit Button (bigger and light green, long width)
+submit_button = tk.Button(root, text="Submit", command=submit_text, bg='lightgreen', font=("Arial", 18, "bold"), padx=50, pady=20)
+submit_button.pack(pady=20, fill=tk.X)  # Fill the width of the screen
+
+# Start the Tkinter event loop
+root.mainloop()
+
+# After exiting the loop, we can print the collected variables if needed
+print("Final Variables:")
+
+with open("datatransferpower.txt","w") as file:
+    file.write(str(DATATRANSFERPOWER))
+print(httpthingy) 
+print(SpecialDevice)
+print(SpecialDomain)
+print(TABLEOFWEBSITESTOCHECK)
+PriceperGB = PriceperGBperday
+PriceperGBperday = PriceperGBperday*(10**8)
+PriceperGB = PriceperGBperday
+RAMPRICEPERGB = RAMPRICEPERGB*(10**8)
+RAMPRICEPERGB = math.floor(RAMPRICEPERGB)
+DATATRANSFERPRICEPERGB=DATATRANSFERPRICEPERGB*(10**8)
+DATATRANSFERPRICEPERGB=math.floor(DATATRANSFERPRICEPERGB)
+VCPUPRICE = VCPUPRICE*(10**8)
+VCPUPRICE = math.floor(VCPUPRICE)
+Variablelevel2 = 1
+IP = ""
+Port = 0
+Type = 0
+
 # Replace this with your seed phrase
 seed_phrase = input("Seed phrase")
 
