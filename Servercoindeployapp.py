@@ -6,7 +6,6 @@ from http import server
 from telnetlib import SE
 import tkinter as tk
 
-from typing import Self
 class Procedures:
     def __init__(self):
         self.serverips = []
