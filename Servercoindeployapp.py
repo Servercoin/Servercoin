@@ -9025,7 +9025,6 @@ def STARTVM2():
     vmname = data["vmname"]
     serverthingthing.startVM(walletname,verifyingsig,vmname)
     return jsonify({"Success":"WE DID IT!@"}),200
-Verifyingkey = load_pem_public_key(convertthething(str(public_pem)).encode('utf-8'),backend=default_backend)
 
 @app.route("/DELETEVM",methods=['POST'])
 def DELETEVM():
