@@ -83,7 +83,6 @@ def import_sql_file(sql_file_path, new_database_path):
 import sqlite3
 import threading
 import subprocess
-import speedtest
 import copy
 import sqlite3
 import re
