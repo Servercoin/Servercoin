@@ -5,4 +5,5 @@ Don't worry about the genesis password since you can just type in a wrong one th
 Commands that will help you:
  Starting the thing: python3 Downloads/Servercoin-main/Servercoindeployapp.py
  If tkinter is not downloaded as a module for some reason: sudo apt-get install python3-tk
- 
+ If beatifulsoup is not downloaded as a module for some reason: pip install beautifulsoup4
+
