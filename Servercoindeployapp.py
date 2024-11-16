@@ -9278,6 +9278,7 @@ loadinputty4 = 0
 TABLEOFWEBSITESTOCHECK2 = []
 PlaceHolderText2 = "Enter the IP of the server you're connecting to."
 def submit_text2():
+  try:
     global Variablelevel2,httpthingy,SpecialDevice,SpecialDomain,inthing,inthinghash,loadthisloop,loadinputty,Variablelevel,VMLOADDRIVE,ISOFILE,SELFVMTHINGLOADERIP,TABLEOFWEBSITESTOCHECK2,PriceperGBperday,PriceperGBbutFIAT,RAMPRICEPERGB,RAMPRICEPERGBFIAT,DATATRANSFERPRICEPERGB,DATATRANSFERPRICEPERGBFIAT,VCPUPRICE,VCPUPRICEFIAT,allowedtostartpowerserver,DATATRANSFERPOWER,SPECIALPORT,seed_phrase, Variable1, Variable2, Variable3, Variable4, Variable5, PlaceHolderText2,Port,Type,server,loadinputty2,loadinputty3,loadinputty4,IP
 
     user_text = text_box2.get("1.0", tk.END).strip()
@@ -9452,6 +9453,8 @@ def submit_text2():
         text_box2.insert("1.0", PlaceHolderText2)
         text_box2.config(fg='grey')
         print("FIXED THIS!")
+  except:
+   lol=True
 # Create the main window
 
 
