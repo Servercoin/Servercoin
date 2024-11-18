@@ -10455,7 +10455,9 @@ if not allowedtostartpowerserver  == True:
                               serverthingthing.setblocknum(NEWBLOCKNUM3)
                               try:
                                try:
-                                requests.post(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/addnewserver",json=data)
+                                data = requests.post(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/addnewserver",json=data)
+				with open("REQUEST.txt","w") as file:
+					file.write(str(data))
                                except:
                                 deletethisone = ""
                                 for item in trueserverlist["Data"]:
