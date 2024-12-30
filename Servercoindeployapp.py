@@ -9789,36 +9789,7 @@ if not allowedtostartpowerserver  == True:
                   except:
                       lol=True
                   changethedataofthese = []
-                  for item in blocklistthingy.keys():
-                    try:
-                     if "STOP" in blocklistthingy[item]["Blockdata"]:
-                      changethedataofthese.append(item)
-                    except:
-                     lol=True
-                    try:
-                     if "STOP" in blocklistthingy[item]["BlockData"]:
-                      changethedataofthese.append(item)
-                    except:
-
-                     lol=True
-
-                  for item in changethedataofthese:
-                      try:
-                       blocklistthingy[item]["Blockdata"] = {}
-                     
-                       if not blocklistthingy[item]["Blockdata"] == {}:
-                           blocklistthingy[item] = {"Blockdata":{},"Dateadded":blocklistthingy[item]["Dateadded"],"Blockhash":blocklistthingy[item]["Blockhash"],"FirstSender":blocklistthingy[item]["FirstSender"]}
-                       else:
-                           lol=True
-
-
-                      except:
-                        lol=True
-                      try:
-                       blocklistthingy[item]["BlockData"] = {}
-                      except:
-                                              lol=True
-
+                  
                   for itemm in blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE]:
                      if blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["Type"] == 1:
                       blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["Sender"]
@@ -9939,8 +9910,10 @@ if not allowedtostartpowerserver  == True:
                         BLOCKDATATYPE = "BlockData"
                        except:
                                               lol=True
-
+                       if "STOP" in blocklistthingy[item][BLOCKDATATYPE]:
+                           blocklistthingy[item][BLOCKDATATYPE] = {}
                        for itemm in blocklistthingy[item][BLOCKDATATYPE]:
+			 if not "STOP" in blocklistthingy[item][BLOCKDATATYPE]:
                           if blocklistthingy[item][BLOCKDATATYPE][itemm]["Type"] == 1:
                            keys_to_keep = {'Type', 'amountofcoins',"Sender","Reciever","txextra","verifyingsig","transactionfee","lol"}  # Define keys that should be kept
                           
