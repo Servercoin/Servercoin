@@ -1300,14 +1300,24 @@ class serverthing:
      dashhash = hashlib.sha256(blockstring.encode()).hexdigest()
 
      wallet = self.getselfwallet()
-     data = {
+     if SpecialDevice == 2:
+      data = {
        "hash": dashhash,
        "Firstsender": wallet,
-       "Serverip": "http://"+str(get_local_ip())+"/checkforblockexistence",
+       "Serverip": str(httpthingy)+str(get_local_ip())+"/checkforblockexistence",
        "Timecreated": blocksendmore["Obtainmentdate"],
        "NodesPassedThrough": 0,
 
-     }
+      }
+     else:
+      data = {
+       "hash": dashhash,
+       "Firstsender": wallet,
+       "Serverip": str(httpthingy)+str(SpecialDomain)+"/checkforblockexistence",
+       "Timecreated": blocksendmore["Obtainmentdate"],
+       "NodesPassedThrough": 0,
+
+      }
      url1num = random.randint(0,serverlen-1)
      url2num = random.randint(0,serverlen-1)
      CHECKED = True
@@ -8748,18 +8758,14 @@ def ramgbpricechangeactivate():
 @app.route("/checkforblockexistence",methods=["POST"])
 def checkforblocke():
  client_ip = request.remote_addr
- response = serverthingthing.checkifthinginserverlist(client_ip)
- if response == "YES!":
-    data = request.json
-    if "Hash" not in data or "Port" not in data:
+ data = request.json
+ if "Hash" not in data or "Port" not in data:
         return jsonify({"Error": "Where is the Hash?????"}),403
-    haash = data["Hash"]
-    port = data["Port"]
-    serverip = client_ip+":"+str(port)
-    responsething = serverthingthing.checkforserverinblock(serverip,haash)
-    return jsonify({"Success":responsething}),200
- else:
-    return jsonify({"Error":"ERROR"}),403
+ haash = data["Hash"]
+ port = data["Port"]
+ serverip = client_ip+":"+str(port)
+ responsething = serverthingthing.checkforserverinblock(serverip,haash)
+ return jsonify({"Success":responsething}),200
 @app.route("/checkforactionexistence",methods=['POST'])
 def checkforactionexistence():
     data=request.json
@@ -9205,46 +9211,6 @@ for item in dictionary:
     
     serverthingthing.addharddrive(harddrive)
     serverthingthing.setharddrivedata(harddrive, int(datavailable))
-sigthinglisty = {}
-# Replace this with your seed phrase
-httpthingy = ""
-SpecialDevice = 0
-SpecialDomain = ""
-
-SPECIALPORT = 0
-DATATRANSFERPOWER = 0
-seed_phrase = ""
-TABLEOFWEBSITESTOCHECK = []
-inthing = ""
-inthinghash = ""
-loadthisloop = True
-allowedtostartpowerserver = False
-
-PriceperGBperday = 0.0
-
-
-PriceperGBbutFIAT = 0.0
-RAMPRICEPERGB = 0.0
-
-RAMPRICEPERGBFIAT = 0.0
-DATATRANSFERPRICEPERGB = 0.0
-
-DATATRANSFERPRICEPERGBFIAT = 0.0
-VCPUPRICE = 0.0
-
-VCPUPRICEFIAT = 0.0
-VMLOADDRIVE = ""
-ISOFILE = ""
-SELFVMTHINGLOADERIP = ""
-
-PlaceHolderText = "What http protocol does your server use?"
-loadinputty = 0
-Variablelevel = 1
-Variable1 = ""
-Variable2 = ""
-Variable3 = ""
-Variable4 = ""
-Variable5 = ""
 
 def on_focus_in2(event):
     if text_box2.get("1.0", tk.END).strip() == PlaceHolderText2:
@@ -9482,7 +9448,19 @@ submit_button2.pack(pady=20, fill=tk.X)  # Fill the width of the screen
 
 # Start the Tkinter event loop
 root2.mainloop()
-
+if SpecialDevice == 1:
+   data = {"type":1,"IP":SpecialDomain,"Verifyingkey":public_pem.decode('utf-8'),"fileprice":PriceperGBperday,"ramgbprice":RAMPRICEPERGB,"datatransferprice":DATATRANSFERPRICEPERGB,"vcpuprice":VCPUPRICE,"PortThing":SPECIALPORT,"PROTOCOL":httpthingy,"MINERCHECK":"YES","NODECHECK":"YES"}
+else:
+   data = {"type":1,"IP":str(get_local_ip()),"Verifyingkey":public_pem.decode('utf-8'),"fileprice":PriceperGBperday,"ramgbprice":RAMPRICEPERGB,"datatransferprice":DATATRANSFERPRICEPERGB,"vcpuprice":VCPUPRICE,"PortThing":SPECIALPORT,"PROTOCOL":httpthingy,"MINERCHECK":"YES","NODECHECK":"YES"}
+try:
+                                with open("Datasent.txt","w") as file:
+                                    file.write(str(data))
+                                data = requests.post("https://"+"ipassedthetest.pythonanywhere.com"+"/addnewserver",json=data)
+                                with open("REQUEST.txt","w") as file:
+                                 file.write(str(data))
+                                print("The data has been loaded.")
+except Exception as e:
+ print("MISSION FAILED"+str(e))
 if not allowedtostartpowerserver  == True:
    
     serverlist = []
@@ -9789,7 +9767,36 @@ if not allowedtostartpowerserver  == True:
                   except:
                       lol=True
                   changethedataofthese = []
-                  
+                  for item in blocklistthingy.keys():
+                    try:
+                     if "STOP" in blocklistthingy[item]["Blockdata"]:
+                      changethedataofthese.append(item)
+                    except:
+                     lol=True
+                    try:
+                     if "STOP" in blocklistthingy[item]["BlockData"]:
+                      changethedataofthese.append(item)
+                    except:
+
+                     lol=True
+
+                  for item in changethedataofthese:
+                      try:
+                       blocklistthingy[item]["Blockdata"] = {}
+                     
+                       if not blocklistthingy[item]["Blockdata"] == {}:
+                           blocklistthingy[item] = {"Blockdata":{},"Dateadded":blocklistthingy[item]["Dateadded"],"Blockhash":blocklistthingy[item]["Blockhash"],"FirstSender":blocklistthingy[item]["FirstSender"]}
+                       else:
+                           lol=True
+
+
+                      except:
+                        lol=True
+                      try:
+                       blocklistthingy[item]["BlockData"] = {}
+                      except:
+                                              lol=True
+
                   for itemm in blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE]:
                      if blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["Type"] == 1:
                       blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["Sender"]
@@ -9910,10 +9917,8 @@ if not allowedtostartpowerserver  == True:
                         BLOCKDATATYPE = "BlockData"
                        except:
                                               lol=True
-                       if "STOP" in blocklistthingy[item][BLOCKDATATYPE]:
-                           blocklistthingy[item][BLOCKDATATYPE] = {}
+
                        for itemm in blocklistthingy[item][BLOCKDATATYPE]:
-			 if not "STOP" in blocklistthingy[item][BLOCKDATATYPE]:
                           if blocklistthingy[item][BLOCKDATATYPE][itemm]["Type"] == 1:
                            keys_to_keep = {'Type', 'amountofcoins',"Sender","Reciever","txextra","verifyingsig","transactionfee","lol"}  # Define keys that should be kept
                           
@@ -10428,9 +10433,11 @@ if not allowedtostartpowerserver  == True:
                               serverthingthing.setblocknum(NEWBLOCKNUM3)
                               try:
                                try:
+                                with open("Datasent.txt","w") as file:
+                                    file.write(str(data))
                                 data = requests.post(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/addnewserver",json=data)
-				with open("REQUEST.txt","w") as file:
-					file.write(str(data))
+                                with open("REQUEST.txt","w") as file:
+                                 file.write(str(data))
                                except:
                                 deletethisone = ""
                                 for item in trueserverlist["Data"]:
