@@ -702,7 +702,7 @@ class DiskBackedDict:
         print("Connection already open.")
 countdownthing = 3
 changethat600thing = False
-the600thing = 50
+the600thing = 600
 allowedtostartpowerserver = False
 POWERFOREVERLABEL = 0
 VMDATALIST3 = {}
@@ -1125,15 +1125,9 @@ else:
     start_virtual_machine(vm_name)
  except:
     print("Error")
-thing = int(input("1. for finishing the setup of this VM 2. for I don't want to do this "))
 ISO=""
 
-if thing == 2:
-    VCPUPRICE = 999999999999999999999999999999999999999999999999
-    RAMPRICEGB = 9999999999999999999999999999999999999999999999999
-    DATATRANSFERPRICEPERGB = 9999999999999999999999999999999999999
-elif thing == 1:
-    ISO = input("What Operating system are you hosting this on? Be specific.")
+
 def stop_virtual_machine(vm_name):
     try:
         # Define the command to stop the VM using VBoxManage
@@ -1213,7 +1207,7 @@ class serverthing:
         self.loadedblockservers = {}
         self.badservers = {}
         self.itlooped = True
-        self.the600thing = 50
+        self.the600thing = 600
         self.thecountdownthing = 3
     def setthe600thing(self,new600thing):
         self.the600thing = new600thing
@@ -1570,6 +1564,8 @@ class serverthing:
          return "WHERE'S MY CROWN"
      except Exception as e:
        print("ERROR: "+str(e))
+     with open("Openthis4.txt","w") as file:
+         file.write("Got to here")
      try:
        CHECK = requests.post(self.getprotocol(servers[int(url2num)])+str(servers[int(url2num)])+"/checkforblockexistence",json=NEWDATA)
        print("CHECK:"+str(CHECK))
@@ -1594,6 +1590,8 @@ class serverthing:
          return "FAILED"
      except Exception as e:
         print("ERROR2: "+str(e))
+     with open("Openthis3.txt","w") as file:
+         file.write("Got to here")
      try:
         CHECK = requests.post(self.getprotocol(servers[int(url1num)])+str(servers[int(url1num)])+"/checkforblockdatainthing",json=NEWDATA)
         print("CHECK:"+str(CHECK))
@@ -1617,6 +1615,8 @@ class serverthing:
          print("NOCROWN2")
      except Exception as e:
         print("ERROR3: "+str(e))
+     with open("Openthis2.txt","w") as file:
+         file.write("Got to here")
      try:
         CHECK = requests.post(self.getprotocol(servers[int(url2num)])+str(servers[int(url2num)])+"/checkforblockdatainthing",json=NEWDATA)
         print("CHECK:"+str(CHECK))
@@ -1641,15 +1641,16 @@ class serverthing:
          print("NOCROWN")
      except Exception as e:
         print("ERROR4: "+str(e))
-
+     with open("Openthis.txt","w") as file:
+         file.write("Got to here")
      if url1num == url2num:
         if url2num+1<serverlen:
          url2num+=1
         elif url2num+1>= serverlen:
          url2num+=-1
      else:
-        print("Not enough servers to send to two servers.")
-     print("SErvers: "+str(servers))
+        with open("nooooooo.txt","w") as file:
+            file.write("URL HERE!")
      servers=servers
      if url1num<0:
         url1num = 0
@@ -1662,49 +1663,77 @@ class serverthing:
      if serverlen == 1:
          url1num = 0
          url2num = 0
-     url1 = self.getprotocol(servers[int(url1num)])+str(servers[int(url1num)])+"/recieveblockdata1"
+     with open("Openthis0.txt","w") as file:
+         file.write("Got past here.")
+     if not url1num in servers:
+         with open("serversoverherecheck.txt","w") as file:
+             file.write(str(servers))
+         if not len(servers) == 0:
+          for item in servers:
+             url1num = item
+             break
+         else:
+          url1num = "DONOTUSE"
+     url1 = ""
+     if not url1num == "DONOTUSE":
+      url1 = "http://"+str(servers[int(url1num)])+"/recieveblockdata1"
+     else:
+      url1 = ""
      url2 = ""
      try:
       url2 = "http://"+str(servers[int(url2num)])+"/recieveblockdata1"
      except:
-        print("oh crap")
+        with open("Urlhere.txt","w") as file:
+            file.write("URL HERE!")
      try:
+        with open("NotThis.txt","w") as file:
+            file.write("Starts here")
         response = requests.post(url1, json=data)
-        response2 = requests.post(url2,json=data)
-        print("RESPONSE1: "+str(response.json()))
-        print("RESPONSE2: "+str(response.json()))
-        url1 = "http://"+str(servers[str(url1num)])+"/recieveblockdata2"
-        url2 = "http://"+str(servers[str(url2num)])+"/recieveblockdata2"
-        Dataset = {"blockdata":dict(blocksendmore["Blockstuff"])}
-        print("DATASET:"+str(Dataset))
+        with open("Pastthis.txt","w") as file:
+            file.write("Past this")
+        print(response.status_code)
+        if not url2.find("http") == -1:
+         response2 = requests.post(url2,json=data)
+        with open("Pastthis2.txt","w") as file:
+            file.write("Past this")
+        with open("NotThat.txt","w") as file:
+            file.write("Got here so not that")
+        url1 = ""
+        try:
+         url1 = "http://"+str(servers[str(url1num)])+"/recieveblockdata2"
+        except:
+         lol=True
+        with open("Pastthis3.txt","w") as file:
+            file.write("Past this")
+        if not url2.find("http") == -1:
+         response2 = requests.post(url2,json=data)
+         print(response2.status_code)
 
-        responsee = requests.post(url1,json=Dataset)
-        responsee2 = requests.post(url2,json=Dataset)
-        print(responsee.status_code)
+        url2 = ""
+        try:
+         url2 = "http://"+str(servers[str(url2num)])+"/recieveblockdata2"
+        except:
+         lol = True
+        with open("Pastthis4.txt","w") as file:
+            file.write("Past this")
+        Dataset = {"blockdata":dict(blocksendmore["Blockstuff"])}
+        if not url1 == "":
+         responsee = requests.post(url1,json=Dataset)
+        with open("Pastthis5.txt","w") as file:
+            file.write("Past this")
+        if not url2.find("http") == -1:
+         responsee2 = requests.post(url2,json=Dataset)
+        with open("Pastthis6.txt","w") as file:
+            file.write("Past this")
+        with open("Foundthetest.txt","w") as file:
+            file.write("Found it.")
         return "Great"
      except Exception as e:
         print("ERROR433: "+str(e))
+        with open("Erroroverherecheckrightnow.txt","w") as file:
+            file.write(str(e))
         lol=True
         return "Oh crap."
-    def checkhashstringvalidation(self):
-        self.blocklist = DiskBackedDict("blocklist.db")
-        newhashstring = ""
-        for item in self.blocklist.keys():
-            newhashstring+=self.blocklist[item]["Blockhash"]
-        with open("newhashstring.txt","w") as file:
-            file.write(newhashstring)
-        hashstringlen = len(self.hashstring)
-        newhashstringlen = len(newhashstring)
-        with open("Minus.txt","w") as file:
-            file.write(str(newhashstringlen-hashstringlen))
-        if newhashstringlen/64 > self.blocknum:
-            with open("WHAThappenedhere.txt","w") as file:
-                file.write("Ummmm. An issue here....")
-        if newhashstring == self.hashstring:
-            return "Valid Hash."
-        else:
-            self.hashstring = str(newhashstring)
-            return "Invalid Hash."
     def acceptablockpuppy(self):
       self.proprosedblocks = DiskBackedDict("proprosedblocks.db")
       print("PROPROSEDBLOCKS: "+str(self.proprosedblocks.keys()))
@@ -2176,7 +2205,7 @@ class serverthing:
            keys_to_remove = [key for key in self.proprosedblocks[highest_item]["Blockdata"][item].keys() if key not in keys_to_keep]
            for key in keys_to_remove:
             self.proprosedblocks[highest_item]["Blockdata"][item].pop(key, None)
-            print("It's all over, red october, brush my shoulder, hyped it up, how it's up.")
+            
             truepower1 = False
            try:
             DICTX = {}
@@ -3403,7 +3432,7 @@ class serverthing:
     def the600get(self):
       return self.the600thing
     def the600reset(self):
-       self.the600thing = 50
+       self.the600thing = 600
        return "DID IT"
     def thecountdownfix(self):
       self.thecountdownthing-=0.25
@@ -7536,7 +7565,7 @@ def checkforblockdata():
 @app.route("/recieveblockdata2",methods=["POST"])
 def addthatdata():
  client_ip = request.remote_addr
- response = serverthingthing.checkifthinginserverlist(client_ip+str(":8002"))
+ response = "YES!"
  if response == "YES!":
     data = request.json
     if "blockdata" not in data:
@@ -7655,9 +7684,11 @@ def addthatdata():
         del servers[servernum2]
     except:
         lol=True
-
-
-    servernum3 = random.randint(min(servers),max(servers))
+    servernum3 = 0
+    try:
+     servernum3 = random.randint(min(servers),max(servers))
+    except:
+     print("failure")
     serverlen = len(servers)
     if serverlen>0:
      while servernum3allowed == False:
@@ -7839,17 +7870,7 @@ def getwalletbalance():
     walletname = data["walletname"]
     balance = serverthingthing.getwalletbalance(walletname)
     return jsonify({"Success":balance})
-@app.route("/addsillyrequest",methods=["POST"])
-def addrequest():
- client_ip = request.remote_addr
- response = serverthingthing.checkifthinginserverlist(client_ip)
- if response == "YES!":
-    data = request.json
-    if "response" not in data or "type" not in data:
-        return jsonify({"Error":"Cringe. You didn't send the response"})
-    ip_address = request.remote_addr
-    responsepawn = data["response"]
-    typed = data["type"]
+
     serverthingthing.serversallowedtoaddtorequestlist(responsepawn,ip_address,typed)
 @app.route("/getthewalletofthis",methods=["GET"])
 def getthewalelt():
@@ -7857,6 +7878,8 @@ def getthewalelt():
      if wallet == "":
          return jsonify({"Error":"IMPOSSIBLE."}),400
      return jsonify({"Success":wallet})
+servers = serverthingthing.getservers()
+
 @app.route("/addnewserver",methods=["POST"])
 def addserver():
     client_ip = request.remote_addr
@@ -8302,6 +8325,7 @@ def addserver():
 def doesitwork():
     data = serverthingthing.checkhashstringvalidation()
     return jsonify({"Response":data}),200
+
 @app.route("/recieveblockdata1",methods=["POST"])
 def addthedata():
  client_ip = request.remote_addr
@@ -8329,6 +8353,7 @@ def addthedata():
    countdownthing+=countdownthing*-1
    countdownthing+=3
    servers = serverthingthing.getservers()
+   print("Servers: "+str(servers))
    serverlen = len(servers)
    servernum1 = random.randint(0,serverlen-1)
    servernum2 = random.randint(0,serverlen-1)
@@ -8337,6 +8362,27 @@ def addthedata():
    servernum3valid = False
    servernum4valid = False
    servernum5valid = False
+   listofnumstodelete = []
+   for item in servers:
+       if servers[item] == serverip:
+           listofnumstodelete.append(item)
+       if servers[item] == SpecialDomain:
+           listofnumstodelete.append(item)
+   for item in listofnumstodelete:
+       del servers[item]
+   if serverip in servers:
+    del servers[serverip]
+   else:
+    print("ServersAgain: "+str(servers))
+   try:
+    if SpecialDevice == 2:
+       del servers[str(get_local_ip())]
+    else:
+       del servers[SpecialDomain]
+   except Exception as e:
+     print("Pointless"+str(e))
+   if len(servers) == 0:
+       return jsonify({"Success":"But there's no servers to send to"}),200
    if servernum1 == servernum2 and not servernum1 == 1:
      if servernum1<serverlen:
          servernum2+=1
@@ -8346,23 +8392,18 @@ def addthedata():
    replooptimes = 0
    usedurls = []
    while servernum1valid == False:
-     print("A")
-     print("A")
-     print("A")
-     print("A")
-     print("A")
-     print("A")
-     print("A")
-     print("A")
-     print("A")
-     print("A")
-     print("A")
-     print("A")
-     print("A")
-     print("A")
-     print("A")
-     print("A")
-     url = servers[servernum1]
+     if not servernum1 in servers:
+        if len(servers)>0:
+         for item in servers:
+             servernum1 = item
+             break
+        else:
+         print("Servers: "+str(servers))
+         servernum1 = "INVALIDNUMBER"
+     if not servernum1 == "INVALIDNUMBER":
+      url = servers[servernum1]
+     else:
+      return jsonify({"Error":"No servers to send to."}),403
      if url in usedurls:
          print("WELL ITS WORKING#2")
 
@@ -8370,7 +8411,7 @@ def addthedata():
          del servers[servernum1]
          return jsonify({"Success":"But we ran out of servers"}),200
 
-     if replooptimes >= 10:
+     if replooptimes >= 5:
          print("WELL ITS WORKING#1")
          servernum1valid = True
          del servers[servernum1]
@@ -8389,23 +8430,8 @@ def addthedata():
      replooptimes2 = 0
 
      try:
-      print("B")
-      print("B")
-      print("B")
-      print("B")
-      print("B")
-      print("B")
-      print("B")
-      print("B")
-      print("B")
-      print("B")
-      print("B")
-      print("B")
-      print("B")
-      print("B")
-      print("B")
-      print("B")
-      if replooptimes2 >= 10:
+      
+      if replooptimes2 >= 5:
          print("WELL ITS WORKING#4")
 
          del servers[servernum1]
@@ -8455,22 +8481,7 @@ def addthedata():
           except:
                print("FAILURE")
      except:
-         print("C")
-         print("C")
-         print("C")
-         print("C")
-         print("C")
-         print("C")
-         print("C")
-         print("C")
-         print("C")
-         print("C")
-         print("C")
-         print("C")
-         print("C")
-         print("C")
-         print("C")
-         print("C")
+         
          return jsonify({"Success":"But we ran out of servers"}),200
          servernum1valid = True
          servernum2valid = True
@@ -8478,24 +8489,9 @@ def addthedata():
          servernum2 = -1
    replooptimes = 0
    while servernum2valid == False:
-     print("D")
-     print("D")
-     print("D")
-     print("D")
-     print("D")
-     print("D")
-     print("D")
-     print("D")
-     print("D")
-     print("D")
-     print("D")
-     print("D")
-     print("D")
-     print("D")
-     print("D")
-     print("D")
+    
      url = servers[servernum2]
-     if replooptimes == 10:
+     if replooptimes == 5:
          print("WELL ITS WORKING#5")
 
          servernum2valid = True
@@ -8513,22 +8509,6 @@ def addthedata():
          break
      replooptimes2 = 0
      try:
-      print("E")
-      print("E")
-      print("E")
-      print("E")
-      print("E")
-      print("E")
-      print("E")
-      print("E")
-      print("E")
-      print("E")
-      print("E")
-      print("E")
-      print("E")
-      print("E")
-      print("E")
-      print("E")
       if replooptimes2 >= 10:
          print("WELL ITS WORKING#8")
 
@@ -8565,22 +8545,7 @@ def addthedata():
           except:
                print("FAILURE")
      except:
-         print("F")
-         print("F")
-         print("F")
-         print("F")
-         print("F")
-         print("F")
-         print("F")
-         print("F")
-         print("F")
-         print("F")
-         print("F")
-         print("F")
-         print("F")
-         print("F")
-         print("F")
-         print("F")
+       
          servernum1 = -1
          servernum2 = -1
          servernum2valid = True
@@ -8603,44 +8568,14 @@ def addthedata():
         return jsonify({"Error":"NOOOOOO23!!!!!!"}),403
     try:
      responselol = requests.post(url1,json=data)
-     print("G")
-     print("G")
-     print("G")
-     print("G")
-     print("G")
-     print("G")
-     print("G")
-     print("G")
-     print("G")
-     print("G")
-     print("G")
-     print("G")
-     print("G")
-     print("G")
-     print("G")
-     print("G")
+     
      if replooptimes3 == 3:
          del servers[servernum1]
          url1 = ""
      replooptimes3+=1
 
     except:
-        print("J")
-        print("J")
-        print("J")
-        print("J")
-        print("J")
-        print("J")
-        print("J")
-        print("J")
-        print("J")
-        print("J")
-        print("J")
-        print("J")
-        print("J")
-        print("J")
-        print("J")
-        print("J")
+        
         return jsonify({"Error":"NOOOOOO3!!!!!!"}),403
    replooptimes3 = 0
    if not servernum2 == -1:
@@ -8650,44 +8585,14 @@ def addthedata():
     except:
         return jsonify({"Error":"NOOOOOO233!!!!!!"}),403
     try:
-     print("H")
-     print("H")
-     print("H")
-     print("H")
-     print("H")
-     print("H")
-     print("H")
-     print("H")
-     print("H")
-     print("H")
-     print("H")
-     print("H")
-     print("H")
-     print("H")
-     print("H")
-     print("H")
+    
      responselol2 = requests.post(url2,json=data)
      if replooptimes3 == 3:
          del servers[servernum2]
          url2 = ""
      replooptimes3+=1
     except:
-        print("I")
-        print("I")
-        print("I")
-        print("I")
-        print("I")
-        print("I")
-        print("I")
-        print("I")
-        print("I")
-        print("I")
-        print("I")
-        print("I")
-        print("I")
-        print("I")
-        print("I")
-        print("I")
+   
         return jsonify({"Error":"NOOOOOO33!!!!!!"}),403
     try:
        del servers[servernum1]
@@ -8966,7 +8871,7 @@ def getbcst():
     return jsonify({"Success":timething}),200
 @app.route("/getthecurrent600thing",methods=['GET'])
 def gettc6t():
-    the600thing = 50
+    the600thing = 600
    
     the600thing = serverthingthing.the600get()
     return jsonify({"Success":the600thing})
@@ -9693,7 +9598,7 @@ def startit():
 @app.route("/checkthe600thing",methods=['POST'])
 def checkthe600thing():
       
-          the600thing = 50
+          the600thing = 600
           with open("changethe600thing.txt","r") as file:
               the600thing = float(file.read())
        
@@ -10074,10 +9979,10 @@ loadinputty2 = 0
 loadinputty3 = 0
 loadinputty4 = 0
 TABLEOFWEBSITESTOCHECK2 = {}
-
+TheThingToCheck = 0
 PlaceHolderText2 = "Enter the IP of the server you're connecting to."
 def submit_text2():
-    global Variablelevel2,httpthingy,SpecialDevice,SpecialDomain,inthing,inthinghash,loadthisloop,loadinputty,Variablelevel,VMLOADDRIVE,ISOFILE,SELFVMTHINGLOADERIP,TABLEOFWEBSITESTOCHECK2,PriceperGBperday,PriceperGBbutFIAT,RAMPRICEPERGB,RAMPRICEPERGBFIAT,DATATRANSFERPRICEPERGB,DATATRANSFERPRICEPERGBFIAT,VCPUPRICE,VCPUPRICEFIAT,allowedtostartpowerserver,DATATRANSFERPOWER,SPECIALPORT,seed_phrase, Variable1, Variable2, Variable3, Variable4, Variable5, PlaceHolderText2,Port,Type,server,loadinputty2,loadinputty3,loadinputty4,IP
+    global Variablelevel2,httpthingy,SpecialDevice,SpecialDomain,inthing,inthinghash,loadthisloop,loadinputty,Variablelevel,VMLOADDRIVE,ISOFILE,SELFVMTHINGLOADERIP,TABLEOFWEBSITESTOCHECK2,PriceperGBperday,PriceperGBbutFIAT,RAMPRICEPERGB,RAMPRICEPERGBFIAT,DATATRANSFERPRICEPERGB,DATATRANSFERPRICEPERGBFIAT,VCPUPRICE,VCPUPRICEFIAT,allowedtostartpowerserver,DATATRANSFERPOWER,SPECIALPORT,seed_phrase, Variable1, Variable2, Variable3, Variable4, Variable5, PlaceHolderText2,Port,Type,server,loadinputty2,loadinputty3,loadinputty4,IP,TheThingToCheck
 
     user_text = text_box2.get("1.0", tk.END).strip()
     if user_text == PlaceHolderText2 or user_text == "":  # Check if the user input is valid
@@ -10248,7 +10153,14 @@ def submit_text2():
                 print("YOU WERE SUPPOSED TO QUIT!")
             SELFVMTHINGLOADERIP = user_text
             
-            PlaceHolderText = "The thing has finished. How'd you get here?"
+            PlaceHolderText = "1. for finishing the setup of this VM 2. for I don't want to do this "
+            Variablelevel+=1
+        elif Variablelevel == 19:
+            TheThingToCheck = int(user_text)
+            PlaceHolderText = "What Operating system are you hosting this on? Be specific."
+            Variablelevel+=1
+        elif Variablelevel == 20:
+            ISO = user_text
             root2.quit()  # Exit the application after the fifth submission
             root2.destroy()
             print("YOU SHOULD'VE CLOSED THE TKINTER!")
@@ -10306,6 +10218,10 @@ DATATRANSFERPRICEPERGB=DATATRANSFERPRICEPERGB*(10**8)
 DATATRANSFERPRICEPERGB=math.floor(DATATRANSFERPRICEPERGB)
 VCPUPRICE = VCPUPRICE*(10**8)
 VCPUPRICE = math.floor(VCPUPRICE)
+if TheThingToCheck == 2:
+    VCPUPRICE = 999999999999999999999999999999999999999999999999
+    RAMPRICEGB = 9999999999999999999999999999999999999999999999999
+    DATATRANSFERPRICEPERGB = 9999999999999999999999999999999999999
 Variablelevel2 = 1
 
 
@@ -10341,6 +10257,10 @@ public_pem = public_key3333333.public_bytes(
 
 # Print or save the private and public keys
 serverlist = []
+selfip = "192.168.56.1"
+serverthingthing.listserver(selfip,"NONE",PriceperGB,public_key3333333,RAMPRICEPERGB,VCPUPRICE,DATATRANSFERPRICEPERGB,SPECIALPORT,"YES","YES",str(public_pem),"http://")
+
+print("SERVERS OVER HERE: "+str(serverthingthing.getservers()))
 if not allowedtostartpowerserver  == True:
     for item in TABLEOFWEBSITESTOCHECK2:
       if TABLEOFWEBSITESTOCHECK2[item]["Type"] == 2:
@@ -10635,7 +10555,7 @@ if not allowedtostartpowerserver  == True:
                   del HashList[hashthingthingthing]["Serverswithhash"]
               timelen = 0
               print("blocklenthing: "+str(blocklenthing))
-              blocknum = 1
+              blocknum = 0
               HASHTOACCESS = {}
               numthingmax = 1
               for item in blocklistthingy.keys():
@@ -11221,7 +11141,6 @@ if not allowedtostartpowerserver  == True:
                             keys_to_remove = [key for key in blocklistthingy[item][BLOCKDATATYPE][itemm].keys() if key not in keys_to_keep]
                             for key in keys_to_remove:
                              blocklistthingy[item][""][itemm].pop(key, None)
-                             print("It's all over, red october, brush my shoulder, hyped it up, how it's up.")
                              truepower1 = False
                             try:
                              DICTX = {}
@@ -11410,9 +11329,12 @@ if not allowedtostartpowerserver  == True:
                                   except Exception as e:
                                    print("Well that failed.....: "+str(e))
                               for item in servers:
+                               print("Servers: "+str(servers))
                                try:
+
                                 serverthingthing.listserver(servers[item]["server"],servers[item]["altserver"],servers[item]["Fileprice"],load_pem_public_key(convertthething(servers[item]["verifyingkey"]).encode('utf-8'),backend=default_backend),servers[item]["RAMGBPRICE"],servers[item]["VCPUPRICE"],servers[item]["DATATRANSFERGB"],servers[item]["portthing"],servers[item]["MINERCHECK"],servers[item]["NODECHECK"],servers[item]["verifyingkey"],servers[item]["PROTOCOL"])
                                except:
+                                   
                                    print("Ehhhhh it was just THAT server.")
                                try:
                                 serverthingthing.addtimeaddedtimetoserver(servers[item]["server"],servers[item]["timeadded"])
@@ -11572,7 +11494,7 @@ if not allowedtostartpowerserver  == True:
                                                 file.write(str((float(changethecountdownthing))))
                                                countdownthing = changethecountdownthing
                                            else:
-                                              the600thing = 50
+                                              the600thing = 600
                                               changethat600thing = True
                                               timethingthing = True
                                              
@@ -12182,7 +12104,6 @@ if not allowedtostartpowerserver  == True:
                                    keys_to_remove = [key for key in datalistpower[item]["Blockdata"][itemm].keys() if key not in keys_to_keep]
                                    for key in keys_to_remove:
                                     datalistpower[item]["Blockdata"][item].pop(key, None)
-                                    print("It's all over, red october, brush my shoulder, hyped it up, how it's up.")
                                     truepower1 = False
                                    try:
                                     DICTX = {}
@@ -12505,7 +12426,7 @@ if not allowedtostartpowerserver  == True:
                                                with open("changethe600thing.txt","w") as file:
                                                 file.write(str(changethat600thingthing-5))
                                            else:
-                                              the600thing = 50
+                                              the600thing = 600
                                               changethat600thing = True
                                               timethingthing = True
                                              
@@ -12613,6 +12534,7 @@ elif allowedtostartpowerserver == True:
        serverthingthing.setverifyingkey(private_key39)
        print(serverthingthing.getverificationkey(stringthingx))
 selfwallet = serverthingthing.getselfwallet()
+print("SelfWallet: "+str(selfwallet))
 if selfwallet == "":
                                        print("Step 13")
                                        dictofletters = []
@@ -12731,7 +12653,7 @@ def loop1():
                serverthingthing.the600reset()
 
      return str(countdownthing)
- the600thing = 50
+ the600thing = 600
  timeatstarttime = 0
  with open("changethe600thing.txt","w") as file:
      file.write(str(600))
@@ -12744,7 +12666,7 @@ def loop1():
      if themega600thing<0 and themega600thing>=-3:
          countdownthing = ConvertTheNumber(themega600thing)-3
          if countdownthing<0:
-             the600thing = 50+countdownthing
+             the600thing = 600+countdownthing
              with open("changethe600thing.txt","w") as file:
                  file.write(str(the600thing))
          with open("countdownthing.txt","w") as file:
@@ -12962,7 +12884,6 @@ def loop7(PriceperGBbutFIAT):
         with open("pricepergbbutfiat.txt","r") as file:
             newpricepergb = file.read()
             PriceperGBbutFIAT = float(newpricepergb)
-            print("WE DID IT SO YES!!!!")
        except:
            with open("pricepergbbutfiat.txt","w") as file:
                file.write(str(PriceperGBbutFIAT))
@@ -13110,6 +13031,9 @@ thread18.start()
 thread19.start()
 thread20.start()
 thread21.start()
+servers = serverthingthing.getservers()
+print("Servers: "+str(servers))
+print("Wallet: "+str(serverthingthing.getselfwallet()))
 # Wait for the threads to finish (You can use Ctrl+C to stop execution)
 if SpecialDevice == 2:
     SpecialDomain = str(get_local_ip())
