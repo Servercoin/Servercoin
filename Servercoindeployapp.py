@@ -13038,7 +13038,6 @@ print("Wallet: "+str(serverthingthing.getselfwallet()))
 if SpecialDevice == 2:
     SpecialDomain = str(get_local_ip())
 serverthingthing.listserver(SpecialDomain,"101.101.101.101",PriceperGB,private_key3333,RAMPRICEPERGB,VCPUPRICE,DATATRANSFERPRICEPERGB,SPECIALPORT,"YES","YES",str(public_pem),httpthingy)
-print("THE START HAS SERVERED")
 print("LOCALIP2: "+str(get_local_ip2()))
 if __name__ == "__main__":
     local_ip = get_local_ip2()
