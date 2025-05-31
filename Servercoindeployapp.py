@@ -572,15 +572,12 @@ public_pem = public_key3333333.public_bytes(
 
 # Print or save the private and public keys
 
-def createseedphrase():
-    letterdict = []
-    leterstring = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    for item in leterstring:
-        letterdict.append(item)
-    letterstring2 = ""
-    for i in range(18):
-     letterstring2 = letterstring2+letterdict[random.randint(0,61)]
-    return leterstring
+import secrets
+import string
+
+def createseedphrase(length=18):
+    charset = string.ascii_letters + string.digits  # a-zA-Z0-9
+    return ''.join(secrets.choice(charset) for _ in range(length))
 def createvmstuff(vm_name):
     leterstring = createseedphrase()
     VMDATALIST[leterstring] = {"vmname":vm_name,"Completed":False,"PublicKey":"","PrivateKey":"","IP":"","WalletName":"","Active":True}
@@ -12541,11 +12538,7 @@ if selfwallet == "":
                                        stringthing = ""
                                        for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz":
                                         dictofletters.append(letter)
-                                       for i in range(18):
-                                        numthing = random.randint(0,len(dictofletters)-1)
-                                        stringthing = stringthing+dictofletters[numthing]
-       
-                                       seed_phrase = stringthing
+                                       seed_phrase = createseedphrase()
                                        with open("seedphrase.txt","w") as file:
                                         file.write(seed_phrase)
 # Convert the BIP39 seed phrase to a seed
