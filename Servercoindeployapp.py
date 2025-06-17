@@ -3581,28 +3581,33 @@ class serverthing:
         return self.selfverifyingkey
     def startfiletransaction(self,filehash,verifyingsig,walletname,filesize,messagetoverifyownership,dayslastingfor,filedata,filename,filetype):
         self.pendingfiletransactionnum += 1
+        max_drive = max(self.harddrives, key=lambda x: self.harddrives[x]['DataAvailable'])
+        full_path = os.path.join(max_drive, "Wallets")
+
+        if not os.path.exists(full_path):
+           os.makedirs(full_path)
+        second_path = os.path.join(full_path,str(walletname))
+        if not os.path.exists(second_path):
+           os.makedirs(second_path)
+        second_path = os.path.join(second_path,str(filename))
+
         dayslastingfor+=-1
         TRUETHINGTHING = False
         transactionnum = self.pendingfiletransactionnum
         verifyingkey = load_pem_public_key(convertthething(self.wallets[walletname]["verifyingkeysummoningthing"]).encode('utf-8'), default_backend())
-        print(verifyingkey)
         try:
             verifyingkey.verify(
               verifyingsig,
               messagetoverifyownership.encode('utf-8'),
               ec.ECDSA(hashes.SHA256())
             )
-            print("Signature is valid.")
             TRUETHINGTHING = True
         except:
-           
-          print("Signature is invalid.")
-     
+           lol=True
+
         if TRUETHINGTHING == True:
          self.pendingfiletransactions[self.pendingfiletransactionnum] = {"txextra":"o","filetype":filetype,"filename":filename,"verifyingsig":"O","fileprice":0,"filehash":filehash,"walletname":walletname,"filesize":filesize,"dayslastingfor":dayslastingfor,"filedata":filedata,"transactionfee":self.averagetransactionfee,"txextra2":"o"}
-         print("YESSSSS!")
         else:
-            print("WE <EESSSED UP!!!!")
             return "500"
         filepricething = (filesize/(10**9)*PriceperGB*dayslastingfor)
         if not walletname in self.pendingwalletchanges:
@@ -3616,16 +3621,14 @@ class serverthing:
              stringthinghere = stringthinghere+letterdict[random.randint(1,35)]
          txextrathing = remove_sql(stringthinghere)
          stringthingtoverify = str(filesize)+str(dayslastingfor)+str(self.wallet)+str(math.floor(filepricething))+str(txextrathing)+str(filehash)+str(math.floor(self.averagetransactionfee))
-         print("VERIFYTHISPART1: "+str(stringthingtoverify))
          signature = self.selfverifyingkey.sign(
              stringthingtoverify.encode('utf-8'),
              ec.ECDSA(hashes.SHA256())
             )
 
-        
-        
+
+
          self.pendingfiletransactions[self.pendingfiletransactionnum]["txextra"] = txextrathing
-         print("Part1:   "+str(stringthingtoverify))
          public_key3333 = self.wallets[self.wallet]["verifyingkey"]
          try:
                          public_key3333.verify(
@@ -3633,32 +3636,33 @@ class serverthing:
                           stringthingtoverify.encode('utf-8'),
                           ec.ECDSA(hashes.SHA256())
                          )
-                         print("Signature is valid.")
-                       
+
          except:
-             print("YOU MESSED UP!")
+             lol=True
          self.pendingwalletchanges[self.wallet] = {
           "Coins": self.wallets[self.wallet]["Coins"],
           "txextras": dict(self.wallets[self.wallet]["txextras"])
          }
-         print("Filepricething"+str(filepricething))
          self.pendingfiletransactions[self.pendingfiletransactionnum]["verifyingsig"] = base64.b64encode(signature).decode('utf-8')
-         print("SIGNATURE: "+str(self.pendingfiletransactions[self.pendingfiletransactionnum]["verifyingsig"]))
          if filepricething>self.pendingwalletchanges[walletname]["Coins"]:
              return "SORRY WONT WORK, TOO MANY COINS LOL."
-         max_drive = max(self.harddrives, key=lambda x: self.harddrives[x]['DataAvailable'])
-         with open(str(max_drive)+str(filename)+".txt",'w') as file:
-             file.write(filedata)
-         self.files[filename] = {"TypeOfFile":filetype,"STORAGETYPE":2,"walletname":walletname,"filesize":filesize,"filename":str(max_drive)+filename}
+         Cando = True
+         newkey = ""
+         for item in stuffindata:
+              if not item == "/":
+                  newkey = str(item)
+
+         if Cando == True and filename.find("/") == -1 and filename.find(newkey) == -1:
+           with open(second_path,'wb') as file:
+             file.write(base64.b64decode(filedata))
+         self.files[filename] = {"TypeOfFile":filetype,"STORAGETYPE":2,"walletname":walletname,"filesize":filesize,"filename":second_path}
          self.pendingwalletchanges[walletname]["Coins"]+=-math.floor(filepricething)
          self.pendingfiletransactions[self.pendingfiletransactionnum]["fileprice"] = math.floor(filepricething)
-         print(str(walletname)+"Coins: "+str(self.pendingwalletchanges[walletname]["Coins"]))
          if walletname not in self.pendingwalletchanges:
           txextrathing = ""
-         
+
           for i in range(10):
              txextrathing = txextrathing+letterdict[random.randint(1,35)]
-          print("TXEXTRA: "+str(txextrathing))
           txextrathing = remove_sql(stringthinghere)
 
           self.pendingfiletransactions[self.pendingfiletransactionnum]["txextra2"] = txextrathing
@@ -3672,43 +3676,45 @@ class serverthing:
           self.pendingfiletransactions[self.pendingfiletransactionnum]["txextra2"] = txextrathing
           stringthingforbuyertoverify = str(filesize)+str("dayslastingfor:")+str(dayslastingfor)+str("fileprice:")+str(math.floor(filepricething))+"transactionamount:"+str(self.pendingfiletransactionnum)+"selfwallet:"+str(self.wallet)+"txextra:"+str(txextrathing)+"transactionfee:"+str(math.floor(self.pendingfiletransactions[self.pendingfiletransactionnum]["transactionfee"]))
           stringthinghere = ""
-          
+
           for i in range(10):
              stringthinghere = stringthinghere+letterdict[random.randint(1,35)]
           txextrathing = stringthinghere
           self.pendingfiletransactions[self.pendingfiletransactionnum]["txextra"] = txextrathing
           stringthingtoverify = str(filesize)+str(dayslastingfor)+str(self.wallet)+str(math.floor(filepricething))+str(txextrathing)+str(filehash)+str(math.floor(self.averagetransactionfee))
-          print("VERIFYTHISPART1: "+str(stringthingtoverify))
           signature = self.selfverifyingkey.sign(
              stringthingtoverify.encode('utf-8'),
              ec.ECDSA(hashes.SHA256())
             )
 
           self.pendingwalletchanges[self.wallet]["txextras"][txextrathing] = "Yes"
-         
+
           self.pendingwalletchanges[walletname]["txextras"][txextrathing] = "Yes"
           self.pendingfiletransactions[self.pendingfiletransactionnum]["fileprice"] = filepricething
           self.pendingfiletransactions[self.pendingfiletransactionnum]["verifyingsig"] = base64.b64encode(signature).decode('utf-8')
           self.pendingwalletchanges[walletname]["Coins"]+=-math.floor(filepricething)
-          print("TXEXTRA: "+str(txextrathing))
-          print(str(walletname)+"Coins: "+str(self.pendingwalletchanges[walletname]["Coins"]))
           if filepricething>self.pendingwalletchanges[walletname]["Coins"]:
              return "SORRY WONT WORK, TOO MANY COINS LOL."
           max_drive = max(self.harddrives, key=lambda x: self.harddrives[x]['DataAvailable'])
-          with open(str(max_drive)+str(filename)+".txt",'w') as file:
-             file.write(filedata)
-          self.files[filename] = {"TypeOfFile":filetype,"STORAGETYPE":2,"walletname":walletname,"filesize":filesize,"filename":str(max_drive)+filename}
+          Cando = True
+          newkey = ""
+          for item in stuffindata:
+              if not item == "/":
+                  newkey = str(item)
+
+          if Cando == True and filename.find("/") == -1 and filename.find(newkey):
+           with open(second_path,'wb') as file:
+             file.write(base64.b64decode(filedata))
+          self.files[filename] = {"TypeOfFile":filetype,"STORAGETYPE":2,"walletname":walletname,"filesize":filesize,"filename":second_path}
           if walletname not in self.pendingwalletchanges:
            self.pendingfiletransactions[self.pendingfiletransactionnum]["txextra2"] = txextrathing
            stringthingforbuyertoverify = str(filesize)+str("dayslastingfor:")+str(dayslastingfor)+str("fileprice:")+str(math.floor(filepricething))+"transactionamount:"+str(self.pendingfiletransactionnum)+"selfwallet:"+str(self.wallet)+"txextra:"+str(txextrathing)+"transactionfee:"+str(math.floor(self.pendingfiletransactions[self.pendingfiletransactionnum]["transactionfee"]))
-           print("PENDINGFILETRANSACTION: "+str(self.pendingfiletransactions[1]))
 
            return stringthingforbuyertoverify
 
           else:
-           self.pendingfiletransactions[self.pendingfiletransactionnum]["txextra2"] = txextrathing 
+           self.pendingfiletransactions[self.pendingfiletransactionnum]["txextra2"] = txextrathing
            stringthingforbuyertoverify = str(filesize)+str("dayslastingfor:")+str(dayslastingfor)+str("fileprice:")+str(math.floor(filepricething))+"transactionamount:"+str(self.pendingfiletransactionnum)+"selfwallet:"+str(self.wallet)+"txextra:"+str(txextrathing)+"transactionfee:"+str(math.floor(self.pendingfiletransactions[self.pendingfiletransactionnum]["transactionfee"]))
-           print("PENDINGFILETRANSACTION: "+str(self.pendingfiletransactions[1]))
 
            return stringthingforbuyertoverify
     def endthepend(self, walletname, transactionnum, verifyingsig, txextra):
@@ -4253,7 +4259,7 @@ class serverthing:
                except:
                  lol=True
 
-    def getfile(self,filename,verifyingsig,walletname):
+   def getfile(self,filename,verifyingsig,walletname):
         if self.files[filename]["TypeOfFile"] == "Private" and walletname == self.files[filename]["Walletname"]:
             verifyingkey = self.wallets[walletname]["verifyingkey"]
             tothemoonthing = True
@@ -4265,15 +4271,13 @@ class serverthing:
              )
             except:
                 tothemoonthing = False
-                print("TOTHEMOON")
             if tothemoonthing == True:
-               with open(self.files[filename]["filename"],"r") as file:
-                   data=file.read()
+               with open(self.files[filename]["filename"],"rb") as file:
+                   data=base64.b64encode(file.read()).decode('utf-8')
                    return data
         elif self.files[filename]["TypeOfFile"] == "Public":
-            print(self.files[filename]["filename"])
-            with open(self.files[filename]["filename"],"r") as file:
-                data = file.read()
+            with open(self.files[filename]["filename"],"rb") as file:
+                data=base64.b64encode(file.read()).decode('utf-8')
                 return data
     def getridoftransactions(self):
         deletethesekeys = []
@@ -5422,13 +5426,21 @@ class serverthing:
            if not filepricething%1==0:
                print("FILEPRICEERROR")
            return "WE HAVE FAILED"
-    def addfilealt(self,filedata,filesize,filename,walletname,verifyingsig,filetype):
+     def addfilealt(self,filedata,filesize,filename,walletname,verifyingsig,filetype):
         maxthingy = max(self.harddrives,key=lambda x: self.harddrives[x]['DataAvailable'])
         maxthingyspace = self.harddrives[maxthingy]["DataAvailable"]
         filename2 = str(maxthingy)+filename
+
         verifythis = str(filename)+str(walletname)
         verifyingkey = self.wallets[walletname]["verifyingkey"]
-        print(verifyingkey)
+        full_path = os.path.join(maxthingy, "Wallets")
+
+        if not os.path.exists(full_path):
+           os.makedirs(full_path)
+        second_path = os.path.join(full_path,str(walletname))
+        if not os.path.exists(second_path):
+           os.makedirs(second_path)
+        second_path = os.path.join(second_path,str(filename))
         truethis = True
         try:
              verifyingkey.verify(
@@ -5437,17 +5449,23 @@ class serverthing:
               ec.ECDSA(hashes.SHA256())
              )
         except Exception as e:
-        
-         truethis = False
-         print(e)
-        if truethis == True and filesize<=maxthingyspace and not filename in self.files and self.filespacedata[walletname]["DataStorageTotal"]>=filesize and self.filespacedata[walletname]["UsedDataStorage"]<=filesize:
-            with open(filename,"w") as file:
-                file.write(filedata)
 
-            self.files[filename] = {"filetype":filetype,"STORAGETYPE":2,"walletname":walletname,"filesize":filesize,"filename":filename2,}
+         truethis = False
+        if truethis == True and filesize<=maxthingyspace and not filename in self.files and self.filespacedata[walletname]["DataStorageTotal"]>=filesize and self.filespacedata[walletname]["UsedDataStorage"]<=filesize:
+         Cando = True
+         newkey = ""
+         for item in stuffindata:
+              if not item == "/":
+                  newkey = str(item)
+
+         if Cando == True and filename.find("/") == -1 and filename.find(newkey) == -1:
+            with open(second_path,'wb') as file:
+             file.write(base64.b64decode(filedata))
+
+
+            self.files[filename] = {"filetype":filetype,"STORAGETYPE":2,"walletname":walletname,"filesize":filesize,"filename":second_path}
             self.harddrives[maxthingy]["DataAvailable"]+=-(filesize)
             self.filespacedata[walletname]["UsedDataStorage"]+=-(filesize)
-            print("WE WON!")
             return "Success."
         else:
             reasons = []
@@ -5462,7 +5480,6 @@ class serverthing:
             if self.filespacedata[walletname]["UsedDataStorage"] > filesize:
              reasons.append("Exceeds available storage for wallet.")
 
-            print("OH NO! Failed due to the following reasons:", reasons)
             return reasons
     def getfilealt(self,walletname,verifyingsig,filename):
       if self.files[filename]["filetype"] == "Private" and walletname == self.files[filename]["walletname"]:
@@ -5476,15 +5493,14 @@ class serverthing:
             ec.ECDSA(hashes.SHA256())
          )
         except Exception as e:
-            print("ERROR: "+str(e))
             TRUETHAT = False
         if TRUETHAT == True:
-            with open(self.files[filename]["filename"],"r") as file:
-                sussything = file.read()
+            with open(self.files[filename]["filename"],"rb") as file:
+                sussything = base64.b64encode(file.read()).decode('utf-8')
                 return sussything
       else:
-          with open(self.files[filename]["filename"],"r") as file:
-              data = file.read()
+          with open(self.files[filename]["filename"],"rb") as file:
+              data = base64.b64encode(file.read()).decode('utf-8')
               return data
     def deletefile(self,walletname,verifyingsig,filename):
         verifythisthing = walletname+filename
@@ -5499,14 +5515,15 @@ class serverthing:
         except:
             truepowerforever = False
         if filename in self.files:
-            print("yea, lol")
+                    lol=True
+
         else:
             truepowerforever = False
         if truepowerforever == True and walletname == self.files[filename]["walletname"]:
            try:
             os.remove(str(self.files[filename]["filename"]))
            except:
-            print("Cringe")
+                       lol=True
     def addaspecialblock(self,block):
         self.proprosedblocks = DiskBackedDict("proprosedblocks.db")
         if not "TestBlock" in self.proprosedblocks:
