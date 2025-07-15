@@ -2,7 +2,6 @@ from ast import If
 from audioop import error
 from http import server
 from telnetlib import SE
-from typing import Self
 import ipaddress
 import tkinter as tk
 import hashlib
@@ -10,6 +9,15 @@ import math
 import time
 from wsgiref.simple_server import server_version
 Variablelevel = 1
+max_drive = ""
+def fixserverset(servers):
+      listthing = {}
+      newvalue = 0
+      print("servers: "+str(servers))
+      for item in servers:
+          listthing[newvalue]=str(servers[item])
+          newvalue+=1
+      return listthing
 class Procedures:
     def __init__(self):
         self.serverips = []
@@ -90,8 +98,7 @@ def import_sql_file(sql_file_path, new_database_path):
 import sqlite3
 import threading
 import subprocess
-import pyautogui
-import speedtest
+
 import copy
 import sqlite3
 import re
@@ -328,6 +335,57 @@ DATATRANSFERPRICEPERGB = 0.0
 
 DATATRANSFERPRICEPERGBFIAT = 0.0
 VCPUPRICE = 0.0
+commands = {}
+files = {}
+
+abspathvariable = os.path.join(max_drive, "Wallets")
+
+def addcommands(command,vm):
+    if not vm in commands:
+        commands[vm] = {"Commands":{},"Count":1}
+        commands[vm]["Commands"][int(commands[vm]["Count"])] = {"Command":command,"Used":False}
+    commands[vm]["Count"]+=1
+def addfiles(file,vm):
+    if not vm in files:
+        files[vm] = {"Files":{},"Count":1}
+        files[vm]["Files"][int(files[vm]["Count"])] = {"File":file,"Used":False}
+    files[vm]["Count"]+=1
+def labelfileasused(count,vm):
+    files[vm]["Files"][count]["Used"] = True
+def labelcommandasused(count,vm):
+    files[vm]["Commands"][count]["Used"] = True
+
+def copy_vmname_to_guest(vm_name, guest_user, guest_pass):
+    temp_filename = f"{vm_name}.txt"
+    abs_path = os.path.abspath(temp_filename)
+
+    with open(abs_path, "w") as f:
+        f.write(vm_name)
+        f.flush()
+        os.fsync(f.fileno())
+
+    print(f"Temp file created at: {abs_path}")
+
+    try:
+        print(f"?? Copying VM name into {vm_name}...")
+
+        subprocess.run([
+            'VBoxManage', 'guestcontrol', vm_name,
+            'copyto',
+            '--username', guest_user,
+            '--password', guest_pass,
+            abs_path,
+            f"/home/{guest_user}/vmname.txt"
+        ], check=True)
+
+        print(f"? Copied to /home/{guest_user}/vmname.txt successfully")
+
+    except subprocess.CalledProcessError as e:
+        print(f"? Failed on VM {vm_name}: {e}")
+
+    finally:
+        os.remove(abs_path)
+
 
 VCPUPRICEFIAT = 0.0
 VMLOADDRIVE = ""
@@ -342,9 +400,17 @@ Variable2 = ""
 Variable3 = ""
 Variable4 = ""
 Variable5 = ""
-
+guestuser = ""
+guestpass = ""
+passedthrough = False
+def automaticfix():
+    passedthrough = True 
+    return "Did it"
+def automaticfixpart2():
+    if passedthrough == True:
+        return True
 def submit_text():
-    global Variablelevel,httpthingy,SpecialDevice,SpecialDomain,inthing,inthinghash,loadthisloop,loadinputty,VMLOADDRIVE,ISOFILE,SELFVMTHINGLOADERIP,TABLEOFWEBSITESTOCHECK,PriceperGBperday,PriceperGBbutFIAT,RAMPRICEPERGB,RAMPRICEPERGBFIAT,DATATRANSFERPRICEPERGB,DATATRANSFERPRICEPERGBFIAT,VCPUPRICE,VCPUPRICEFIAT,allowedtostartpowerserver,DATATRANSFERPOWER,SPECIALPORT,seed_phrase, Variable1, Variable2, Variable3, Variable4, Variable5, PlaceHolderText
+    global Variablelevel,httpthingy,SpecialDevice,SpecialDomain,inthing,inthinghash,loadthisloop,loadinputty,VMLOADDRIVE,ISOFILE,SELFVMTHINGLOADERIP,TABLEOFWEBSITESTOCHECK,PriceperGBperday,PriceperGBbutFIAT,RAMPRICEPERGB,RAMPRICEPERGBFIAT,DATATRANSFERPRICEPERGB,DATATRANSFERPRICEPERGBFIAT,VCPUPRICE,VCPUPRICEFIAT,allowedtostartpowerserver,DATATRANSFERPOWER,SPECIALPORT,seed_phrase, Variable1, Variable2, Variable3, Variable4, Variable5, PlaceHolderText,guestuser,guestpass
 
     user_text = text_box.get("1.0", tk.END).strip()
     if user_text == PlaceHolderText or user_text == "":  # Check if the user input is valid
@@ -355,12 +421,16 @@ def submit_text():
         # Assign user input to the corresponding variable
         if Variablelevel == 1:
             httpthingy = user_text
+            with open("httpthingy.txt","w") as file:
+                file.write(httpthingy)
             PlaceHolderText = "1. for special domain and 2 for not."
             Variablelevel += 1
 
         elif Variablelevel == 2:
            if not SpecialDevice>0:
             SpecialDevice = int(user_text)
+            with open("SpecialDevice.txt","w") as file:
+                 file.write(str(SpecialDevice))
             if SpecialDevice == 1:
              PlaceHolderText = "What is the special domain?"
             else:
@@ -370,6 +440,8 @@ def submit_text():
            else:
             if SpecialDevice == 1:
              SpecialDomain = user_text
+             with open("SpecialDomain.txt","w") as file:
+                 file.write(str(SpecialDomain))
              PlaceHolderText = "What is the port of this thing?"
              Variablelevel+=1
             else:
@@ -378,28 +450,39 @@ def submit_text():
              print("There is no special domain it seems...")
         elif Variablelevel == 3:
             SPECIALPORT = int(user_text)
+            with open("SPECIALPORT.txt","w") as file:
+                 file.write(str(SPECIALPORT))
             PlaceHolderText = "What is the total amount of data transfer megabytes that are usable on this machine?"
             Variablelevel+=1
         elif Variablelevel == 4:
             DATATRANSFERPOWER = int(user_text)
+            with open("DATATRANSFERPOWER.txt","w") as file:
+                 file.write(str(DATATRANSFERPOWER))
             PlaceHolderText = "Seed phrase"
             Variablelevel+=1
 
         elif Variablelevel == 5:
+            
             seed_phrase = user_text
+            with open("seedphrase.txt","w") as file:
+                 file.write(str(seed_phrase))
             PlaceHolderText = "What is the genesis password?"
             Variablelevel+=1
             
         elif Variablelevel == 6:
             inthing = user_text
             inthinghash = str(hashlib.sha256(inthing.encode('utf8')).hexdigest())
-            if inthinghash == "c508c75cab978afb13baa0b2d9d42118dd4d40a233672510b7bfef3ad53573a8":
+            with open("inthinghash.txt","w") as file:
+                 file.write(str(inthing))
+            if inthinghash == "f7af4d9ee489c849ac840db125ed35f76fcae913f5e645e98067efcb14202bbc":
              allowedtostartpowerserver = True
+          
             PlaceHolderText = "1. for stopping this and 2. for continuing this"
             Variablelevel+=1
         elif Variablelevel == 7:
             if loadinputty<=0:
              loadinputty = int(user_text)
+             
              if loadinputty == 2:
               PlaceHolderText = "What is the Address of the website you are getting your data from?"
              else:
@@ -412,6 +495,8 @@ def submit_text():
               loadinputty = 0
               PlaceHolderText = "1. for stopping this and 2. for continuing this"
               TABLEOFWEBSITESTOCHECK.append(newserver)
+              with open("Tableofwebsitestocheck.txt","w") as file:
+                  file.write(str(TABLEOFWEBSITESTOCHECK))
              else:
               
               print("loadinputty: "+str(loadinputty))
@@ -419,56 +504,67 @@ def submit_text():
               PlaceHolderText = "What is the amount of server coins you want the user to spend per gigabyte."
         elif Variablelevel == 8:
             PriceperGBperday = float(user_text)
-            
+            with open("PriceperGBperday.txt","w") as file:
+                  file.write(str(PriceperGBperday))
             PlaceHolderText = "What is the FIAT price of this thing? If there isn't one just type NONE."
             Variablelevel+=1
             
         elif Variablelevel == 9:
             if not user_text == "NONE":
              PriceperGBbutFIAT = float(user_text)
+             with open("PriceperGBbutFIAT.txt","w") as file:
+                  file.write(str(PriceperGBbutFIAT))
             else:
              PriceperGBbutFIAT = user_text
             PlaceHolderText = "What is the price of RAM per Gigabyte per day on this server?"
             Variablelevel+=1
         elif Variablelevel == 10:
             RAMPRICEPERGB = float(user_text)
-            
+            with open("RAMPRICEPERGB.txt","w") as file:
+                  file.write(str(RAMPRICEPERGB))
             PlaceHolderText = "What is the price of RAM per gigabyte per day on this server in FIAT? Type -1 if none"
             Variablelevel+=1
         elif Variablelevel == 11:
             RAMPRICEPERGBFIAT = float(user_text)
-            
+            with open("RAMPRICEPERGBFIAT.txt","w") as file:
+                  file.write(str(RAMPRICEPERGBFIAT))
             PlaceHolderText = "What is the price of DATA TRANSFER per Gigabyte per day on this server?"
             Variablelevel+=1
         elif Variablelevel == 12:
             DATATRANSFERPRICEPERGBFIAT = float(user_text)
-            
+            with open("DATATRANSFERPRICEPERGBFIAT.txt","w") as file:
+                  file.write(str(DATATRANSFERPRICEPERGBFIAT))
             PlaceHolderText = "What is the price of DATA TRANSFER per gigabyte per day on this server in FIAT? Type -1 if none"
             Variablelevel+=1
         elif Variablelevel == 13:
             DATATRANSFERPRICEPERGB = float(user_text)
-            
+            with open("DATATRANSFERPRICEPERGB.txt","w") as file:
+                  file.write(str(DATATRANSFERPRICEPERGB))
             PlaceHolderText = "What is the price of 1 VCPU per day on this server?"
             Variablelevel+=1
         elif Variablelevel == 14:
             VCPUPRICE = float(user_text)
-            
+            with open("VCPUPRICE.txt","w") as file:
+                  file.write(str(VCPUPRICE))
             PlaceHolderText = "What is the price of 1 VCPU per day on this server in FIAT? Type -1 if none"
             Variablelevel+=1
         elif Variablelevel == 15:
             VCPUPRICEFIAT = float(user_text)
-            
+            with open("VCPUPRICEFIAT.txt","w") as file:
+                  file.write(str(VCPUPRICEFIAT))
             PlaceHolderText = "What is the name of the drive that the VMs are stored in?"
             Variablelevel+=1
         elif Variablelevel == 16:
             VMLOADDRIVE = user_text
-            
+            with open("VMLOADDRIVE.txt","w") as file:
+                  file.write(str(VMLOADDRIVE))
             PlaceHolderText = "What is the address of the ISO file?"
             Variablelevel+=1
             
         elif Variablelevel == 17:
             ISOFILE = user_text
-            
+            with open("ISOFILE.txt","w") as file:
+                  file.write(str(ISOFILE))
             PlaceHolderText = "What is the IP address of the VM you use for the thing that allows the VMs this makes to get their IP?"
             Variablelevel+=1
         elif Variablelevel == 18:
@@ -477,7 +573,28 @@ def submit_text():
                 root.quit()
                 print("YOU WERE SUPPOSED TO QUIT!")
             SELFVMTHINGLOADERIP = user_text
-            
+            with open("SELFVMTHINGLOADERIP.txt","w") as file:
+                  file.write(str(SELFVMTHINGLOADERIP))
+            PlaceHolderText = "What is the guest user of the VMs"
+            Variablelevel+=1
+        elif Variablelevel == 19:
+            if PlaceHolderText == "The thing has finished. How'd you get here?":
+                print("JUST QUIT NOW!")
+                root.quit()
+                print("YOU WERE SUPPOSED TO QUIT!")
+            guestuser = user_text
+            with open("guestuser.txt","w") as file:
+                  file.write(str(guestuser))
+            PlaceHolderText = "What is the guest pass of the VMS"
+            Variablelevel+=1
+        elif Variablelevel == 20:
+            if PlaceHolderText == "The thing has finished. How'd you get here?":
+                print("JUST QUIT NOW!")
+                root.quit()
+                print("YOU WERE SUPPOSED TO QUIT!")
+            guestpass = user_text
+            with open("guestpass.txt","w") as file:
+                  file.write(str(guestpass))
             PlaceHolderText = "The thing has finished. How'd you get here?"
             root.quit()  # Exit the application after the fifth submission
             root.destroy()
@@ -490,7 +607,10 @@ def submit_text():
         text_box.config(fg='grey')
 
 # Create the main window
-
+allowedtostartpowerserver = automaticfixpart2()
+if allowedtostartpowerserver == True:
+    with open("Powerserver3.txt","w") as file:
+        file.write("SO WHAT???")
 
 root = tk.Tk()
 root.title("Servercoin GUI part 1.")
@@ -520,8 +640,7 @@ root.mainloop()
 # After exiting the loop, we can print the collected variables if needed
 print("Final Variables:")
 
-with open("datatransferpower.txt","w") as file:
-    file.write(str(DATATRANSFERPOWER))
+
 print(httpthingy) 
 print(SpecialDevice)
 print(SpecialDomain)
@@ -539,6 +658,173 @@ Variablelevel2 = 1
 IP = ""
 Port = 0
 Type = 0
+with open("inthinghash.txt","r") as file:
+    inthing = str(file.read())
+    inthinghash = str(hashlib.sha256(inthing.encode('utf8')).hexdigest())
+    if inthinghash == "f7af4d9ee489c849ac840db125ed35f76fcae913f5e645e98067efcb14202bbc":
+             allowedtostartpowerserver = True
+    else:
+     with open("Okthatswhy.txt","w") as file:
+         file.write("Right here!: "+str(inthinghash))
+with open("allowedtostartpowerserver.txt","w") as file:
+    file.write(str(allowedtostartpowerserver))
+
+try: 
+ with open('httpthingy.txt','r') as file:
+  httpthingy = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('Variablelevel.txt','r') as file:
+  Variablelevel = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('httpthingy.txt','r') as file:
+  httpthingy = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('SpecialDevice.txt','r') as file:
+  SpecialDevice = int(file.read())
+except: 
+  print('failed')
+try: 
+ with open('SpecialDomain.txt','r') as file:
+  SpecialDomain = int(file.read())
+except: 
+  print('failed')
+try: 
+ with open('inthing.txt','r') as file:
+  inthing = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('loadthisloop.txt','r') as file:
+  loadthisloop = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('loadinputty.txt','r') as file:
+  loadinputty = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('VMLOADDRIVE.txt','r') as file:
+  VMLOADDRIVE = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('ISOFILE.txt','r') as file:
+  ISOFILE = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('SELFVMTHINGLOADERIP.txt','r') as file:
+  SELFVMTHINGLOADERIP = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('TABLEOFWEBSITESTOCHECK.txt','r') as file:
+  TABLEOFWEBSITESTOCHECK = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('PriceperGBperday.txt','r') as file:
+  PriceperGBperday = float(file.read())
+except: 
+  print('failed')
+try: 
+ with open('PriceperGBbutFIAT.txt','r') as file:
+  PriceperGBbutFIAT = float(file.read())
+except: 
+  print('failed')
+try: 
+ with open('RAMPRICEPERGB.txt','r') as file:
+  RAMPRICEPERGB = float(file.read())
+except: 
+  print('failed')
+try: 
+ with open('RAMPRICEPERGBFIAT.txt','r') as file:
+  RAMPRICEPERGBFIAT = float(file.read())
+except: 
+  print('failed')
+try: 
+ with open('DATATRANSFERPRICEPERGB.txt','r') as file:
+  DATATRANSFERPRICEPERGB = float(file.read())
+except: 
+  print('failed')
+try: 
+ with open('DATATRANSFERPRICEPERGBFIAT.txt','r') as file:
+  DATATRANSFERPRICEPERGBFIAT = float(file.read())
+except: 
+  print('failed')
+try: 
+ with open('VCPUPRICE.txt','r') as file:
+  VCPUPRICE = float(file.read())
+except: 
+  print('failed')
+try: 
+ with open('VCPUPRICEFIAT.txt','r') as file:
+  VCPUPRICEFIAT = float(file.read())
+except: 
+  print('failed')
+
+try: 
+ with open('DATATRANSFERPOWER.txt','r') as file:
+  DATATRANSFERPOWER = int(file.read())
+except: 
+  print('failed')
+try: 
+ with open('SPECIALPORT.txt','r') as file:
+  SPECIALPORT = int(file.read())
+except: 
+  print('failed')
+try: 
+ with open('seed_phrase.txt','r') as file:
+  seed_phrase = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('Variable1.txt','r') as file:
+  Variable1 = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('Variable2.txt','r') as file:
+  Variable2 = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('Variable3.txt','r') as file:
+  Variable3 = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('Variable4.txt','r') as file:
+  Variable4 = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('Variable5.txt','r') as file:
+  Variable5 = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('PlaceHolderText.txt','r') as file:
+  PlaceHolderText = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('guestuser.txt','r') as file:
+  guestuser = str(file.read())
+except: 
+  print('failed')
+try: 
+ with open('guestpass.txt','r') as file:
+  guestpass = str(file.read())
+except: 
+  print('failed')
 
 
 salt = "22".encode('utf-8')  
@@ -700,13 +986,24 @@ class DiskBackedDict:
 countdownthing = 3
 changethat600thing = False
 the600thing = 600
-allowedtostartpowerserver = False
 POWERFOREVERLABEL = 0
 VMDATALIST3 = {}
 runthecountdowthing = False
 LOOPTHEFILEPRICECHECK = True
 
+def add_file_to_vm(vm_name, file_name,file_data,walletname):
+    # Command to copy a file to the VM
+    full_path = os.path.join(max_drive, "Wallets")
 
+    if not os.path.exists(full_path):
+           os.makedirs(full_path)
+    second_path = os.path.join(full_path,str(walletname))
+    if not os.path.exists(second_path):
+           os.makedirs(second_path)
+    second_path = os.path.join(second_path,str(file_name))
+    with open(file_name,"wb") as file:
+        file.write(file_data)
+    addfiles(file_name,vm_name)
 def get_ip_address():
     try:
         # Create a socket object
@@ -855,8 +1152,8 @@ readfiledata = "TXT"
 fileread = ""
 vCPUs = 2
 GPUenabled = True
-with open(filey,"w") as file:
-    file.write("YOUR MOM")
+
+
 def create_virtual_machine(vm_name, os_type, memory_size_mb, disk_size_mb, iso_file_path, video_memory_mb, vcpu_count, gpu_enabled,walletname):
     createvmstuff(vm_name)
     VMDATALIST[listofkeyeys[selfnum]]["WalletName"] = walletname
@@ -1011,12 +1308,6 @@ def delete_virtual_machine(vm_name):
     except subprocess.CalledProcessError:
         print(f"Error: Virtual machine '{vm_name}' not found.")
 
-def add_file_to_vm(vm_name, file_name,file_data):
-    # Command to copy a file to the VM
-    IPADDRESSY = VMDATALIST[VMDATALIST2[vm_name]["String"]]["IP"]
-    data = {"filename":file_name,"filedata":file_data}
-    URL = "http://"+IPADDRESSY+":8002/addfile"
-    requests.post(url=URL,json=data)
 def delete_file_from_vm(vm_name,file_name):
     IPADDRESSY = VMDATALIST[VMDATALIST2[vm_name]["String"]]["IP"]
     data = {"filename":file_name}
@@ -1086,7 +1377,8 @@ def clone_vm(source_vm_name, new_vm_name, new_ram_mb, new_storage_mb, new_vcpus)
         
         # Run the storage resize command using subprocess
         subprocess.run(cmd_resize_storage, check=True)
-
+        subprocess.run(['VBoxManage', 'guestproperty', 'set', new_vm_name,'VM_NAME', new_vm_name], check=True)
+        copy_vmname_to_guest(new_vm_name,guestuser,guestpass)
         print(f"Cloned VM '{source_vm_name}' to '{new_vm_name}' successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")
@@ -1177,7 +1469,7 @@ class serverthing:
         self.hashstring = ""
         self.verifyingkeyspluswallets = {}
         self.walletnum = 1
-        self.blockchainstarttime = 0
+        self.blockchainstarttime = 1725148800
         self.pendingfiletransactions = {}
         self.pendingfiletransactionnum = 0
         self.selfverifyingkey = ""
@@ -1206,20 +1498,23 @@ class serverthing:
         self.itlooped = True
         self.the600thing = 600
         self.thecountdownthing = 3
+        self.verifyingkeysperserver = {}
     def setthe600thing(self,new600thing):
         self.the600thing = new600thing
     def listserver(self,server,otherserver,fileprice,verifyingkey,RAMGBPRICE,VCPUPRICE,DATATRANSFERGB,portthing,MINERCHECK,NODECHECK,Verifyingkey2,PROTOCOL):
-      if not server+":"+str(portthing) in self.serverlist:
+      if not server+":"+str(portthing) in self.serverlist and not Verifyingkey2 in self.verifyingkeysperserver:
         validip = is_valid_ip(server)
         if validip == False:
             portthing = ""
             self.serverlist[str(server)] ={"server":str(server),"altserver":otherserver,"Fileprice":fileprice,"verifyingkey":verifyingkey,"timeadded":time.time(),"RAMGBPRICE":RAMGBPRICE,"VCPUPRICE":VCPUPRICE,"DATATRANSFERGB":DATATRANSFERGB}
-            self.superserverlist[str(server)]={"server":str(server),"altserver":otherserver,"Fileprice":fileprice,"verifyingkey":Verifyingkey2,"portthing":portthing,"timeadded":time.time(),"RAMGBPRICE":RAMGBPRICE,"VCPUPRICE":VCPUPRICE,"DATATRANSFERGB":DATATRANSFERGB,"MINERCHECK":MINERCHECK,"NODECHECK":NODECHECK,"PROTOCOL":PROTOCOL}
-
+            self.superserverlist[str(server)]={"server":str(server),"altserver":otherserver,"Fileprice":fileprice,"verifyingkey":Verifyingkey2,"portthing":portthing,"timeadded":time.time(),"RAMGBPRICE":RAMGBPRICE,"VCPUPRICE":VCPUPRICE,"DATATRANSFERGB":DATATRANSFERGB,"MINERCHECK":MINERCHECK,"NODECHECK":NODECHECK,"PROTOCOL":PROTOCOL,}
+            self.verifyingkeysperserver[Verifyingkey2] = server
         else:
          self.serverlist[str(server)+str(":")+str(portthing)] ={"server":str(server),"altserver":otherserver,"Fileprice":fileprice,"verifyingkey":verifyingkey,"timeadded":time.time(),"RAMGBPRICE":RAMGBPRICE,"VCPUPRICE":VCPUPRICE,"DATATRANSFERGB":DATATRANSFERGB}
          self.superserverlist[str(server)+str(":")+str(portthing)]={"server":str(server),"altserver":otherserver,"Fileprice":fileprice,"verifyingkey":Verifyingkey2,"portthing":portthing,"timeadded":time.time(),"RAMGBPRICE":RAMGBPRICE,"VCPUPRICE":VCPUPRICE,"DATATRANSFERGB":DATATRANSFERGB,"MINERCHECK":MINERCHECK,"NODECHECK":NODECHECK,"PROTOCOL":PROTOCOL}
          self.servernum+=1
+         self.verifyingkeysperserver[Verifyingkey2] = server
+
     def getprotocol(self,server):
         return self.superserverlist[str(server)]["PROTOCOL"] 
     def addtimeaddedtimetoserver(self,server,timeadded):
@@ -1231,36 +1526,6 @@ class serverthing:
         return "WE DID IT !"
     def getservers2(self):
         return self.superserverlist
-    def addnextblocks(self):
-       
-        self.proprosedblocks = DiskBackedDict("proprosedblocks.db")
-        self.nextproposedblocklist = DiskBackedDict("nextproposedblocklist.db")
-        listofblockstodelete = []
-        newitem = ""
-        for item in self.nextproposedblocklist.keys():
-            newitem = str(item)
-            print(type(self.nextproposedblocklist[item]["Count"]))
-            print(type(self.nextproposedblocklist[item]["Transactionnum"]))
-            print(type(self.nextproposedblocklist[item]["Timerecieved"]))
-            print(type(self.nextproposedblocklist[item]["serverwaittime"]))
-            print(type(self.nextproposedblocklist[item]["Timecreated"]))
-            if not item in self.proprosedblocks:
-             self.proprosedblocks[item] = {"Blockhash": str(self.nextproposedblocklist[item]["Blockhash"]),"Count":int(self.nextproposedblocklist[item]["Count"]) ,"FirstSender":str(self.nextproposedblocklist[item]["FirstSender"]),"Serversthatgotthisblock":dict(self.nextproposedblocklist[item]["Serversthatgotthisblock"]),"Timecreated":str(self.nextproposedblocklist[item]["Timecreated"]),"Blockdata":dict(self.nextproposedblocklist[item]["Blockdata"]),"Transactionnum":dict(self.nextproposedblocklist[item]["Transactionnum"]),"Timerecieved":float(self.nextproposedblocklist[item]["Timerecieved"]),"serverwaittime":float(self.nextproposedblocklist[item]["serverwaittime"]),"BlockDataRecieved":True,"Dateadded":float(self.nextproposedblocklist[item]["Timecreated"]),"SUPERCHECK":False}
-            else:
-                NewServerlist = dict(self.nextproposedblocklist[item]["Serversthatgotthisblock"])
-                serverip = str(get_local_ip())
-                NewServerlist[serverip+":"+str(SPECIALPORT)] = "YES"
-                self.proprosedblocks[item] = {"Blockhash": str(self.nextproposedblocklist[item]["Blockhash"]),"Count":int(self.nextproposedblocklist[item]["Count"]) ,"FirstSender":str(self.nextproposedblocklist[item]["FirstSender"]),"Serversthatgotthisblock":NewServerlist,"Timecreated":str(self.nextproposedblocklist[item]["Timecreated"]),"Blockdata":dict(self.nextproposedblocklist[item]["Blockdata"]),"Transactionnum":dict(self.nextproposedblocklist[item]["Transactionnum"]),"Timerecieved":float(self.nextproposedblocklist[item]["Timerecieved"]),"serverwaittime":float(self.nextproposedblocklist[item]["serverwaittime"]),"BlockDataRecieved":True,"Dateadded":float(self.nextproposedblocklist[item]["Timecreated"]),"SUPERCHECK":False}
-            listofblockstodelete.append(item)
-            print("SErVERS IN THE BLOCK: "+str(self.nextproposedblocklist[item]["Serversthatgotthisblock"]))
-        for item in listofblockstodelete:
-         del self.nextproposedblocklist[item]
-        if not newitem == "":
-         print("SERVERS IN THE BLOCK: "+str(self.proprosedblocks[newitem]["Serversthatgotthisblock"]))
-        else:
-            print("I'M HERE TO DISS YOU!")
-        print("ADDED NEXT BLOCKS!")
-        return "WE DID IT!"
     def gethashstringspecial(self):
         
         return str(self.hashstring)
@@ -1351,7 +1616,6 @@ class serverthing:
        blockstring = blockstring+str(self.blocktobesent[item]["amountofcoins"])
        blockstring = blockstring+str(self.blocktobesent[item]["txextra"])
        blockstring = blockstring+str(self.blocktobesent[item]["vmtransactionnum"])
-     sha256_hash = hashlib.sha256(blockstring.encode()).hexdigest()
        # Convert to Mbps
      selfip = get_local_ip()
      if SpecialDevice == 2:
@@ -1361,14 +1625,24 @@ class serverthing:
      else:
       print("SERVERLIST: "+str(self.serverlist))
       sTF = time.time()-self.serverlist[str(SpecialDomain)]["timeadded"]
-
-     stuffpower = str(self.blocknum)+str(IPADDRESSOFTHESERVER)
+     if SpecialDevice == 2:
+      stuffpower = str(self.blocknum)+str(IPADDRESSOFTHESERVER)
+     else:
+      stuffpower+=str(self.blocknum)+str(SpecialDomain)
      eothingtoadd2 = hashlib.sha256(stuffpower.encode('utf8')).hexdigest()
      SEALDEAL = int(str(eothingtoadd2),16)
      SEALDEAL = SEALDEAL%7
+     signature = private_key3333.sign(
+       str(self.wallet).encode('utf-8'),
+       ec.ECDSA(hashes.SHA256())
+     )
      numthing = sTF*(SEALDEAL+1)
-     self.proprosedblocks = DiskBackedDict("proprosedblocks.db")
+     blockstring+=self.wallet
+     blockstring+=str(numthing)
+     sha256_hash = hashlib.sha256(blockstring.encode()).hexdigest()
 
+     self.proprosedblocks = DiskBackedDict("proprosedblocks.db")
+     
      block_data_copy = copy.deepcopy(self.blocktobesent)
      print("BLOCKDATACOPY: "+str(block_data_copy))
      serverblocklistmust = dict(self.superdictdevice)
@@ -1378,9 +1652,8 @@ class serverthing:
      else:
       print("WELL THIS MAKES ZERO SENSE!")
       serverblocklistmust[str(selfip)] =  {"Server":str(selfip),"Sender":self.wallet,"Serverwaittime": numthing}
-     if not sha256_hash in self.proprosedblocks  :
-
-      self.proprosedblocks[sha256_hash] = {"Transactionnum":len(block_data_copy),"Count":1,"FirstSender":self.wallet,"Serverip":IPADDRESSOFTHESERVER, "Blockdata":block_data_copy,"Serversthatgotthisblock":serverblocklistmust,"Dateadded":time.time(),"Blockhash":str(sha256_hash),"Timecreated":time.time(),"Timerecieved":time.time(),"serverwaittime":numthing,"BlockDataRecieved":False,"SUPERCHECK":False}
+     if not sha256_hash in self.proprosedblocks:
+      self.proprosedblocks[sha256_hash] = {"Transactionnum":len(block_data_copy),"Count":1,"FirstSender":self.wallet,"Serverip":IPADDRESSOFTHESERVER, "Blockdata":block_data_copy,"Serversthatgotthisblock":serverblocklistmust,"Dateadded":time.time(),"Blockhash":str(sha256_hash),"Timecreated":time.time(),"Timerecieved":time.time(),"serverwaittime":numthing,"BlockDataRecieved":False,"SUPERCHECK":False,"Signature":base64.b64encode(signature).decode('utf-8')}
       print("BLOCKDATA: "+str(self.proprosedblocks[sha256_hash]["Blockdata"]))
       print("Wallet: "+str(self.wallet))
      else:
@@ -1395,10 +1668,10 @@ class serverthing:
                      print("THERES SOME WORK TO DO!")
              print("NEW SERVER BLOCK GET LIST: "+str(newserverblockgetlist))
              if len(dict(self.proprosedblocks[sha256_hash]["Blockdata"]))>0:
-              self.proprosedblocks[sha256_hash] = {"Blockhash": str(self.proprosedblocks[sha256_hash]["Blockhash"]),"Count":int(self.proprosedblocks[sha256_hash]["Count"]) ,"FirstSender":str(self.proprosedblocks[sha256_hash]["FirstSender"]),"Serversthatgotthisblock":newserverblockgetlist,"Timecreated":self.proprosedblocks[sha256_hash]["Timecreated"],"Blockdata":self.proprosedblocks[sha256_hash]["Blockdata"],"Transactionnum":self.proprosedblocks[sha256_hash]["Transactionnum"],"Timerecieved":self.proprosedblocks[sha256_hash]["Timerecieved"],"serverwaittime":self.proprosedblocks[sha256_hash]["serverwaittime"],"BlockDataRecieved":self.proprosedblocks[sha256_hash]["BlockDataRecieved"],"Dateadded":self.proprosedblocks[sha256_hash]["Timecreated"],"SUPERCHECK": self.proprosedblocks[sha256_hash]["SUPERCHECK"]}
+              self.proprosedblocks[sha256_hash] = {"Blockhash": str(self.proprosedblocks[sha256_hash]["Blockhash"]),"Count":int(self.proprosedblocks[sha256_hash]["Count"]) ,"FirstSender":str(self.proprosedblocks[sha256_hash]["FirstSender"]),"Serversthatgotthisblock":newserverblockgetlist,"Timecreated":self.proprosedblocks[sha256_hash]["Timecreated"],"Blockdata":self.proprosedblocks[sha256_hash]["Blockdata"],"Transactionnum":self.proprosedblocks[sha256_hash]["Transactionnum"],"Timerecieved":self.proprosedblocks[sha256_hash]["Timerecieved"],"serverwaittime":self.proprosedblocks[sha256_hash]["serverwaittime"],"BlockDataRecieved":self.proprosedblocks[sha256_hash]["BlockDataRecieved"],"Dateadded":self.proprosedblocks[sha256_hash]["Timecreated"],"SUPERCHECK": self.proprosedblocks[sha256_hash]["SUPERCHECK"],"Signature":base64.b64encode(signature).decode('utf-8')}
              else:
 
-               self.proprosedblocks[sha256_hash] = {"Blockhash": str(self.proprosedblocks[sha256_hash]["Blockhash"]),"Count":int(self.proprosedblocks[sha256_hash]["Count"]) ,"FirstSender":str(self.proprosedblocks[sha256_hash]["FirstSender"]),"Serversthatgotthisblock":newserverblockgetlist,"Timecreated":self.proprosedblocks[sha256_hash]["Timecreated"],"Blockdata":block_data_copy,"Transactionnum":self.proprosedblocks[sha256_hash]["Transactionnum"],"Timerecieved":self.proprosedblocks[sha256_hash]["Timerecieved"],"serverwaittime":self.proprosedblocks[sha256_hash]["serverwaittime"],"BlockDataRecieved":self.proprosedblocks[sha256_hash]["BlockDataRecieved"],"Dateadded":self.proprosedblocks[sha256_hash]["Timecreated"],"SUPERCHECK": self.proprosedblocks[sha256_hash]["SUPERCHECK"]}
+               self.proprosedblocks[sha256_hash] = {"Blockhash": str(self.proprosedblocks[sha256_hash]["Blockhash"]),"Count":int(self.proprosedblocks[sha256_hash]["Count"]) ,"FirstSender":str(self.proprosedblocks[sha256_hash]["FirstSender"]),"Serversthatgotthisblock":newserverblockgetlist,"Timecreated":self.proprosedblocks[sha256_hash]["Timecreated"],"Blockdata":block_data_copy,"Transactionnum":self.proprosedblocks[sha256_hash]["Transactionnum"],"Timerecieved":self.proprosedblocks[sha256_hash]["Timerecieved"],"serverwaittime":self.proprosedblocks[sha256_hash]["serverwaittime"],"BlockDataRecieved":self.proprosedblocks[sha256_hash]["BlockDataRecieved"],"Dateadded":self.proprosedblocks[sha256_hash]["Timecreated"],"SUPERCHECK": self.proprosedblocks[sha256_hash]["SUPERCHECK"],"Signature":base64.b64encode(signature).decode('utf-8')}
      
      print("Time: "+str(self.proprosedblocks[sha256_hash]["serverwaittime"]))
      print("PROPROSEDBLOCKS: "+str(self.proprosedblocks.keys()))
@@ -1437,12 +1710,12 @@ class serverthing:
             print(type(self.nextproposedblocklist[item]["serverwaittime"]))
             print(type(self.nextproposedblocklist[item]["Timecreated"]))
             if not item in self.proprosedblocks:
-             self.proprosedblocks[item] = {"Blockhash": str(self.nextproposedblocklist[item]["Blockhash"]),"Count":int(self.nextproposedblocklist[item]["Count"]) ,"FirstSender":str(self.nextproposedblocklist[item]["FirstSender"]),"Serversthatgotthisblock":dict(self.nextproposedblocklist[item]["Serversthatgotthisblock"]),"Timecreated":str(self.nextproposedblocklist[item]["Timecreated"]),"Blockdata":dict(self.nextproposedblocklist[item]["Blockdata"]),"Transactionnum":dict(self.nextproposedblocklist[item]["Transactionnum"]),"Timerecieved":float(self.nextproposedblocklist[item]["Timerecieved"]),"serverwaittime":float(self.nextproposedblocklist[item]["serverwaittime"]),"BlockDataRecieved":True,"Dateadded":float(self.nextproposedblocklist[item]["Timecreated"]),"SUPERCHECK":False}
+             self.proprosedblocks[item] = {"Blockhash": str(self.nextproposedblocklist[item]["Blockhash"]),"Count":int(self.nextproposedblocklist[item]["Count"]) ,"FirstSender":str(self.nextproposedblocklist[item]["FirstSender"]),"Serversthatgotthisblock":dict(self.nextproposedblocklist[item]["Serversthatgotthisblock"]),"Timecreated":str(self.nextproposedblocklist[item]["Timecreated"]),"Blockdata":dict(self.nextproposedblocklist[item]["Blockdata"]),"Transactionnum":dict(self.nextproposedblocklist[item]["Transactionnum"]),"Timerecieved":float(self.nextproposedblocklist[item]["Timerecieved"]),"serverwaittime":float(self.nextproposedblocklist[item]["serverwaittime"]),"BlockDataRecieved":True,"Dateadded":float(self.nextproposedblocklist[item]["Timecreated"]),"SUPERCHECK":False,"Signature":self.nextproposedblocklist[item]["Signature"]}
             else:
                 NewServerlist = dict(self.nextproposedblocklist[item]["Serversthatgotthisblock"])
                 serverip = str(get_local_ip())
                 NewServerlist[serverip+":"+str(SPECIALPORT)] = "YES"
-                self.proprosedblocks[item] = {"Blockhash": str(self.nextproposedblocklist[item]["Blockhash"]),"Count":int(self.nextproposedblocklist[item]["Count"]) ,"FirstSender":str(self.nextproposedblocklist[item]["FirstSender"]),"Serversthatgotthisblock":NewServerlist,"Timecreated":str(self.nextproposedblocklist[item]["Timecreated"]),"Blockdata":dict(self.nextproposedblocklist[item]["Blockdata"]),"Transactionnum":dict(self.nextproposedblocklist[item]["Transactionnum"]),"Timerecieved":float(self.nextproposedblocklist[item]["Timerecieved"]),"serverwaittime":float(self.nextproposedblocklist[item]["serverwaittime"]),"BlockDataRecieved":True,"Dateadded":float(self.nextproposedblocklist[item]["Timecreated"]),"SUPERCHECK":False}
+                self.proprosedblocks[item] = {"Blockhash": str(self.nextproposedblocklist[item]["Blockhash"]),"Count":int(self.nextproposedblocklist[item]["Count"]) ,"FirstSender":str(self.nextproposedblocklist[item]["FirstSender"]),"Serversthatgotthisblock":NewServerlist,"Timecreated":str(self.nextproposedblocklist[item]["Timecreated"]),"Blockdata":dict(self.nextproposedblocklist[item]["Blockdata"]),"Transactionnum":dict(self.nextproposedblocklist[item]["Transactionnum"]),"Timerecieved":float(self.nextproposedblocklist[item]["Timerecieved"]),"serverwaittime":float(self.nextproposedblocklist[item]["serverwaittime"]),"BlockDataRecieved":True,"Dateadded":float(self.nextproposedblocklist[item]["Timecreated"]),"SUPERCHECK":False,"Signature":self.nextproposedblocklist[item]["Signature"]}
             listofblockstodelete.append(item)
             print("SErVERS IN THE BLOCK: "+str(self.nextproposedblocklist[item]["Serversthatgotthisblock"]))
         for item in listofblockstodelete:
@@ -1455,7 +1728,7 @@ class serverthing:
         print("Serverlist: "+str(self.serverlist))
         self.serverlist[str(Server)]["Timeadded"] =float(time)
         return "Well ok!"
-    def addblockthing(self,data):
+    def addblockthing(self,data,signature):
      received_dict = data["recieved_dict"]
      portnum = data["selfport"]
      procedureblock = Procedures()
@@ -1512,6 +1785,7 @@ class serverthing:
        "Serverip": str(get_local_ip()),
        "Timecreated": blocksendmore["Obtainmentdate"],
        "NodesPassedThrough": 0,
+       "Signature":signature
 
       }
      else:
@@ -1521,6 +1795,7 @@ class serverthing:
        "Serverip": str(SpecialDomain),
        "Timecreated": blocksendmore["Obtainmentdate"],
        "NodesPassedThrough": 0,
+       "Signature":signature
 
       }
      url1num = random.randint(0,serverlen-1)
@@ -1731,12 +2006,21 @@ class serverthing:
             file.write(str(e))
         lol=True
         return "Oh crap."
+    def findserver(self,wallet):
+        for item in self.superserverlist:
+            if str(self.superserverlist[item]["verifyingkey"]) == str(self.wallets[wallet]["verifyingkeysummoningthing"]):
+                return item
+            else:
+               with open("verifyingkeything.txt","w") as file:
+                   file.write(str(self.wallets[wallet]["verifyingkeysummoningthing"]))
+               with open("verifyingkeything2.txt","w") as file:
+                   file.write(str(self.superserverlist[item]["verifyingkey"]))
     def acceptablockpuppy(self):
       self.proprosedblocks = DiskBackedDict("proprosedblocks.db")
       print("PROPROSEDBLOCKS: "+str(self.proprosedblocks.keys()))
       for item in self.proprosedblocks.keys():
         
-         self.proprosedblocks[item] = {"Blockhash": str(self.proprosedblocks[item]["Blockhash"]),"Count":int(self.proprosedblocks[item]["Count"]) ,"FirstSender":str(self.proprosedblocks[item]["FirstSender"]),"Serversthatgotthisblock":self.proprosedblocks[item]["Serversthatgotthisblock"],"Timecreated":self.proprosedblocks[item]["Timecreated"],"Blockdata":self.proprosedblocks[item]["Blockdata"],"Transactionnum":self.proprosedblocks[item]["Transactionnum"],"Timerecieved":self.proprosedblocks[item]["Timerecieved"],"serverwaittime":self.proprosedblocks[item]["serverwaittime"],"BlockDataRecieved":self.proprosedblocks[item]["BlockDataRecieved"],"Dateadded":self.proprosedblocks[item]["Timecreated"],"SUPERCHECK":True}
+         self.proprosedblocks[item] = {"Blockhash": str(self.proprosedblocks[item]["Blockhash"]),"Count":int(self.proprosedblocks[item]["Count"]) ,"FirstSender":str(self.proprosedblocks[item]["FirstSender"]),"Serversthatgotthisblock":self.proprosedblocks[item]["Serversthatgotthisblock"],"Timecreated":self.proprosedblocks[item]["Timecreated"],"Blockdata":self.proprosedblocks[item]["Blockdata"],"Transactionnum":self.proprosedblocks[item]["Transactionnum"],"Timerecieved":self.proprosedblocks[item]["Timerecieved"],"serverwaittime":self.proprosedblocks[item]["serverwaittime"],"BlockDataRecieved":self.proprosedblocks[item]["BlockDataRecieved"],"Dateadded":self.proprosedblocks[item]["Timecreated"],"SUPERCHECK":True,"Signature":self.proprosedblocks[item]["Signature"]}
       self.itlooped = True
 
       self.blocktobesent = {}
@@ -1758,16 +2042,17 @@ class serverthing:
        print(self.proprosedblocks[highest_item]["FirstSender"])
       except:
           print("lol")
-     
-      blockneostring = ""
-      blockneohash = hashlib.sha256(blockneostring.encode("utf-8")).hexdigest()
-      self.proprosedblocks[highest_item]["Blockhash"] = str(blockneohash)
+      if self.proprosedblocks[highest_item]["Blockhash"] == "":
+       blockneostring = ""
+       blockneohash = hashlib.sha256(blockneostring.encode("utf-8")).hexdigest()
+       self.proprosedblocks[highest_item]["Blockhash"] = str(blockneohash)
       isblockvalid = True
       try:
        DICTX = {}
        DICTX["YES"]=self.proprosedblocks[highest_item]["FirstSender"]
        DICTX["YES"]=self.proprosedblocks[highest_item]["Dateadded"]
        DICTX["YES"]=self.proprosedblocks[highest_item]["Blockdata"]
+       DICTX["YES"]=self.proprosedblocks[highest_item]["Signature"]
       except Exception as e:
         isblockvalid = False
         print("ERROR ERROR PUMPKIN TERROR!:"+str(e))
@@ -1809,21 +2094,44 @@ class serverthing:
           print("DELETED A SERVER")
       print("BLOCKDATA: "+str(self.proprosedblocks[highest_item]["Blockdata"]))
       print("Blocknum: "+str(self.blocknum))
-      self.blocklist[self.blocknum] = {"Dateadded":0,"BlockData":{},"Blockhash":"","FirstSender":""}
+      self.blocklist[self.blocknum] = {"Dateadded":0,"BlockData":{},"Blockhash":"","FirstSender":"","Signature":""}
       self.blocklist[self.blocknum]["Dateadded"] = time.time()
       transactiontotal = 0
       try:
        self.blocklist[self.blocknum]["Blockhash"] =  self.proprosedblocks[highest_item]["Blockhash"]
        self.blocklist[self.blocknum]["FirstSender"] =  self.proprosedblocks[highest_item]["FirstSender"]
+       signature = self.blocklist[self.blocknum]["Signature"]
+
       except Exception as e:
           print("Supererror: "+str(e))
           isblockvalid = False
       newwalletlist = {}
-      if isblockvalid == False:
+      publickeything = self.wallets[self.proprosedblocks[highest_item]["FirstSender"]]["verifyingkey"]
+      signature = self.proprosedblocks[highest_item]["Signature"]
+      try:
+                publickeything.verify(
+                   base64.b64decode(signature),
+                   self.proprosedblocks[highest_item]["FirstSender"].encode('utf-8'),
+                   ec.ECDSA(hashes.SHA256())
+                )
+      except Exception as e:
+          isblockvalid = False
+      while isblockvalid == False:
           print("THE BLOCK'S NOT VALID!")
           del self.proprosedblocks[highest_item]
+
           highest_item = max(self.proprosedblocks.keys(), key=lambda x: self.proprosedblocks[x]['serverwaittime'])
-          isblockvalid = True
+          publickeything = self.wallets[self.proprosedblocks[highest_item]["FirstSender"]]["verifyingkey"]
+          try:
+                publickeything.verify(
+                   base64.b64decode(signature),
+                   self.proprosedblocks[highest_item]["FirstSender"].encode('utf-8'),
+                   ec.ECDSA(hashes.SHA256())
+                )
+                isblockvalid = True
+                
+          except Exception as e:
+           isblockvalid = False
 
 
 
@@ -1832,6 +2140,7 @@ class serverthing:
       for item in self.proprosedblocks[highest_item]["Blockdata"]:
        validornot = False
        print("WERE THERE")
+
        try:
            DICTX = {}
            DICTX["YES"] = self.proprosedblocks[highest_item]["Blockdata"][item]["Type"] 
@@ -2299,11 +2608,11 @@ class serverthing:
               if len(dict(self.proprosedblocks[highest_item]["Blockdata"])) == 0:
                   print("FAILURE!")
                   hashed = hashlib.sha256(hashed.encode("utf-8")).hexdigest()
-                  self.blocklist[self.blocknum] = {"Blockdata":dict(self.proprosedblocks[highest_item]["Blockdata"]),"FirstSender":str(self.proprosedblocks[highest_item]["FirstSender"]),"Blockhash":hashed,"Dateadded":self.proprosedblocks[highest_item]["Dateadded"]}
+                  self.blocklist[self.blocknum] = {"Blockdata":dict(self.proprosedblocks[highest_item]["Blockdata"]),"FirstSender":str(self.proprosedblocks[highest_item]["FirstSender"]),"Blockhash":hashed,"Dateadded":self.proprosedblocks[highest_item]["Dateadded"],"Signature":self.proprosedblocks[highest_item]["Signature"]}
           if not self.blocknum in self.blocklist:
-           self.blocklist[self.blocknum] = {"Blockdata":dict(self.proprosedblocks[highest_item]["Blockdata"]),"FirstSender":str(self.proprosedblocks[highest_item]["FirstSender"]),"Blockhash":str(self.proprosedblocks[highest_item]["Blockhash"]),"Dateadded":str(self.proprosedblocks[highest_item]["Dateadded"])}
+           self.blocklist[self.blocknum] = {"Blockdata":dict(self.proprosedblocks[highest_item]["Blockdata"]),"FirstSender":str(self.proprosedblocks[highest_item]["FirstSender"]),"Blockhash":str(self.proprosedblocks[highest_item]["Blockhash"]),"Dateadded":str(self.proprosedblocks[highest_item]["Dateadded"]),"Signature":self.proprosedblocks[highest_item]["Signature"]}
           elif self.blocklist[self.blocknum]["FirstSender"] == "":
-              self.blocklist[self.blocknum] = {"Blockdata":dict(self.proprosedblocks[highest_item]["Blockdata"]),"FirstSender":str(self.proprosedblocks[highest_item]["FirstSender"]),"Blockhash":str(self.proprosedblocks[highest_item]["Blockhash"]),"Dateadded":str(self.proprosedblocks[highest_item]["Dateadded"])}
+              self.blocklist[self.blocknum] = {"Blockdata":dict(self.proprosedblocks[highest_item]["Blockdata"]),"FirstSender":str(self.proprosedblocks[highest_item]["FirstSender"]),"Blockhash":str(self.proprosedblocks[highest_item]["Blockhash"]),"Dateadded":str(self.proprosedblocks[highest_item]["Dateadded"]),"Signature":self.proprosedblocks[highest_item]["Signature"]}
 
               print("WHAT HAPPENED HERE???????")
           print("BLOCKLIST: "+str(self.blocklist[self.blocknum]))
@@ -2427,6 +2736,30 @@ class serverthing:
                if outerflag == True:
                    break
                newhighestitem = max(self.proprosedblocks.keys(), key=lambda x: self.proprosedblocks[x]['serverwaittime'])
+               signature = self.proprosedblocks[newhighestitem]["Signature"]
+               try:
+                publickeything.verify(
+                   base64.b64decode(signature),
+                   self.proprosedblocks[newhighestitem]["FirstSender"].encode('utf-8'),
+                   ec.ECDSA(hashes.SHA256())
+                )
+               except Exception as e:
+                isblocktrue = False
+               while isblocktrue == False:
+                del self.proprosedblocks[highest_item]
+
+                newhighestitem = max(self.proprosedblocks.keys(), key=lambda x: self.proprosedblocks[x]['serverwaittime'])
+                publickeything = self.wallets[self.proprosedblocks[newhighestitem]["FirstSender"]]["verifyingkey"]
+                try:
+                 publickeything.verify(
+                   base64.b64decode(signature),
+                   self.proprosedblocks[highest_item]["FirstSender"].encode('utf-8'),
+                   ec.ECDSA(hashes.SHA256())
+                 )
+                 isblocktrue = True
+                
+                except Exception as e:
+                 isblocktrue = True
                print("NEWHIGHESTITEM: "+str(newhighestitem))
                try:
                  firstsender = dict(self.proprosedblocks[newhighestitem]["FirstSender"])
@@ -3005,7 +3338,7 @@ class serverthing:
             self.averagetransactionfee = transactionsinthere2/transactionfeething
            except:
                lol=True
-           self.blocklist[self.blocknum] = {"Blockdata":self.proprosedblocks[newhighestitem]["Blockdata"],"Dateadded":time.time(),"Blockhash":str(newhighestitem),"FirstSender":self.proprosedblocks[newhighestitem]["FirstSender"]}
+           self.blocklist[self.blocknum] = {"Blockdata":self.proprosedblocks[newhighestitem]["Blockdata"],"Dateadded":time.time(),"Blockhash":str(newhighestitem),"FirstSender":self.proprosedblocks[newhighestitem]["FirstSender"],"Signature":self.proprosedblocks[newhighestitem]["Signature"]}
            self.hashstring = self.hashstring +self.blocklist[self.blocknum]["Blockhash"]
            self.blocknum+=1
            self.blocksuntildoom+=-1
@@ -3125,46 +3458,63 @@ class serverthing:
             self.files[filename] = {"Wallet": wallet, "DaysOfActivity": daysofactivity, "TimeListed": time.time(), "TimeLeft":daysofactivity*86400}
             self.transactions[wallet]["Coins"] += PriceperGBperday * -1
             self.transactions[wallet]["Coins"] += PriceperGBperday * -1
-    def addforcorretblockcount(self,haash,firstsender,serverip,timecreated,NodesPassedThrough):
-      print("LOADING!")
+    def addforcorrectblockcount(self,haash,firstsender,serverip,timecreated,NodesPassedThrough,signature):
       self.proposedblocks = DiskBackedDict("proprosedblocks.db")
       self.nextproposedblocklist = DiskBackedDict("nextproposedblocklist.db")
+      publickeything = self.wallets[firstsender]["verifyingkey"]
+      print("First Sender: "+str(firstsender))
+      try:
+          publickeything.verify(
+             base64.b64decode(signature),
+             firstsender.encode('utf-8'),
+             ec.ECDSA(hashes.SHA256())
+          )
+          print("IT WORKED.")
+      except Exception as e:
+       print("IT FAILED")
+       return "This block is invalid."
       if not timecreated<POWERFOREVERLABEL :
-       print("HERE!")
-       if haash in self.proprosedblocks:
-        print("HERE2!1")
-        if self.proprosedblocks[haash]["SUPERCHECK"] == False:
-         print("HERE3!")
-         if not serverip in self.proprosedblocks[haash]["Serversthatgotthisblock"]:
-          print("DATAINBLOCK: "+str(self.proprosedblocks[haash]))
+       if haash in self.proposedblocks:
+        if self.proposedblocks[haash]["SUPERCHECK"] == False:
+         if not serverip in self.proposedblocks[haash]["Serversthatgotthisblock"]:
 
 
-         
+
           try:
+             with open("gothereok.txt","w") as file:
+              file.write("Got here ok")
              newserverblockgetlist = {}
-            
-             newserverblockgetlist = dict(self.proprosedblocks[haash]["Serversthatgotthisblock"])
+
+             newserverblockgetlist = dict(self.proposedblocks[haash]["Serversthatgotthisblock"])
              if len(newserverblockgetlist) == 0:
-                 print("HOW????")
-             serverblocklistmust[str(serverip)] = {"Server":str(serverip),"Sender":self.proprosedblocklist[haash]["FirstSender"],"Serverwaittime": self.proprosedblocklist[haash]["serverwaittime"]}
+                 lol=True
+             sTF = time.time()-self.serverlist[serverip]["timeadded"]
 
-             print("THESERVERS: "+str(self.proprosedblocks[haash]["Serversthatgotthisblock"]))
+             stuffpower = str(self.blocknum)+str(serverip)
+             eothingtoadd2 = hashlib.sha256(stuffpower.encode('utf8')).hexdigest()
+             SEALDEAL = int(str(eothingtoadd2),16)
+             SEALDEAL = SEALDEAL%7
+             numthing = sTF*(SEALDEAL+1)
+             newserverblockgetlist[str(serverip)] = {"Server":str(serverip),"Sender":str(firstsender),"Serverwaittime":int(numthing)}
 
-             self.proprosedblocks[haash] = {"Blockhash": str(self.proprosedblocks[haash]["Blockhash"]),"Count":int(self.proprosedblocks[haash]["Count"]) ,"FirstSender":str(self.proprosedblocks[haash]["FirstSender"]),"Serversthatgotthisblock":newserverblockgetlist,"Timecreated":self.proprosedblocks[haash]["Timecreated"],"Blockdata":self.proprosedblocks[haash]["Blockdata"],"Transactionnum":self.proprosedblocks[haash]["Transactionnum"],"Timerecieved":self.proprosedblocks[haash]["Timerecieved"],"serverwaittime":self.proprosedblocks[haash]["serverwaittime"],"BlockDataRecieved":self.proprosedblocks[haash]["BlockDataRecieved"],"Dateadded":self.proprosedblocks[haash]["Timecreated"],"SUPERCHECK":self.proprosedblocks[haash]["SUPERCHECK"]}
 
-          except:
-              print("NOT THAT WAY EITHER!")
-          print("SERVERS33: "+str(self.proprosedblocks[haash]["Serversthatgotthisblock"]))
-         
-          print("SERVERS44")
+             self.proposedblocks[haash] = {"Blockhash": str(self.proposedblocks[haash]["Blockhash"]),"Count":int(self.proposedblocks[haash]["Count"]) ,"FirstSender":str(self.proposedblocks[haash]["FirstSender"]),"Serversthatgotthisblock":newserverblockgetlist,"Timecreated":self.proposedblocks[haash]["Timecreated"],"Blockdata":self.proposedblocks[haash]["Blockdata"],"Transactionnum":self.proposedblocks[haash]["Transactionnum"],"Timerecieved":self.proposedblocks[haash]["Timerecieved"],"serverwaittime":self.proposedblocks[haash]["serverwaittime"],"BlockDataRecieved":self.proposedblocks[haash]["BlockDataRecieved"],"Dateadded":self.proposedblocks[haash]["Timecreated"],"SUPERCHECK":self.proposedblocks[haash]["SUPERCHECK"],"Signature":signature}
+             with open("NewList.txt","w") as file:
+                 file.write(str(newserverblockgetlist))
+             with open("proposedblockhere.txt","w") as file:
+              file.write(str(self.proposedblocks[haash]))
+          except Exception as e:
+              with open("OBJECTION.txt","w") as file:
+                  file.write(str(e))
+              lol=True
+
           return "WE DID IT!"
          else:
-             print("FOUND THIS!3333")
-
-        elif haash in self.proprosedblocks:
-         print("HERE2!2")
-         if self.proprosedblocks[haash]["SUPERCHECK"] == True and not haash in self.nextproposedblocklist:
-           print("HERE3!")
+             lol=True
+        elif haash in self.proposedblocks:
+         with open("gothereok.txt","w") as file:
+              file.write("Got here ok")
+         if self.proposedblocks[haash]["SUPERCHECK"] == True and not haash in self.nextproposedblocklist:
            serverblocklistmust = {}
            serverblocklistmust[str(serverip)] = {"Server":str(serverip),"Sender":firstsender,"Serverwaittime": numthing}
 
@@ -3174,33 +3524,38 @@ class serverthing:
            SEALDEAL = int(str(eothingtoadd2),16)
            SEALDEAL = SEALDEAL%7
            numthing = sTF*(SEALDEAL+1)
-           self.nextproposedblocklist[haash]  = {"Transactionnum":{},"Count":1,"FirstSender":firstsender,"Serverip":serverip, "Blockdata":{},"Serversthatgotthisblock":serverblocklistmust,"Dateadded":time.time(),"Blockhash":"","Timecreated":time.time(),"Timerecieved":time.time(),"serverwaittime":numthing,"BlockDataRecieved":False,"SUPERCHECK":False}
-           print("THESERVERS: "+str(self.nextproposedblocklist[haash]["Serversthatgotthisblock"]))
-
-         elif self.proprosedblocks[haash]["SUPERCHECK"] == True:
-             print("HERE6!")
+           self.nextproposedblocklist[haash]  = {"Transactionnum":{},"Count":1,"FirstSender":firstsender,"Serverip":serverip, "Blockdata":{},"Serversthatgotthisblock":serverblocklistmust,"Dateadded":time.time(),"Blockhash":"","Timecreated":time.time(),"Timerecieved":time.time(),"serverwaittime":numthing,"BlockDataRecieved":False,"SUPERCHECK":False,"Signature":signature}
+           with open("NewList.txt","w") as file:
+               file.write(str(serverblocklistmust))
+         elif self.proposedblocks[haash]["SUPERCHECK"] == True:
              serverblocklistmust = dict(self.nextproposedblocklist[haash]["Serversthatgotthisblock"])
-             print("HERE7!")
              serverblocklistmust[str(serverip)] = {"Server":str(serverip),"Sender":self.nextproposedblocklist[haash]["FirstSender"],"Serverwaittime": self.nextproposedblocklist[haash]["serverwaittime"]}
-             print("HERE8!")
-             self.nextproposedblocklist[haash]  = {"Transactionnum":self.nextproposedblocklist[haash]["Transactionnum"],"Count":self.nextproposedblocklist[haash]["Count"],"FirstSender":self.nextproposedblocklist[haash]["FirstSender"],"Serverip":self.nextproposedblocklist[haash]["Serverip"], "Blockdata":self.nextproposedblocklist[haash]["Blockdata"],"Serversthatgotthisblock":serverblocklistmust,"Dateadded":self.nextproposedblocklist[haash]["Dateadded"],"Blockhash":self.nextproposedblocklist[haash]["Blockhash"],"Timecreated":self.nextproposedblocklist[haash]["Timecreated"],"Timerecieved":self.nextproposedblocklist[haash]["Timerecieved"],"serverwaittime":self.nextproposedblocklist[haash]["serverwaittime"],"BlockDataRecieved":self.nextproposedblocklist[haash]["BlockDataRecieved"],"SUPERCHECK":self.nextproposedblocklist[haash]["SUPERCHECK"]}
-             print("THESERVERS: "+str(self.nextproposedblocklist[haash]["Serversthatgotthisblock"]))
+             self.nextproposedblocklist[haash]  = {"Transactionnum":self.nextproposedblocklist[haash]["Transactionnum"],"Count":self.nextproposedblocklist[haash]["Count"],"FirstSender":self.nextproposedblocklist[haash]["FirstSender"],"Serverip":self.nextproposedblocklist[haash]["Serverip"], "Blockdata":self.nextproposedblocklist[haash]["Blockdata"],"Serversthatgotthisblock":serverblocklistmust,"Dateadded":self.nextproposedblocklist[haash]["Dateadded"],"Blockhash":self.nextproposedblocklist[haash]["Blockhash"],"Timecreated":self.nextproposedblocklist[haash]["Timecreated"],"Timerecieved":self.nextproposedblocklist[haash]["Timerecieved"],"serverwaittime":self.nextproposedblocklist[haash]["serverwaittime"],"BlockDataRecieved":self.nextproposedblocklist[haash]["BlockDataRecieved"],"SUPERCHECK":self.nextproposedblocklist[haash]["SUPERCHECK"],"Signature":signature}
+             with open("NewList.txt","w") as file:
+                 file.write(str(serverblocklistmust))
        else:
+          with open("gothereok.txt","w") as file:
+              file.write("Got here ok")
           sTF = time.time()-self.serverlist[serverip]["timeadded"]
-          
+
           stuffpower = str(self.blocknum)+str(serverip)
           eothingtoadd2 = hashlib.sha256(stuffpower.encode('utf8')).hexdigest()
           SEALDEAL = int(str(eothingtoadd2),16)
           SEALDEAL = SEALDEAL%7
           numthing = sTF*(SEALDEAL+1)
-          
+
           serverlistpowerdevice = {}
           serverlistpowerdevice[str(serverip)] =  {"Server":str(serverip),"Sender":firstsender,"Serverwaittime": numthing}
-          print("IN THE DEVICE: "+str(self.superdictdevice))
 
-          self.proprosedblocks[haash] = {"Blockhash":str(haash),"Count":1,"FirstSender":firstsender,"Serversthatgotthisblock":dict(serverlistpowerdevice),"Timecreated":timecreated,"Blockdata":{},"Transactionnum":0,"Timerecieved":time.time(),"serverwaittime":numthing,"BlockDataRecieved":False,"Dateadded":time.time(),"SUPERCHECK":False}
+          self.proposedblocks[haash] = {"Blockhash":str(haash),"Count":1,"FirstSender":firstsender,"Serversthatgotthisblock":dict(serverlistpowerdevice),"Timecreated":timecreated,"Blockdata":{},"Transactionnum":0,"Timerecieved":time.time(),"serverwaittime":numthing,"BlockDataRecieved":False,"Dateadded":time.time(),"SUPERCHECK":False,"Signature":signature}
+          with open("proposedblockhere.txt","w") as file:
+              file.write(str(self.proposedblocks[haash]))
+          with open("NewList.txt","w") as file:
+              file.write(str(serverlistpowerdevice))
       else:
-          print("THE MAJOR FAILURE!")
+          with open("ERRORERRORERROR.txt","w") as file:
+              file.write("error....")
+          lol=True
     def checkforserverinblock(self,serverip,haash):
         self.proprosedblocks = DiskBackedDict("proprosedblocks.db")
         self.nextproposedblocklist = DiskBackedDict("nextproposedblocklist.db")
@@ -3262,70 +3617,62 @@ class serverthing:
         return walletbalance
     def getverificationkey(self,walletname):
         return self.wallets[walletname]["verifyingkeysummoningthing"]
-    def rateserver(self,walletname,stars,reason):
-        self.amountofratings+=1
-        self.ratings[self.amountofratings] = {"Poster":walletname,"Stars":stars,"Reason":reason}
-        if stars>self.rating:
-            self.rating+= (stars/self.amountofratings)
-        elif stars<self.rating:
-            self.rating+= -1*(stars/self.amountofratings)
     def getthepriceofuploads(self,filesize,amountofdays):
         return (math.floor(PriceperGBperday*filesize*amountofdays))/(10**8)
     def addblockdatatoblock(self,blockdata,blockhash):
-      self.proprosedblocks = DiskBackedDict("proprosedblocks.db")
+      self.proposedblocks = DiskBackedDict("proprosedblocks.db")
       self.nextproposedblocklist = DiskBackedDict("nextproposedblocklist.db")
       blockstring = ""
       for item in blockdata:
-       if item["Type"] == 1:
-        blockstring = blockstring+str(item["Sender"])
-        blockstring = blockstring+str(item["Reciever"])
-        blockstring = blockstring+str(item["amountofcoins"])
-        blockstring = blockstring+str(item["transactionfee"])
-        blockstring = blockstring+str(item["verifyingsig"])
-        blockstring = blockstring+str(item["txextra"])
-       elif item["Type"] == 2:
-        blockstring = blockstring+str(item["Sender"])
-        blockstring = blockstring+str(item["Reciever"])
-        blockstring = blockstring+str(item["transactionfee"])
-        blockstring = blockstring+str(item["verifyingsig1"])
-        blockstring = blockstring+str(item["verifyingsig2"])
-        blockstring = blockstring+str(item["filehash"])
-        blockstring = blockstring+str(item["fileprice"])
-        blockstring = blockstring+str(item["daysoflasting"])
-        blockstring = blockstring+str(item["filesize"])
-       elif item["Type"] == 3:
-        blockstring = blockstring+str(item["Sender"])
-        blockstring = blockstring+str(item["Reciever"])
-        blockstring = blockstring+str(item["transactionfee"])
-        blockstring = blockstring+str(item["verifyingsig1"])
-        blockstring = blockstring+str(item["verifyingsig2"])
-        blockstring = blockstring+str(item["filepricething"])
-        blockstring = blockstring+str(item["daysoflasting"])
-        blockstring = blockstring+str(item["filespace"])
-        blockstring = blockstring+str(item["pendingtransactionnum"])
-       elif item["Type"] == 4:
-        blockstring = blockstring+str(item["Sender"])
-        blockstring = blockstring+str(item["Reciever"])
-        blockstring = blockstring+str(item["transactionfee"])
-        blockstring = blockstring+str(item["verifyingsig1"])
-        blockstring = blockstring+str(item["verifyingsig2"])
-        blockstring = blockstring+str(item["amountofcoins"])
-        blockstring = blockstring+str(item["txextra"])
-        blockstring = blockstring+str(item["vmtransactionnum"])
+       if blockdata[item]["Type"] == 1:
+        blockstring = blockstring+str(blockdata[item]["Sender"])
+        blockstring = blockstring+str(blockdata[item]["Reciever"])
+        blockstring = blockstring+str(blockdata[item]["amountofcoins"])
+        blockstring = blockstring+str(blockdata[item]["verifyingsig"])
+        blockstring = blockstring+str(blockdata[item]["txextra"])
+       elif blockdata[item]["Type"] == 2:
+        blockstring = blockstring+str(blockdata[item]["Sender"])
+        blockstring = blockstring+str(blockdata[item]["Reciever"])
+        blockstring = blockstring+str(blockdata[item]["transactionfee"])
+        blockstring = blockstring+str(blockdata[item]["verifyingsig1"])
+        blockstring = blockstring+str(blockdata[item]["verifyingsig2"])
+        blockstring = blockstring+str(blockdata[item]["filehash"])
+        blockstring = blockstring+str(blockdata[item]["fileprice"])
+        blockstring = blockstring+str(blockdata[item]["daysoflasting"])
+        blockstring = blockstring+str(blockdata[item]["filesize"])
+       elif blockdata[item]["Type"] == 3:
+        blockstring = blockstring+str(blockdata[item]["Sender"])
+        blockstring = blockstring+str(blockdata[item]["Reciever"])
+        blockstring = blockstring+str(blockdata[item]["transactionfee"])
+        blockstring = blockstring+str(blockdata[item]["verifyingsig1"])
+        blockstring = blockstring+str(blockdata[item]["verifyingsig2"])
+        blockstring = blockstring+str(blockdata[item]["filepricething"])
+        blockstring = blockstring+str(blockdata[item]["daysoflasting"])
+        blockstring = blockstring+str(blockdata[item]["filespace"])
+        blockstring = blockstring+str(blockdata[item]["pendingtransactionnum"])
+       elif blockdata[item]["Type"] == 4:
+        blockstring = blockstring+str(blockdata[item]["Sender"])
+        blockstring = blockstring+str(blockdata[item]["Reciever"])
+        blockstring = blockstring+str(blockdata[item]["transactionfee"])
+        blockstring = blockstring+str(blockdata[item]["verifyingsig1"])
+        blockstring = blockstring+str(blockdata[item]["verifyingsig2"])
+        blockstring = blockstring+str(blockdata[item]["amountofcoins"])
+        blockstring = blockstring+str(blockdata[item]["txextra"])
+        blockstring = blockstring+str(blockdata[item]["vmtransactionnum"])
       dashhash = hashlib.sha256(blockstring.encode()).hexdigest()
-      if  len(blockdata)<200000 and dashhash == blockhash and blockhash in self.proprosedblocks:
+      if  len(blockdata)<200000 and dashhash == blockhash and blockhash in self.proposedblocks:
         sizeofblock = sys.getsizeof(blockdata)
-        self.proprosedblocks[blockhash]["Blockdata"] = blockdata
-        self.proprosedblocks[blockhash]["transactionnum"] = len(blockdata)
-        self.proprosedblocks[blockhash]["BlockDataRecieved"] = True
-        timething = self.proprosedblocks[blockhash]["Timecreated"]*sizeofblock
+        self.proposedblocks[blockhash]["Blockdata"] = blockdata
+        self.proposedblocks[blockhash]["transactionnum"] = len(blockdata)
+        self.proposedblocks[blockhash]["BlockDataRecieved"] = True
+        timething = self.proposedblocks[blockhash]["Timecreated"]*sizeofblock
       elif len(blockdata)<200000 and dashhash == blockhash and blockhash in self.nextproposedblocklist:
         sizeofblock = sys.getsizeof(blockdata)
         self.nextproposedblocklist[blockhash]["Blockdata"] = blockdata
         self.nextproposedblocklist[blockhash]["transactionnum"] = len(blockdata)
         self.nextproposedblocklist[blockhash]["BlockDataRecieved"] = True
         timething = self.nextproposedblocklist[blockhash]["Timecreated"]*sizeofblock
-      self.proprosedblocks.close()
+      self.proposedblocks.close()
     def getblockamount(self):
         return self.blocknum
     def changewallet(self,wallet):
@@ -3579,6 +3926,9 @@ class serverthing:
         self.selfverifyingkey = verifyingkey
     def getverifyingkey(self):
         return self.selfverifyingkey
+    def setmaxdrive(self):
+        max_drive = max(self.harddrives, key=lambda x: self.harddrives[x]['DataAvailable'])
+        return max_drive
     def startfiletransaction(self,filehash,verifyingsig,walletname,filesize,messagetoverifyownership,dayslastingfor,filedata,filename,filetype):
         self.pendingfiletransactionnum += 1
         max_drive = max(self.harddrives, key=lambda x: self.harddrives[x]['DataAvailable'])
@@ -4259,7 +4609,7 @@ class serverthing:
                except:
                  lol=True
 
-   def getfile(self,filename,verifyingsig,walletname):
+    def getfile(self,filename,verifyingsig,walletname):
         if self.files[filename]["TypeOfFile"] == "Private" and walletname == self.files[filename]["Walletname"]:
             verifyingkey = self.wallets[walletname]["verifyingkey"]
             tothemoonthing = True
@@ -6533,7 +6883,7 @@ class serverthing:
                 truepower2 = False
            if truepower2 == True:
             try:
-             add_file_to_vm(vm_name,filename,filedata)
+             add_file_to_vm(vm_name,filename,filedata,walletname)
             except:
                 print("ERROR")
     def setdoomblocks(self,doomblocks):
@@ -6604,7 +6954,7 @@ class serverthing:
             truepower = False
         if truepower == True:
           try:
-            execute_command_on_vm(vmname,command)
+            addcommands(vmname,command)
           except:
               print("Error")
     def checkVMTHINGYTIMEY(self,vmname):
@@ -6678,6 +7028,20 @@ class serverthing:
             print("WE MESSED UP")
         if truepower == True:
             return self.filespacedata[walletname]["DataStorageTotal"]
+    def verifywhatever(self,walletname,verifyingsig):
+        truepower = True
+        try:
+         self.wallets[walletname]["verifyingkey"].verify(
+          verifyingsig,
+          walletname.encode('utf-8'),
+          ec.ECDSA(hashes.SHA256())
+         )
+        except:
+            truepower = False
+            print("WE MESSED UP")
+            return "NO"
+        if truepower == True:
+            return "YES"
     def deletethevmfile(self,vmname,walletname,verifyingsig,filename):
         truepower = True
         try:
@@ -6829,6 +7193,40 @@ def makeawallet():
         del servers[servernum2]
 
     return jsonify({"Success":"Done"}),200
+
+@app.route("/getfiles",methods=['POST'])
+def getfiles():
+ vm = request.json
+ vm = vm["vm"]
+ return jsonify(files[vm])
+@app.route("/getcommands",methods=['POST'])
+def getcommands():
+ vm = request.json
+ vm = vm["vm"]
+ return jsonify(commands[vm])
+@app.route("/getfile",methods=['POST'])
+def getfile():
+    file = request.json
+    file = file["Name"]
+    if os.path.abspath(file).find(abspathvariable)>-1:
+
+     return send_file(file)
+    else:
+     return "Not allowed."
+@app.route("/addfiletousedlist",methods=['POST'])
+def addfiletousedlist():
+    filesplusvms = request.json
+    file = filesplusvms["File"]
+    vm = filesplusvms["vm"]
+    labelfileasused(file,vm)
+    return "YOU DID IT"
+@app.route("/addcommandtousedlist",methods=['POST'])
+def addcommandtousedlist():
+    commandsplusvms = request.json
+    command = commandsplusvms["Command"]
+    vm = commandsplusvms["vm"]
+    labelfileasused(command,vm)
+    return "YOU DID IT"        
 @app.route("/getfilespace",methods=['POST'])
 def getfilespace():
     data=request.json
@@ -7578,31 +7976,73 @@ def checkforblockdata():
      return jsonify({"Error":"THIS IS NOT THE RIGHT WAY!"}),403
 @app.route("/recieveblockdata2",methods=["POST"])
 def addthatdata():
- client_ip = request.remote_addr
  response = "YES!"
  if response == "YES!":
     data = request.json
     if "blockdata" not in data:
-        print("YOU MESSED UP HARD!")
         return jsonify({"Error":"You messed up."}),403
     blockdata = data["blockdata"]
+    serverip = data["serverip"]
     blockhash = hashlib.sha256(str(blockdata).encode('utf8')).hexdigest()
+    with open("PASTTHISPIECE2.txt","w") as file:
+        file.write("PAST THIS PIECE")
     serverthingthing.addblockdatatoblock(blockdata,blockhash)
+    with open("PASTTHISPIECE.txt","w") as file:
+        file.write("PAST THIS PIECE")
     servers = serverthingthing.getservers()
     serverlen = len(servers)
     servernum1 = random.randint(0,serverlen-1)
     servernum2 = random.randint(0,serverlen-1)
-    print("SERVERS: "+str(servers))
     servernum1allowed = False
     servernum2allowed = False
     servernum3allowed = False
     servernum4allowed = False
     servernum5allowed = False
+    with open("GOTPASTTHAT.txt","w") as file:
+        file.write("Got past that")
+    listofnumstodelete = []
+    for item in servers:
+       if servers[item] == serverip:
+           listofnumstodelete.append(item)
+       if servers[item] == SpecialDomain:
+           listofnumstodelete.append(item)
+       if servers[item] == "127.0.0.1:8254":
+           listofnumstodelete.append(item)
+    with open("listofnumstodelete.txt","w") as file:
+        file.write(str(listofnumstodelete))
+    with open("PastThisAswell7.txt","w") as file:
+       file.write("Even past this.")
+    for item in listofnumstodelete:
+       if not item in servers:
+           with open("Servershere.txt","w") as file:
+               file.write(str(servers))
+           with open("Itemhere.txt","w") as file:
+               file.write(str(item))
+       if len(servers)>0:
+        del servers[item]
+       else:
+        return jsonify({"Success":"But there's no servers to send to"}),200
+    servers = fixserverset(servers)
+
+    with open("PastThisAswell8.txt","w") as file:
+       file.write("Even past this.")
+
+    try:
+     if SpecialDevice == 2:
+       del servers[str(get_local_ip())]
+     else:
+       del servers[SpecialDomain]
+    except Exception as e:
+     lol=True
+    with open("PastThisAswell9.txt","w") as file:
+       file.write("Even past this.")
+    if len(servers) == 0:
+       return jsonify({"Success":"But there's no servers to send to"}),200
     while servernum1allowed == False:
        if not servernum1 == -1 and servernum1 in servers:
         URL = serverthingthing.getprotocol(servers[servernum1])+servers[servernum1]+"/checkforblockdatainthing"
         data = {"Hash":blockhash}
-        
+
         try:
           response = requests.post(URL,json=data)
           if response.status_code == 200:
@@ -7612,6 +8052,7 @@ def addthatdata():
                 servernum1allowed = True
             else:
               if not serverlen == 0:
+                print("OVER HERE, ITS HERE")
                 del servers[servernum1]
                 serverlen = len(servers)
                 servernum1 = random.randint(0,serverlen)
@@ -7624,20 +8065,20 @@ def addthatdata():
                       servernum1+=-1
                   else:
                       servernum1+=1
-         
+
         except:
+            print("OK ITS HERE")
             servernum1allowed = True
             servernum2allowed = True
             servernum1 = -1
             servernum2 = -1
        else:
-            print("NOOOOOOOOOOOOOOOOOOOOOO!!!!!!!")
             break
     while servernum2allowed == False:
        if not servernum2 == -1 and servernum2 in servers:
         URL = serverthingthing.getprotocol(servers[servernum2])+servers[servernum2]+"/checkforblockdatainthing"
         data = {"Hash":blockhash}
-     
+
         try:
           response = requests.post(URL,json=data)
           if response.status_code == 200:
@@ -7647,6 +8088,8 @@ def addthatdata():
                 servernum2allowed = True
             else:
               if not serverlen == 0:
+                print("OVER HERE, ITS HERE 2")
+
                 del servers[servernum2]
                 serverlen = len(servers)
                 servernum2 = random.randint(0,serverlen)
@@ -7660,37 +8103,41 @@ def addthatdata():
                   else:
                       servernum2+=1
         except:
+            print("OK ITS HERE.2")
+
             servernum1allowed = True
             servernum2allowed = True
             servernum1 = -1
             servernum2 = -1
        else:
-            print("NOOOOOOOOOOOOOOO!!!!!!!!!!!!!!!!!!2")
             break
-    
+
     url1 = ""
+    if not servernum1 in servers:
+        servernum1 = random.randint(0,len(servers)-1)
     if not servernum1 == -1 and int(servernum1) in servers:
      url1 = serverthingthing.getprotocol(servers[servernum1])+servers[servernum1]+"/recieveblockdata2"
     else:
-        print("SERVERNUM1: "+str(servernum1))
-        print("OH# THATSW HY")
+               print("OH NO: "+str(servers))
+               print("SERVERNUM1: "+str(servernum1))
+               lol=True
+
     url2 = ""
     if not servernum2 == -1 and int(servernum2) in servers:
      url2 = serverthingthing.getprotocol(servers[servernum2])+servers[servernum2]+"/recieveblockdata2"
     else:
-        print("SERVERNUM2: "+str(servernum2))
+                print("....")
+                lol=True
 
-        print("Oh that's why")
-    blockdataset = {"blockdata":blockdata}
+    blockdataset = {"blockdata":blockdata,"serverip":"127.0.0.1:8254"}
     try:
      response1 = requests.post(url1,json=blockdataset)
-     print("WE DID IT!")
      response2 = requests.post(url2,json=blockdataset)
-     print("WE DID IT!")
     except Exception as e:
-        print("ERR00R: "+str(e))
+        print("Error: "+str(e))
+        return {"Error: "+str(e)},403
         lol=True
-    try: 
+    try:
         del servers[servernum1]
     except:
         lol=True
@@ -7698,16 +8145,13 @@ def addthatdata():
         del servers[servernum2]
     except:
         lol=True
-    servernum3 = 0
-    try:
-     servernum3 = random.randint(min(servers),max(servers))
-    except:
-     print("failure")
+
+    servernum3 = random.randint(min(servers),max(servers))
     serverlen = len(servers)
     if serverlen>0:
      while servernum3allowed == False:
       if not servernum3 == -1 and servernum3 in servers:
-     
+
         try:
           response = requests.post(URL,json=data)
           if response.status_code == 200:
@@ -7735,7 +8179,6 @@ def addthatdata():
             servernum5allowed = True
             servernum3= -1
       else:
-            print("NOOOOOOOOOOOOOOO!!!!!!!!!!!!!!!!!!2")
             break
      if not servernum3 == -1 and servernum3 in servers:
         URL = serverthingthing.getprotocol(servers[servernum3])+servers[servernum3]+"/checkforblockdatainthing"
@@ -7748,11 +8191,12 @@ def addthatdata():
     try:
      servernum4 = random.randint(min(servers),max(servers))
     except:
-        print("WE HAVE RAN OUT OF SERVERS. THIS IT TO PREVENT A VERY ANNOYING BUG DO NOT REMOVE")
+                lol=True
+
     serverlen = len(servers)
     if serverlen>0:
      while servernum4allowed == False:
-      
+
        if not servernum4 == -1 and servernum4 in servers:
         try:
           response = requests.post(URL,json=data)
@@ -7781,7 +8225,6 @@ def addthatdata():
             servernum5allowed = True
             servernum4= -1
        else:
-            print("NOOOOOOOOOOOOOOO!!!!!!!!!!!!!!!!!!2")
             break
      if not servernum4 == -1 and servernum4 in servers:
         URL = serverthingthing.getprotocol(servers[servernum4])+servers[servernum4]+"/checkforblockdatainthing"
@@ -7793,11 +8236,11 @@ def addthatdata():
     try:
      servernum5 = random.randint(min(servers),max(servers))
     except:
-        print("THIS IS TO PREVENT A BUG DONT REMOVE!")
+        lol=True
     serverlen = len(servers)
     if serverlen>0:
      while servernum5allowed == False:
-      
+
        if not servernum5 == -1 and servernum5 in servers:
         try:
           response = requests.post(URL,json=data)
@@ -7826,7 +8269,6 @@ def addthatdata():
             servernum5allowed = True
             servernum5= -1
        else:
-            print("NOOOOOOOOOOOOOOO!!!!!!!!!!!!!!!!!!2")
             break
      if not servernum5 == -1 and servernum5 in servers:
         URL = serverthingthing.getprotocol(servers[servernum5])+servers[servernum5]+"/checkforblockdatainthing"
@@ -7838,8 +8280,8 @@ def addthatdata():
 
     return jsonify({"Success": "Block data added successfully"}),200
  else:
-     print("IT HAS FAILED.")
      return jsonify({"Error":"SYSTEM FAILED"}),403
+
 @app.route("/recieveservers",methods=["GET"])
 def getthoseservers():
     servers = serverthingthing.getservers()
@@ -8342,59 +8784,84 @@ def doesitwork():
 
 @app.route("/recieveblockdata1",methods=["POST"])
 def addthedata():
- client_ip = request.remote_addr
- response = serverthingthing.checkifthinginserverlist(client_ip+str(":8002"))
- print("CLIENTIP: "+str(client_ip))
+ response = "YES!"
  if response == "YES!":
    data = request.json
-   if "hash" not in data or "Firstsender" not in data or "Serverip" not in data or "Timecreated" not in data or "NodesPassedThrough" not in data:
+   if "hash" not in data or "Firstsender" not in data or "Serverip" not in data or "Timecreated" not in data or "NodesPassedThrough" not in data or "Signature" not in data:
      return jsonify({"Error":"You messed up."})
    haash = data["hash"]
    sender = data["Firstsender"]
-   print("FIRSTSENDER: "+str(sender))
    serverip = data["Serverip"]
-   print("SERVERIP: "+str(serverip))
    timecreated = data["Timecreated"]
    NodesPassedThrough = data["NodesPassedThrough"]
+   Signature = data["Signature"]
+
+   with open("GotTohere999.txt","w") as file:
+       file.write("Got Over Here")
    check = serverthingthing.checkforserverinblock(serverip,haash)
+   with open("GotPastThis.txt","w") as file:
+       file.write("Past this thing")
+
    if check == "YES":
-       print("ERROR CODE#23")
        return jsonify({"Error":"THIS SHOULDNT BE HERE!"}),403
-   serverthingthing.addforcorretblockcount(haash,sender,serverip,timecreated,NodesPassedThrough)
-   print("THE CORRECT BLOCK!")
+   with open("PastThisAswell.txt","w") as file:
+       file.write("Even past this.")
+   serverthingthing.addforcorrectblockcount(haash,sender,serverip,timecreated,NodesPassedThrough,Signature)
+
+   with open("pastthisanyways.txt","w") as file:
+       file.write("PASTTHIS")
    with open("countdownthing.txt","r") as file:
-            countdownthing = float(file.read())   
+            countdownthing = float(file.read())
    countdownthing+=countdownthing*-1
    countdownthing+=3
+   with open("PastThisAswell2.txt","w") as file:
+       file.write("Even past this.")
    servers = serverthingthing.getservers()
-   print("Servers: "+str(servers))
+   with open("PastThisAswell3.txt","w") as file:
+       file.write("Even past this.")
    serverlen = len(servers)
-   servernum1 = random.randint(0,serverlen-1)
-   servernum2 = random.randint(0,serverlen-1)
+   with open("PastThisAswell4.txt","w") as file:
+       file.write("Even past this.")
+
+   with open("PastThisAswell5.txt","w") as file:
+       file.write("Even past this.")
    servernum1valid = False
    servernum2valid = False
    servernum3valid = False
    servernum4valid = False
    servernum5valid = False
+   with open("PastThisAswell6.txt","w") as file:
+       file.write("Even past this.")
    listofnumstodelete = []
    for item in servers:
        if servers[item] == serverip:
            listofnumstodelete.append(item)
        if servers[item] == SpecialDomain:
            listofnumstodelete.append(item)
+       if servers[item] == "127.0.0.1:8254":
+           listofnumstodelete.append(item)
+   
+   with open("PastThisAswell77.txt","w") as file:
+       file.write("Even past this.")
    for item in listofnumstodelete:
        del servers[item]
-   if serverip in servers:
-    del servers[serverip]
-   else:
-    print("ServersAgain: "+str(servers))
+   servers = fixserverset(servers)
+   serverlen = len(servers)
+
+   servernum1 = random.randint(0,serverlen-1)
+   servernum2 = random.randint(0,serverlen-1)
+   with open("PastThisAswell88.txt","w") as file:
+       file.write("Even past this.")
+
    try:
     if SpecialDevice == 2:
        del servers[str(get_local_ip())]
     else:
        del servers[SpecialDomain]
    except Exception as e:
-     print("Pointless"+str(e))
+     lol=True
+   with open("PastThisAswell99.txt","w") as file:
+       file.write("Even past this.")
    if len(servers) == 0:
        return jsonify({"Success":"But there's no servers to send to"}),200
    if servernum1 == servernum2 and not servernum1 == 1:
@@ -8402,74 +8869,72 @@ def addthedata():
          servernum2+=1
      else:
          servernum2+=-1
-   data1 = {"Hash":haash,"Port":str(SPECIALPORT)}
+   if servernum1 == servernum2 and not servernum1 == 1:
+     if servernum1<serverlen:
+         servernum2+=1
+     else:
+         servernum2+=-1
+   data1 = {"Hash":haash,"Port":str(SPECIALPORT),"Type":2,"SpecialDomain":SpecialDomain}
    replooptimes = 0
    usedurls = []
+   
    while servernum1valid == False:
-     if not servernum1 in servers:
-        if len(servers)>0:
-         for item in servers:
-             servernum1 = item
-             break
-        else:
-         print("Servers: "+str(servers))
-         servernum1 = "INVALIDNUMBER"
-     if not servernum1 == "INVALIDNUMBER":
+     url = ""
+     try:
       url = servers[servernum1]
-     else:
-      return jsonify({"Error":"No servers to send to."}),403
+     except Exception as e:
+         print("Error: "+str(e))
      if url in usedurls:
-         print("WELL ITS WORKING#2")
 
          servernum1valid = True
          del servers[servernum1]
          return jsonify({"Success":"But we ran out of servers"}),200
 
-     if replooptimes >= 5:
-         print("WELL ITS WORKING#1")
+     if replooptimes >= 10:
          servernum1valid = True
          del servers[servernum1]
          return jsonify({"Success":"But we ran out of servers"}),200
 
      replooptimes+=1
      if len(servers)<1:
-         print("WELL ITS WORKING#3")
 
          servernum1valid = True
          del servers[servernum1]
-         
-         
-         
-         
+
+
+
+
      replooptimes2 = 0
 
      try:
-      
-      if replooptimes2 >= 5:
-         print("WELL ITS WORKING#4")
+
+      if replooptimes2 >= 10:
 
          del servers[servernum1]
          servernum1valid = True
          return jsonify({"Success":"But we ran out of servers"}),200
 
       replooptimes2+=1
+      print("Server: "+str(serverthingthing.getprotocol(url)+url+"/checkforblockexistence"))
       responsepawn = requests.post(serverthingthing.getprotocol(url)+url+"/checkforblockexistence",json=data1)
+      print("Status code: "+str(responsepawn.status_code))
+      print("Done")
       usedurls.append(url)
-      
-      print("DATA1: "+str(data1))
+
       if responsepawn.status_code == 200:
-       validity = response.json()
+       validity = responsepawn.json()
        validity = validity["Success"]
-       print("VALIDITY:"+str(validity))
 
        if validity == "NO":
          servernum1valid = True
        else:
+           print("Ok thats why this is occurring, but how????")
            del servers[servernum1]
            try:
                servernum1 = random.randint(min(servers),max(servers))
            except:
-               print("FAILURE")
+                       lol=True
+
        if servernum1 == servernum2:
           servernum1valid = False
           if servernum1>serverlen-1:
@@ -8478,53 +8943,55 @@ def addthedata():
               servernum1+=1
        else:
         if not serverlen == 0:
-         del servers[servernum1]
+         print("Uhhh")
          serverlen = len(servers)
          try:
                servernum1 = random.randint(min(servers),max(servers))
          except:
-               print("FAILURE")
+                     lol=True
+
         else:
          servernum1 = -1
          break
-       
+
       else:
+          print("over here's a problem......")
           del servers[servernum1]
           try:
                servernum1 = random.randint(min(servers),max(servers))
           except:
-               print("FAILURE")
-     except:
-         
+                      lol=True
+
+     except Exception as e:
+         print("Error: "+str(e))
          return jsonify({"Success":"But we ran out of servers"}),200
          servernum1valid = True
          servernum2valid = True
          servernum1 = -1
          servernum2 = -1
    replooptimes = 0
+   if not servernum2 in servers:
+       servernum2valid = True
    while servernum2valid == False:
-    
+
      url = servers[servernum2]
-     if replooptimes == 5:
-         print("WELL ITS WORKING#5")
+     if replooptimes == 10:
 
          servernum2valid = True
          break
      replooptimes+=1
      if len(servers)<1:
-         print("WELL ITS WORKING#6")
 
          servernum2valid = True
          break
      if url in usedurls:
-         print("WELL ITS WORKING#7")
 
          servernum2valid = True
          break
      replooptimes2 = 0
      try:
+
       if replooptimes2 >= 10:
-         print("WELL ITS WORKING#8")
 
          servernum2valid = True
          del servers[servernum2]
@@ -8532,7 +8999,6 @@ def addthedata():
       replooptimes2+=1
       responsepawn = requests.post(serverthingthing.getprotocol(url)+url+"/checkforblockexistence",json=data1)
       usedurls.append(url)
-      print("DATA1: "+str(data1))
       if replooptimes2 >= 10:
          servernum1valid = True
          break
@@ -8540,7 +9006,6 @@ def addthedata():
       if responsepawn.status_code == 200:
        validity = response.json()
        validity = validity["Success"]
-       print("VALIDITY:"+str(validity))
        if validity == "NO":
          servernum2valid = True
 
@@ -8557,39 +9022,48 @@ def addthedata():
           try:
                servernum2 = random.randint(min(servers),max(servers))
           except:
-               print("FAILURE")
+                      lol=True
+
      except:
-       
+
          servernum1 = -1
          servernum2 = -1
          servernum2valid = True
          servernum1valid = True
 
-   
+
    data = {
      "hash":haash,
       "Firstsender":sender,
       "Serverip":serverip,
       "Timecreated":timecreated,
-      "NodesPassedThrough":NodesPassedThrough+1}
+      "NodesPassedThrough":NodesPassedThrough+1,
+      "Signature":Signature}
+   print("Servernum1: "+str(servernum1))
    if not servernum1 == -1:
+    print("inside here alright")
     url1 = ""
     replooptimes3 = 3
     try:
      
      url1 = serverthingthing.getprotocol(servers[servernum1])+str(servers[servernum1])+"/recieveblockdata1"
-    except:
+    except Exception as e:
+        print("Is this the true reason?"+str(e))
+        print("Servers: "+str(servers))
         return jsonify({"Error":"NOOOOOO23!!!!!!"}),403
+    with open("Gottothispoint.txt","w") as file:
+        file.write("Got over here")
     try:
      responselol = requests.post(url1,json=data)
-     
+     with open("Gotthroughthis.txt","w") as file:
+         file.write("Got through this.")
      if replooptimes3 == 3:
          del servers[servernum1]
          url1 = ""
      replooptimes3+=1
 
     except:
-        
+
         return jsonify({"Error":"NOOOOOO3!!!!!!"}),403
    replooptimes3 = 0
    if not servernum2 == -1:
@@ -8599,14 +9073,14 @@ def addthedata():
     except:
         return jsonify({"Error":"NOOOOOO233!!!!!!"}),403
     try:
-    
+
      responselol2 = requests.post(url2,json=data)
      if replooptimes3 == 3:
          del servers[servernum2]
          url2 = ""
      replooptimes3+=1
     except:
-   
+
         return jsonify({"Error":"NOOOOOO33!!!!!!"}),403
     try:
        del servers[servernum1]
@@ -8626,7 +9100,7 @@ def addthedata():
          servernum3valid = True
          servernum4valid = True
          servernum5valid = True
-    
+
     replooptimes = 0
     while servernum3valid == False:
      if replooptimes == 10:
@@ -8637,7 +9111,6 @@ def addthedata():
      url = servers[servernum3]
      try:
       responsepawn = requests.post(serverthingthing.getprotocol(url)+url+"/checkforblockexistence",json=data1)
-      print("DATA1: "+str(data1))
 
       if responsepawn.status_code == 200:
        validity = response.json()
@@ -8665,11 +9138,12 @@ def addthedata():
     try:
      url3 = serverthingthing.getprotocol(servers[servernum3])+str(servers[servernum3])+"/recieveblockdata1"
     except:
-        print("PROBLEM HERE")
+                lol=True
+
     try:
      responselol2 = requests.post(url3,json=data)
     except:
-      print("PROBLEM HeRE2")
+                lol=True
 
    serverlen = len(servers)
    if serverlen>0:
@@ -8681,12 +9155,11 @@ def addthedata():
          servernum4valid = True
          servernum5valid = True
 
-   
+
     while servernum4valid == False:
      url = servers[servernum4]
      try:
       responsepawn = requests.post(serverthingthing.getprotocol(servers[servernum4])+url+"/checkforblockexistence",json=data1)
-      print("DATA1: "+str(data1))
 
       if responsepawn.status_code == 200:
        validity = response.json()
@@ -8714,12 +9187,12 @@ def addthedata():
     try:
      url4 = serverthingthing.getprotocol(servers[servernum4])+str(servers[servernum4])+"/recieveblockdata1"
     except:
-              print("PROBLEM HeRE3")
+                lol=True
 
     try:
      responselol2 = requests.post(url4,json=data)
     except:
-              print("PROBLEM HeRE4")
+                lol=True
 
     serverlen = len(servers)
    servernum5 = 0
@@ -8736,12 +9209,11 @@ def addthedata():
          servernum4valid = True
          servernum5valid = True
 
-   
+
     while servernum5valid == False:
      url = servers[servernum5]
      try:
       responsepawn = requests.post(serverthingthing.getprotocol(url)+url+"/checkforblockexistence",json=data1)
-      print("DATA1: "+str(data1))
 
       if responsepawn.status_code == 200:
        validity = response.json()
@@ -8769,12 +9241,12 @@ def addthedata():
     try:
      url5 = serverthingthing.getprotocol(servers[servernum5])+str(servers[servernum5])+"/recieveblockdata1"
     except:
-              print("PROBLEM HeRE5")
+                lol=True
 
     try:
      responselol2 = requests.post(url5,json=data)
     except:
-              print("PROBLEM HeRE6")
+                lol=True
 
    return jsonify({"Success":"WE DID IT!"}),200
  else:
@@ -8895,7 +9367,7 @@ def gettat():
 @app.route("/addmaxblockthing",methods=['POST'])
 def addmaxblockthing():
     data = request.json
-    if not "haash" in data or not "firstsender" in data or not "serverip" in data or not "timecreated" in data or not "blockdata" in data or not "NodesPassedThrough" in data:
+    if not "haash" in data or not "firstsender" in data or not "serverip" in data or not "timecreated" in data or not "blockdata" in data or not "NodesPassedThrough" in data or not "Signature" in data:
         return jsonify({"Error":"NO YOU"})
     haash = data["haash"]
     firstsender = data["firstsender"]
@@ -8903,7 +9375,8 @@ def addmaxblockthing():
     timecreated = data["timecreated"]
     blockdata = data["blockdata"]
     NodesPassedThrough = data["NodesPassedThrough"]
-    serverthingthing.addforcorretblockcount(haash,firstsender,serverip,timecreated,NodesPassedThrough)
+    Signature = data["Signature"]
+    serverthingthing.addforcorretblockcount(haash,firstsender,serverip,timecreated,NodesPassedThrough,signature)
     serverthingthing.addblockdatatoblock(blockdata)
     return jsonify({"Success":"YES"})
 
@@ -9761,6 +10234,12 @@ def checkplaceinternetspeed():
     vmname = VMDATALIST[seedphrase]["vmname"]
     internetspeed = int(data["internetspeed"]/(10**6))
     serverthingthing.CHECKTHINGSINTERNETSPEEDVALIDITY(vmname,internetspeed)
+@app.route("/FindServer",methods=['POST'])
+def FindServer():
+    data = request.json
+    wallet = data["Wallet"]
+    server = serverthingthing.findserver(wallet)
+    return {"Server":server}
 @app.route("/createvm",methods=['POST'])
 def createvm():
     data=request.json
@@ -9789,6 +10268,9 @@ def STARTVM2():
 Verifyingkey = load_pem_public_key(convertthething(str(public_pem)).encode('utf-8'),backend=default_backend)
 print("VERIFYINGKEY: "+str(Verifyingkey))
 print("public_pem:"+str(public_pem))
+@app.route('/public-key')
+def serve_public_key():
+    return jsonify({'public_key': public_pem})
 @app.route("/DELETEVM",methods=['POST'])
 def DELETEVM():
     data=request.json
@@ -9854,7 +10336,7 @@ def executecommand():
     verifyingsig = base64.b64decode(verifyingsig)
     command = data["command"]
     serverthingthing.executecommandonVM(vmname,verifyingsig,command)
-@app.route("/gethashstringplus",methods=['POST'])
+@app.route("/gethashstringplus",methods=['GET'])
 def getthisone9now():
     hashstringthing = serverthingthing.gethashstringspecial()
     return jsonify({"Success":hashstringthing})
@@ -10186,32 +10668,35 @@ def submit_text2():
         text_box2.config(fg='grey')
         print("FIXED THIS!")
 # Create the main window
-
-
-root2 = tk.Tk()
-root2.title("Servercoin GUI part 1.")
+with open("allowedtostartpowerserver.txt","w") as file:
+    file.write(str(allowedtostartpowerserver))
+if not allowedtostartpowerserver == True:
+ with open("Powerserver2.txt","w") as file:
+     file.write("How can these both activate?")
+ root2 = tk.Tk()
+ root2.title("Servercoin GUI part 1.")
 
 # Make the window full screen
-root2.attributes('-fullscreen', True)
+ root2.attributes('-fullscreen', True)
 
 # Style the Textbox (make it more modern-looking)
-text_box2 = tk.Text(root2, height=10, fg='grey', bg='#f0f0f0', padx=10, pady=10, bd=2, relief="solid", font=("Arial", 18))
-text_box2.insert("1.0", PlaceHolderText2)  # Insert the initial placeholder text
-text_box2.pack(padx=20, pady=20, fill=tk.BOTH, expand=True)  # Fill the entire available space
+ text_box2 = tk.Text(root2, height=10, fg='grey', bg='#f0f0f0', padx=10, pady=10, bd=2, relief="solid", font=("Arial", 18))
+ text_box2.insert("1.0", PlaceHolderText2)  # Insert the initial placeholder text
+ text_box2.pack(padx=20, pady=20, fill=tk.BOTH, expand=True)  # Fill the entire available space
 
 # Bind focus in/out events to manage the placeholder
-text_box2.bind("<FocusIn>", on_focus_in2)
-text_box2.bind("<FocusOut>", on_focus_out2)
+ text_box2.bind("<FocusIn>", on_focus_in2)
+ text_box2.bind("<FocusOut>", on_focus_out2)
 
 # Bind key press event to remove placeholder when typing starts
-text_box2.bind("<Key>", on_key_press2)
+ text_box2.bind("<Key>", on_key_press2)
 
 # Style the Submit Button (bigger and light green, long width)
-submit_button2 = tk.Button(root2, text="Submit", command=submit_text2, bg='lightgreen', font=("Arial", 18, "bold"), padx=50, pady=20)
-submit_button2.pack(pady=20, fill=tk.X)  # Fill the width of the screen
+ submit_button2 = tk.Button(root2, text="Submit", command=submit_text2, bg='lightgreen', font=("Arial", 18, "bold"), padx=50, pady=20)
+ submit_button2.pack(pady=20, fill=tk.X)  # Fill the width of the screen
 
 # Start the Tkinter event loop
-root2.mainloop()
+ root2.mainloop()
 with open("SPECIALDOMAIN.txt","w") as file:
     file.write(str(SpecialDomain))
 # After exiting the loop, we can print the collected variables if needed
@@ -10363,7 +10848,9 @@ if not allowedtostartpowerserver  == True:
         responsething2 = responsething2["Success"]
         print("can we get here?")
         print("Responsething:"+str(responsething2))
-        serverlistlist[it] = {"Data":responsething["Success"],"Server":servers[item],"NEWDATA":responsething2}
+        servers2 = dict(responsething2)
+        print
+        serverlistlist[item] = {"Data":responsething["Success"],"Server":servers[item],"NEWDATA":responsething2}
         print("serverlistlist:"+str(serverlistlist))
         print("YES!")
         it+=1
@@ -10372,6 +10859,20 @@ if not allowedtostartpowerserver  == True:
            print("error: "+str(E))
            deletetheseservers.append(item)
            lol=True
+       print(servers2[servers[item]])
+       load_pem_public_key(convertthething(servers2[servers[item]]["verifyingkey"]).encode('utf-8'),backend=default_backend)
+    for item in servers:
+                               print("Servers: "+str(servers))
+                               try:
+
+                                serverthingthing.listserver(servers2[item]["server"],servers2[item]["altserver"],servers2[item]["Fileprice"],load_pem_public_key(convertthething(servers2[item]["verifyingkey"]).encode('utf-8'),backend=default_backend),servers2[item]["RAMGBPRICE"],servers2[item]["VCPUPRICE"],servers2[item]["DATATRANSFERGB"],servers2[item]["portthing"],servers2[item]["MINERCHECK"],servers2[item]["NODECHECK"],servers2[item]["verifyingkey"],servers2[item]["PROTOCOL"])
+                               except Exception as e:
+                                   
+                                   print("Ehhhhh it was just THAT server. "+str(e))
+                               try:
+                                serverthingthing.addtimeaddedtimetoserver(servers[item]["server"],servers[item]["timeadded"])
+                               except Exception as e:
+                                   print("OH NO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+str(e))
     for item in deletetheseservers:
         del servers[item]
     print("Serverlistlist: "+str(serverlistlist))
@@ -10447,7 +10948,7 @@ if not allowedtostartpowerserver  == True:
                 try:
                  print("SERVERLIST:"+str(trueserverlist))
                  print("SERVERLISTID: "+str(trueserverlist["Data"]))
-                 requestthing = requests.post(trueserverlist["NEWDATA"][trueserverlist["Data"][str(ID)]]["PROTOCOL"]+str(trueserverlist["Data"][str(ID)])+"/gethashstringhash")
+                 requestthing = requests.get(trueserverlist["NEWDATA"][trueserverlist["Data"][str(ID)]]["PROTOCOL"]+str(trueserverlist["Data"][str(ID)])+"/gethashstringplus")
                  if requestthing.status_code == 200:
                     requestthing = requestthing.json()
                     addhashthingtohashlist(requestthing["Success"],trueserverlist["Data"][str(ID)])
@@ -10461,10 +10962,11 @@ if not allowedtostartpowerserver  == True:
             print("HashList"+str(HashList))
             print("TimeStampList: "+str(timestamplist))
             hashthingthingthing = max(HashList,key=lambda x: HashList[x]['Amount'])
-            timestartdate = max(timestamplist,key=lambda x: timestamplist[x]['Amount'])
+            timestartdate = 1751892642
+            with open("timestartdate.txt","w") as file:
+                file.write(str(timestartdate))
             serveramount = len(HashList[hashthingthingthing]["Serverswithhash"])
-            
-
+           
             HASHSTRINGFORHASHCHECKTHING = ""
             hashstringlist = []
             trueproof = False
@@ -10486,9 +10988,13 @@ if not allowedtostartpowerserver  == True:
               HASHSTRINGFORHASHCHECKTHING = ""
 
               blocklistthingy = {}
-              
+              HASHLEN = 0
               randomserver = random.randint(0,serveramount-1)
-              HASHLEN = len(HashList[hashthingthingthing]["Serverswithhash"])
+              try:
+               HASHLEN = len(HashList[hashthingthingthing]["Serverswithhash"])
+              except:
+                  print("Umm wut")
+                  HASHLEN = int(serveramount)
               print("HASH LENGTH:"+str(HASHLEN))
               print("STEP 11")
               if HASHLEN == 0:
@@ -10512,7 +11018,11 @@ if not allowedtostartpowerserver  == True:
                   respondtomeplz = requests.get(urltosendto2)
                   with open(sql_file_path, 'wb') as file:
                    file.write(respondtomeplz.content)
-
+                  conn = sqlite3.connect("blocklist.db")
+                  cur = conn.cursor()
+                  cur.execute("DROP TABLE IF EXISTS kv_store")
+                  conn.commit()
+                  conn.close()
                   import_sql_file(sql_file_path, new_database_path)
                 print("LOADED!")
                
@@ -10527,7 +11037,22 @@ if not allowedtostartpowerserver  == True:
                   break
               urltosendto = HashList[hashthingthingthing]["Serverswithhash"][int(randomserver)]
               urltosendto244 = trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/getblocknum"
-              
+              cleaneditems = []
+              for item in blocklistthingy.keys():
+               BLOCKDATATYPE = "Blockdata"
+               try:
+                blocklistthingy[item][BLOCKDATATYPE]
+               except:
+                BLOCKDATATYPE = "BlockData"
+               if "STOP" in blocklistthingy[item][BLOCKDATATYPE]:
+                 cleaneditems.append(str(item))
+              for item in cleaneditems:
+                BLOCKDATATYPE = "Blockdata"
+                try:
+                 blocklistthingy[item][BLOCKDATATYPE]
+                except:
+                 BLOCKDATATYPE = "BlockData"
+                del blocklistthingy[item][BLOCKDATATYPE]["STOP"]
               sql_file_path = "output.sql"
               new_database_path = "blocklist.db"
               blocklistthingy = DiskBackedDict("blocklist.db")
@@ -10562,6 +11087,10 @@ if not allowedtostartpowerserver  == True:
                   print("newpowerresponse: "+str(newpowerresponse))
               except Exception as e:
                   print("ERROROROROR: "+str(e))
+              if blocklistthingy["0"]["Blockhash"] == blocklistthingy["1"]["Blockhash"]:
+                      print("What happened here?????")
+                      with open("Crap.txt","w") as file:
+                       file.write("Why did this happen...")
               trueblocknum = int(maxblocknum)
               maxblocknum = maxblocknum/9+1
               if len(blocklistthingy.keys())>maxblocknum:
@@ -10576,7 +11105,7 @@ if not allowedtostartpowerserver  == True:
                    HASHTOACCESS[numthingmax] = min(blocklistthingy.keys(), key=lambda x: float(blocklistthingy[x]["Dateadded"]))
                    numthingmax+=1
               for i in range(len(blocklistthingy.keys())):
-                 BLOCKACCESSTHING = HASHTOACCESS[i+1]
+                 BLOCKACCESSTHING = str(i)
                  hashstringlist.append(blocklistthingy[BLOCKACCESSTHING]["Blockhash"])
                  timelen+=1
                  try:
@@ -10588,15 +11117,27 @@ if not allowedtostartpowerserver  == True:
                  blocknum+=1
               print("timelen: "+str(timelen))
               print("STRINGLEN: "+str(HASHSTRINGFORHASHCHECKTHING))
+              with open("CHECKTHISOUTRIGHTNOW.txt","w") as file:
+                  file.write(str(HASHSTRINGFORHASHCHECKTHING))
+              newblockstring0 = requests.get(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/getnewblockstring0")
               hashthingpowerforever = hashlib.sha256(HASHSTRINGFORHASHCHECKTHING.encode('utf8')).hexdigest()
+              if not len(hashthingthingthing) == 64:
+                  hashthingthingthing = hashlib.sha256(hashthingthingthing.encode('utf8')).hexdigest()
+              if HASHSTRINGFORHASHCHECKTHING == newblockstring0:
+                  print("so what...")
               BLOCKDEVICE = {}
               print("STEP 13")
               print("HASHTHINGPOWERFOREVER:"+str(hashthingpowerforever))
               print("HASHTHINGTHINGTHING"+str(hashthingthingthing))
-              hashpost = requests.post(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/gethashstringplus")
+              hashpost = requests.get(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/gethashstringplus")
               hashpost = hashpost.json()
               hashpost = hashpost["Success"]
               LOADABLEKEY = False
+              superservers=requests.get(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"]+urltosendto+"/recieveservers2")
+              with open("Superservers.txt","w") as file:
+                  file.write(str(superservers))
+              superservers = superservers.json()
+              superservers = superservers["Success"]
               with open("hashpost.txt",
                         "w") as file:
                   file.write(str(hashpost))
@@ -10604,12 +11145,16 @@ if not allowedtostartpowerserver  == True:
                   file.write(str(HASHSTRINGFORHASHCHECKTHING))
               if not HASHSTRINGFORHASHCHECKTHING == hashpost:
                   print("Oh, it all makes sense now.")
+              response = requests.get("https://servercoinofficial.pythonanywhere.com/public-key")
+              public_key_pem = response.json()["public_key"]
               if not hashthingpowerforever == hashthingthingthing:
                   print("THIS IS WHY!!!!!!")
+                  print("HASHTHINGPOWERFOREVER: "+str(hashthingpowerforever))
+                  print("HASHTHINGTHINGTHING: "+str(hashthingthingthing))
                   for item in HashList[hashthingthingthing]["Serverswithhash"]:
                       if item == urltosendto:
                           del item
- 
+         
               else:
                totalitems = 0
                PROOFOFHAPPEN = True
@@ -10619,13 +11164,23 @@ if not allowedtostartpowerserver  == True:
                for item in blocklistthingy.keys():
                    HASHTOACCESS[numthingmax] = min(blocklistthingy.keys(), key=lambda x: float(blocklistthingy[x]["Dateadded"]))
                    numthingmax+=1
-               
+               loadedupthisround = False
+               loadedup = False
                for i in range(len(blocklistthingy.keys())):
+                  loadedupthisround = False
+                  if blocklistthingy["0"]["Blockhash"] == blocklistthingy["1"]["Blockhash"]:
+                      print("What happened here?????")
+                      with open("Crap.txt","w") as file:
+                          file.write("Why did this happen...")
+                  if loadedup == False:
+                      loadedupthisround = True
+                      loadedup = True
                   blockstring = ""
                   print("STEP 14")
                   print("DATAINBLOCK: "+str(blocklistthingy[item]))
                   BLOCKDEVICE = blocklistthingy[item]
-                  BLOCKACCESSTHING = HASHTOACCESS[i+1]
+                  BLOCKACCESSTHING = str(i)
+                  print("BLOCKACCESSTHING: "+str(BLOCKACCESSTHING))
                   try:
                       dicty = blocklistthingy[item]["Blockdata"]
                       BLOCKDATATYPE = "Blockdata"
@@ -10648,23 +11203,25 @@ if not allowedtostartpowerserver  == True:
                   if not BLOCKDATATYPE in blocklistthingy[BLOCKACCESSTHING]:
                       print("WHAT????: "+str(blocklistthingy[BLOCKACCESSTHING]))
                   for itemm in blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE]:
+                     
+                     print("Item: "+str(blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE]))
                      if blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["Type"] == 1:
                       blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["Sender"]
                       blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["Reciever"]
-                      blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["amountofcoins"]
-                      blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["transactionfee"]
+                      blockstring = blockstring+str(blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["amountofcoins"])
+                      blockstring = blockstring+str(blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["transactionfee"])
                       blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["verifyingsig"]
                       blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["txextra"]
                      elif blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["Type"] == 2:
                           blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["Sender"]
                           blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["Reciever"]
-                          blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["transactionfee"]
+                          blockstring = blockstring+str(blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["transactionfee"])
                           blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["verifyingsig1"]
                           blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["verifyingsig2"]
                           blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["filehash"]
-                          blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["fileprice"]
-                          blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["daysoflasting"]
-                          blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["filesize"]
+                          blockstring = blockstring+str(blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["fileprice"])
+                          blockstring = blockstring+str(blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["daysoflasting"])
+                          blockstring = blockstring+str(blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["filesize"])
                      elif blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["Type"] == 3:
                          blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["Sender"]
                          blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["Reciever"]
@@ -10684,16 +11241,89 @@ if not allowedtostartpowerserver  == True:
                          blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["amountofcoins"]
                          blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["txextra"]
                          blockstring = blockstring+blocklistthingy[BLOCKACCESSTHING][BLOCKDATATYPE][itemm]["vmtransactionnum"]
+                  if loadedupthisround == True:
+            
+                   with open("Block0part1.txt","w") as file:
+                      file.write(str(blockstring))
+                  blockstring+=str(blocklistthingy[BLOCKACCESSTHING]["FirstSender"])
+                  if loadedupthisround == True:
+                   with open("Block0part2.txt","w") as file:
+                      file.write(str(blockstring))
+                  data = {"Wallet":blocklistthingy[BLOCKACCESSTHING]["FirstSender"]}
+                  server = requests.post(str(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"])+urltosendto+"/FindServer",json=data)
+                  server = server.json()
+                  server = server["Server"]
+                  timeaddedthing = superservers[server]["timeadded"]
+                  
+                  sTF = int(timestartdate)
+                  sTF+=int(i)*603
+                  with open("i.txt","w") as file:
+                   file.write(str(i))
+                  if loadedupthisround == True:
+                   with open("MaybeHer1.txt","w") as file:
+                      file.write(str(sTF))
+                  sTF-=timeaddedthing
+                  if loadedupthisround == True:
+                   with open("MaybeHer2.txt","w") as file:
+                      file.write(str(sTF))
+                   with open("TimeAdded.txt","w") as file:
+                      file.write(str(timeaddedthing))
+                  
+                  signature = base64.b64decode(blocklistthingy[BLOCKACCESSTHING]["Signature"])
+                  message = blocklistthingy[BLOCKACCESSTHING]["FirstSender"]
+                  message = message.encode("utf-8")
+                  
+
+                  public_keyoftheserver = serialization.load_pem_public_key(public_key_pem.encode('utf-8'))
+                  try:
+                                     public_keyoftheserver.verify(
+                                      signature,
+                                      message,
+                                      ec.ECDSA(hashes.SHA256())
+
+                                     )
+
+                  except:
+                   PROOFOFHAPPEN = False
+                   print("This is why")
+                  stuffpower = str(i)+str(server)
+                  if loadedupthisround == True:
+                   with open("MaybeHer7.txt","w") as file:
+                      file.write(str(stuffpower))
+                  eothingtoadd2 = hashlib.sha256(stuffpower.encode('utf8')).hexdigest()
+                  if loadedupthisround == True:
+                   with open("MaybeHer6.txt","w") as file:
+                      file.write(str(eothingtoadd2))
+                  SEALDEAL = int(str(eothingtoadd2),16)
+                  if loadedupthisround == True:
+                   with open("MaybeHer5.txt","w") as file:
+                      file.write(str(SEALDEAL))
+                  SEALDEAL = SEALDEAL%7
+                  if loadedupthisround == True:
+                   with open("MaybeHer4.txt","w") as file:
+                      file.write(str(SEALDEAL))
+                  numthing = sTF*(SEALDEAL+1)
+                  if loadedupthisround == True:
+                   with open("MaybeHer3.txt","w") as file:
+                      file.write(str(numthing))
+                  
+                  blockstring+=str(numthing)
+                  if loadedupthisround == True:
+                   with open("Block0part3.txt","w") as file:
+                      file.write(str(blockstring))
                   blockhashthingything = ''
                   blockhashthingything = hashlib.sha256(blockstring.encode('utf8')).hexdigest()
-                  if not blockhashthingything == '':
-                      print("OK:"+str(blockhashthingything))
-                  if not hashstringlist[totalitems] == '':
-                      print("OK2")
-                  if hashstringlist[totalitems] == '':
-                      hashstringlist[totalitems] = hashlib.sha256(hashstringlist[totalitems].encode('utf8')).hexdigest()
-                  if not hashstringlist[totalitems] == blockhashthingything:
+                  
+                  if not blocklistthingy[BLOCKACCESSTHING]["Blockhash"] == blockhashthingything:
                       PROOFOFHAPPEN = False
+                      print("Totalitemnum: "+str(totalitems))
+                      print("Totalitems: "+str(hashstringlist[totalitems]))
+                      with open("TheBlockHere.txt","w") as file:
+                          file.write(str(blocklistthingy[BLOCKACCESSTHING]["Blockhash"]))
+                      print("Blockstring: "+str(blockstring))
+                      with open("TheBlockString.txt","w") as file:
+                          file.write(str(blockstring))
+                      print("I: "+str(i))
                       totalitems = 0
                       print("hashstringlist")
                       print("Ohhhhhhhhhhhhhhhhhhh")
@@ -10705,6 +11335,7 @@ if not allowedtostartpowerserver  == True:
                           print("It doesn't even exist anymore.")
                           POWERVAL = False
                           break
+                  
                   else:
                       totalitems+=1
                FINISHEDTHESTUFF4EVER = True
@@ -11342,18 +11973,6 @@ if not allowedtostartpowerserver  == True:
                                      print("Well that failed")
                                   except Exception as e:
                                    print("Well that failed.....: "+str(e))
-                              for item in servers:
-                               print("Servers: "+str(servers))
-                               try:
-
-                                serverthingthing.listserver(servers[item]["server"],servers[item]["altserver"],servers[item]["Fileprice"],load_pem_public_key(convertthething(servers[item]["verifyingkey"]).encode('utf-8'),backend=default_backend),servers[item]["RAMGBPRICE"],servers[item]["VCPUPRICE"],servers[item]["DATATRANSFERGB"],servers[item]["portthing"],servers[item]["MINERCHECK"],servers[item]["NODECHECK"],servers[item]["verifyingkey"],servers[item]["PROTOCOL"])
-                               except:
-                                   
-                                   print("Ehhhhh it was just THAT server.")
-                               try:
-                                serverthingthing.addtimeaddedtimetoserver(servers[item]["server"],servers[item]["timeadded"])
-                               except Exception as e:
-                                   print("OH NO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+str(e))
                               if SpecialDevice == 1:
                                 data = {"type":1,"IP":SpecialDomain,"Verifyingkey":public_pem.decode('utf-8'),"fileprice":PriceperGBperday,"ramgbprice":RAMPRICEPERGB,"datatransferprice":DATATRANSFERPRICEPERGB,"vcpuprice":VCPUPRICE,"PortThing":0,"PROTOCOL":httpthingy,"MINERCHECK":"YES","NODECHECK":"YES"}
                               else:
@@ -13041,6 +13660,7 @@ thread18.start()
 thread19.start()
 thread20.start()
 thread21.start()
+max_drive = serverthingthing.setmaxdrive()
 servers = serverthingthing.getservers()
 print("Servers: "+str(servers))
 print("Wallet: "+str(serverthingthing.getselfwallet()))
@@ -13052,4 +13672,4 @@ print("LOCALIP2: "+str(get_local_ip2()))
 if __name__ == "__main__":
     local_ip = get_local_ip2()
     port = 1000
-    app.run(host=local_ip, port=SPECIALPORT)
+    app.run(host="0.0.0.0", port=SPECIALPORT)
